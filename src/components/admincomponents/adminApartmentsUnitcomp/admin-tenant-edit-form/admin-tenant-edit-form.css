@@ -1,0 +1,28 @@
+.regFormInput {
+  background-color: #1b1b1b;
+  height: 50px;
+}
+
+.regPreFormText {
+  font-size: 12px;
+}
+
+.regButtonSpace {
+  height: 80px;
+}
+
+.regButtonHolder {
+  background: #1b1b1b;
+  position: fixed;
+  bottom: 0px;
+  height: 80px;
+  width: 100%;
+  left: 0px;
+}
+
+.regButton {
+  background: #947a1e;
+  height: 50px;
+  color: white;
+  margin-top: 5px;
+}

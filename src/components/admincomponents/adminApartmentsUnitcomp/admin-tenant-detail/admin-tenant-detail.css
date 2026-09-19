@@ -1,0 +1,17 @@
+.profileBorder {
+  border-bottom: 2px solid #947a1e !important;
+}
+
+
+.adminTenantCard {
+  background: #1b1b1b !important;
+  min-height: 200px;
+}
+
+.editOccupantBtn {
+  background-color: #947a1e;
+}
+
+.normaliseCap {
+  text-transform: capitalize;
+}

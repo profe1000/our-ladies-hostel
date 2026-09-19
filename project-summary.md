@@ -1,0 +1,236 @@
+## Capacitor Plugins
+
+- 🟧 @capacitor/app@5.0.7 - Unable to find information on npm.
+- 🟧 @capacitor/device@5.0.6 - Unable to find information on npm.
+- 🟧 @capacitor/status-bar@5.0.7 - Unable to find information on npm.
+## Cordova Plugins
+
+## Dependencies
+
+- 🟧 @ant-design/icons@5.2.5 - Unable to find information on npm.
+- 🟧 @capacitor/android@5.7.4 - Unable to find information on npm.
+- 🟧 @capacitor/assets@3.0.5 - Unable to find information on npm.
+- 🟧 @capacitor/cli@5.7.4 - Unable to find information on npm.
+- 🟧 @capacitor/core@5.4.0 - Unable to find information on npm.
+- 🟧 @capacitor/ios@5.7.4 - Unable to find information on npm.
+- 🟧 @paystack/inline-js@2.13.0 - Unable to find information on npm.
+- 🟧 @testing-library/jest-dom@5.16.5 - Unable to find information on npm.
+- 🟧 @testing-library/react@13.3.0 - Unable to find information on npm.
+- 🟧 @testing-library/user-event@13.5.0 - Unable to find information on npm.
+- 🟧 @types/file-saver@2.0.7 - Unable to find information on npm.
+- 🟧 @types/jest@27.5.2 - Unable to find information on npm.
+- 🟧 @types/node@16.11.56 - Unable to find information on npm.
+- 🟧 @types/react@18.0.18 - Unable to find information on npm.
+- 🟧 @types/react-dom@18.0.6 - Unable to find information on npm.
+- 🟧 antd@5.8.3 - Unable to find information on npm.
+- 🟧 axios@0.27.2 - Unable to find information on npm.
+- 🟧 file-saver@2.0.5 - Unable to find information on npm.
+- 🟧 jsonapi-serializer@3.6.7 - Unable to find information on npm.
+- 🟧 react@18.2.0 - Unable to find information on npm.
+- 🟧 react-dom@18.2.0 - Unable to find information on npm.
+- 🟧 react-redux@8.0.5 - Unable to find information on npm.
+- 🟧 react-reveal@1.2.2 - Unable to find information on npm.
+- 🟧 react-router-dom@6.3.0 - Unable to find information on npm.
+- 🟧 react-scripts@5.0.1 - Unable to find information on npm.
+- 🟧 redux@4.2.1 - Unable to find information on npm.
+- 🟧 redux-devtools-extension@2.13.9 - redux-devtools-extension is deprecated: Package moved to @redux-devtools/extension.
+- 🟧 redux-thunk@2.4.2 - Unable to find information on npm.
+- 🟧 retry-axios@3.0.0 - Unable to find information on npm.
+- 🟧 typescript@4.8.2 - Unable to find information on npm.
+- 🟧 web-vitals@2.1.4 - Unable to find information on npm.
+### Maintenance Score
+0 out of 34 dependencies were up to date without issues.
+
+
+
+## Nonstandard naming
+The following files and folders do not follow the standard naming convention:
+
+- /.DS_Store
+- /App.css
+- /App.test.tsx
+- /App.tsx
+- /Redux/.DS_Store
+- /Redux/action/AuthSignUpAction.ts
+- /Redux/action/TodoActions.js
+- /Redux/reducers/TodoReducer.js
+- /Redux/reducers/admin_auth_data.ts
+- /Redux/reducers/admin_dashboard_reducer.ts
+- /Redux/reducers/auth_data.ts
+- /Redux/reducers/tenant_reducer_group.ts
+- /Redux/reduxCustomHook.ts
+- /Redux/store.ts
+- /Redux/znotes/reduxhome.js
+- /Redux/znotes/znote.txt
+- /apiservice/.DS_Store
+- /apiservice/admin-AuthService.ts
+- /apiservice/admin-AuthService.type.ts
+- /apiservice/admin-General-ApiService.ts
+- /apiservice/admin-General-ApiService.type.ts
+- /apiservice/authService.ts
+- /apiservice/authService.type.ts
+- /apiservice/sampleUsage/sample.ts
+- /apiservice/sampleUsage/sampleAPITest.tsx
+- /apiservice/tenant-general-apiService.ts
+- /apiservice/tenant-general-apiService.type..ts
+- /components/.DS_Store
+- /components/LayoutComponent/.DS_Store
+- /components/LayoutComponent/TabBar/Tabbar.css
+- /components/LayoutComponent/TabBar/Tabbar.tsx
+- /components/LayoutComponent/TitleBar/titleBar.css
+- /components/LayoutComponent/TitleBar/titleBar.tsx
+- /components/LayoutComponent/TopBar/topBar.tsx
+- /components/LayoutComponent/TopBar/topbar.css
+- /components/LayoutComponent/TopBar-Admin/TopBar-Admin.css
+- /components/LayoutComponent/TopBar-Admin/TopBar-Admin.tsx
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-add/admin-apartment-unit-add.css
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-add/admin-apartment-unit-add.tsx
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-cost-add/admin-unitcost-add.css
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-cost-add/admin-unitcost-add.tsx
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-cost-list/admin-apartment-unit-cost-list.css
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-cost-list/admin-apartment-unit-cost-list.tsx
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-edit/admin-apartment-unit-edit-form.tsx
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-edit/admin-apartment-unit-edit.css
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-list/admin-apartment-unit-list.css
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-list/admin-apartment-unit-list.tsx
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-list-wrapper/admin-apartment-unit-list-wrapper.css
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-list-wrapper/admin-apartment-unit-list-wrapper.tsx
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-occupant/admin-apartment-unit-occupant.css
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-occupant/admin-apartment-unit-occupant.tsx
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-occupant-log/admin-apartment-unit-occupant-log.css
+- /components/admincomponents/adminApartmentsUnitcomp/admin-apartment-unit-occupant-log/admin-apartment-unit-occupant-log.tsx
+- /components/admincomponents/adminApartmentsUnitcomp/admin-tenant-detail/admin-tenant-detail.css
+- /components/admincomponents/adminApartmentsUnitcomp/admin-tenant-detail/admin-tenant-detail.tsx
+- /components/admincomponents/adminApartmentsUnitcomp/admin-tenant-edit-form/admin-tenant-edit-form.css
+- /components/admincomponents/adminApartmentsUnitcomp/admin-tenant-edit-form/admin-tenant-edit-form.tsx
+- /components/admincomponents/adminApartmentsUnitcomp/admin-tenant-registrationForms/admin-tenant-registrationForms.css
+- /components/admincomponents/adminApartmentsUnitcomp/admin-tenant-registrationForms/admin-tenant-registrationForms.tsx
+- /components/admincomponents/adminBuildingsComp/admin-building-add/admin-builiding-add.css
+- /components/admincomponents/adminBuildingsComp/admin-building-add/admin-builiding-add.tsx
+- /components/admincomponents/adminBuildingsComp/admin-building-edit/admin-builiding-edit-form.tsx
+- /components/admincomponents/adminBuildingsComp/admin-building-edit/admin-builiding-edit-image.tsx
+- /components/admincomponents/adminBuildingsComp/admin-building-edit/admin-builiding-edit.css
+- /components/admincomponents/adminBuildingsComp/admin-building-list/admin-building-list.css
+- /components/admincomponents/adminBuildingsComp/admin-building-list/admin-building-list.tsx
+- /components/admincomponents/adminBuildingsComp/admin-building-list-wrapper/admin-building-list-wrapper.css
+- /components/admincomponents/adminBuildingsComp/admin-building-list-wrapper/admin-building-list-wrapper.tsx
+- /components/admincomponents/adminCharts/adminChart-CashFlow.tsx
+- /components/admincomponents/adminCharts/adminChart-CashProjection.tsx
+- /components/admincomponents/adminCharts/adminChart-OccupancyRate.tsx
+- /components/admincomponents/adminCharts/adminChart-Revenue.tsx
+- /components/admincomponents/adminCharts/adminChart.css
+- /components/admincomponents/adminCharts/adminTable-CashFlow-BreakDown.tsx
+- /components/admincomponents/adminCharts/adminTable-Revenue-Tab.tsx
+- /components/admincomponents/adminCharts/adminTable-Upcoming-Revenue.tsx
+- /components/admincomponents/adminDashboardComp/admin-dashboard/admin-dashboard.css
+- /components/admincomponents/adminDashboardComp/admin-dashboard/admin-dashboard.tsx
+- /components/admincomponents/adminDashboardComp/admin-dashboard-wrapper/admin-dashboard-wrapper.css
+- /components/admincomponents/adminDashboardComp/admin-dashboard-wrapper/admin-dashboard-wrapper.tsx
+- /components/admincomponents/adminSettingsComponent/CreateAdmin-Form/CreateAdmin-Form.css
+- /components/admincomponents/adminSettingsComponent/CreateAdmin-Form/CreateAdmin-Form.tsx
+- /components/admincomponents/adminSettingsComponent/admin-Details-Me-Edit-Password/Admin-Details-Me-Edit-Form.css
+- /components/admincomponents/adminSettingsComponent/admin-Details-Me-Edit-Password/Admin-Details-Me-Edit-Password.tsx
+- /components/admincomponents/adminSettingsComponent/admin-details/admin-details.css
+- /components/admincomponents/adminSettingsComponent/admin-details/admin-details.tsx
+- /components/admincomponents/adminSettingsComponent/admin-list/admin-list.css
+- /components/admincomponents/adminSettingsComponent/admin-list/admin-list.tsx
+- /components/admincomponents/adminSettingsComponent/admin-list-wrapper/admin-list-wrapper.css
+- /components/admincomponents/adminSettingsComponent/admin-list-wrapper/admin-list-wrapper.tsx
+- /components/admincomponents/adminSettingsComponent/admin-settings-wrapper/admin-settings-wrapper.css
+- /components/admincomponents/adminSettingsComponent/admin-settings-wrapper/admin-settings-wrapper.tsx
+- /components/userscomponents/apartmentsFormsComp/paymentForms/tenantPayment.css
+- /components/userscomponents/apartmentsFormsComp/paymentForms/tenantPaymentForm.tsx
+- /components/userscomponents/apartmentsFormsComp/registratiionForms/tenantRegistration.css
+- /components/userscomponents/apartmentsFormsComp/registratiionForms/tenantRegistrationForm.tsx
+- /components/userscomponents/apartmentsFormsComp/tenant-Details-Me-Edit-Password/tenant-Details-Me-Edit-Password.css
+- /components/userscomponents/apartmentsFormsComp/tenant-Details-Me-Edit-Password/tenant-Details-Me-Edit-Password.tsx
+- /components/userscomponents/apartmentsFormsComp/tenant-profile-comp/tenant-profile-comp.css
+- /components/userscomponents/apartmentsFormsComp/tenant-profile-comp/tenant-profile-comp.tsx
+- /components/userscomponents/apartmentsUnitcomp/apartment-unit-list/apartment-unit-list.css
+- /components/userscomponents/apartmentsUnitcomp/apartment-unit-list/apartment-unit-list.tsx
+- /components/userscomponents/apartmentsUnitcomp/apartment-unit-list-wrapper/apartment-unit-list-wrapper.css
+- /components/userscomponents/apartmentsUnitcomp/apartment-unit-list-wrapper/apartment-unit-list-wrapper.tsx
+- /components/userscomponents/buildingsComp/building-list/building-list.css
+- /components/userscomponents/buildingsComp/building-list/building-list.tsx
+- /components/userscomponents/buildingsComp/building-list-wrapper/building-list-wrapper.css
+- /components/userscomponents/buildingsComp/building-list-wrapper/building-list-wrapper.tsx
+- /context/BasicContext.tsx
+- /hooks/FetchUrl.tsx
+- /hooks/formatApiRequest.tsx
+- /hooks/useAuth.tsx
+- /pages/.DS_Store
+- /pages/Layout/Layout.css
+- /pages/Layout/Layout.tsx
+- /pages/Nopage/Nopage.css
+- /pages/Nopage/Nopage.tsx
+- /pages/ProtectedRoute/ProtectedRoutePage.tsx
+- /pages/admindashboardpages/Admin/AdminSettings.css
+- /pages/admindashboardpages/Admin/AdminSettings.tsx
+- /pages/admindashboardpages/AdminApartments/AdminApartments.css
+- /pages/admindashboardpages/AdminApartments/AdminApartments.tsx
+- /pages/admindashboardpages/AdminApartmentsAddPage/AdminApartmentsAddPage.css
+- /pages/admindashboardpages/AdminApartmentsAddPage/AdminApartmentsAddPage.tsx
+- /pages/admindashboardpages/AdminApartmentsEditPage/AdminApartmentsEditPage.css
+- /pages/admindashboardpages/AdminApartmentsEditPage/AdminApartmentsEditPage.tsx
+- /pages/admindashboardpages/AdminApartmentsManageCostPage/AdminApartmentsManageCostPage.css
+- /pages/admindashboardpages/AdminApartmentsManageCostPage/AdminApartmentsManageCostPage.tsx
+- /pages/admindashboardpages/AdminApartmentsTenants/AdminApartmentsTenants.css
+- /pages/admindashboardpages/AdminApartmentsTenants/AdminApartmentsTenants.tsx
+- /pages/admindashboardpages/AdminApartmentsTenantsAdd/AdminApartmentsTenantsAdd.css
+- /pages/admindashboardpages/AdminApartmentsTenantsAdd/AdminApartmentsTenantsAdd.tsx
+- /pages/admindashboardpages/AdminApartmentsTenantsEdit/AdminApartmentsTenantsEdit.css
+- /pages/admindashboardpages/AdminApartmentsTenantsEdit/AdminApartmentsTenantsEdit.tsx
+- /pages/admindashboardpages/AdminApartmentsTenantsHistory/AdminApartmentsTenantsHistory.css
+- /pages/admindashboardpages/AdminApartmentsTenantsHistory/AdminApartmentsTenantsHistory.tsx
+- /pages/admindashboardpages/AdminApartmentsTenantsHistoryDetails/AdminApartmentsTenantsHistoryDetails.css
+- /pages/admindashboardpages/AdminApartmentsTenantsHistoryDetails/AdminApartmentsTenantsHistoryDetails.tsx
+- /pages/admindashboardpages/AdminBuildings/AdminBuildings.css
+- /pages/admindashboardpages/AdminBuildings/AdminBuildings.tsx
+- /pages/admindashboardpages/AdminBuildingsAddPage/AdminBuildingsAddPage.css
+- /pages/admindashboardpages/AdminBuildingsAddPage/AdminBuildingsAddPage.tsx
+- /pages/admindashboardpages/AdminBuildingsEditPage/AdminBuildingsEditPage.css
+- /pages/admindashboardpages/AdminBuildingsEditPage/AdminBuildingsEditPage.tsx
+- /pages/admindashboardpages/AdminHome/AdminHome.css
+- /pages/admindashboardpages/AdminHome/AdminHome.tsx
+- /pages/admindashboardpages/AdminManageAdminAdd/AdminManageAdminAdd.css
+- /pages/admindashboardpages/AdminManageAdminAdd/AdminManageAdminAdd.tsx
+- /pages/admindashboardpages/AdminManageAdminDetails/AdminManageAdminDetails.css
+- /pages/admindashboardpages/AdminManageAdminDetails/AdminManageAdminDetails.tsx
+- /pages/admindashboardpages/AdminManageAdminEdit/AdminManageAdminEdit.css
+- /pages/admindashboardpages/AdminManageAdminEdit/AdminManageAdminEdit.tsx
+- /pages/admindashboardpages/AdminManageAdmins/AdminManageAdmins.css
+- /pages/admindashboardpages/AdminManageAdmins/AdminManageAdmins.tsx
+- /pages/admindashboardpages/AdminManagePassword/AdminManagePassword.css
+- /pages/admindashboardpages/AdminManagePassword/AdminManagePassword.tsx
+- /pages/admindashboardpages/AdminManageProfile/AdminManageProfile.css
+- /pages/admindashboardpages/AdminManageProfile/AdminManageProfile.tsx
+- /pages/admindashboardpages/AdminNotifcation/AdminNotifcation.css
+- /pages/admindashboardpages/AdminNotifcation/AdminNotifcation.tsx
+- /pages/admindashboardpages/AdminSettings/AdminSettings.css
+- /pages/admindashboardpages/AdminSettings/AdminSettings.tsx
+- /pages/admindashboardpages/adminPagesRoute.tsx
+- /pages/authenticationpages/.DS_Store
+- /pages/authenticationpages/Auth.css
+- /pages/authenticationpages/AuthRoute.tsx
+- /pages/authenticationpages/authSignIn/authSignin.tsx
+- /pages/authenticationpages/authforgetPassword/authForgetPassword.tsx
+- /pages/authenticationpages/authforgetPassword-setnewpassword/authSetNewPassword.tsx
+- /pages/landingpages/Home/Home.css
+- /pages/landingpages/Home/Home.tsx
+- /pages/landingpages/UserApartmentUnitsPage/UserApartmentUnitsPage.css
+- /pages/landingpages/UserApartmentUnitsPage/UserApartmentUnitsPage.tsx
+- /pages/landingpages/UserPaymentForm/UserPaymentForm.css
+- /pages/landingpages/UserPaymentForm/UserPaymentForm.tsx
+- /pages/landingpages/UserRegistrationForm/UserRegistrationForm.css
+- /pages/landingpages/UserRegistrationForm/UserRegistrationForm.tsx
+- /pages/landingpages/landingPagesRoute.tsx
+- /pages/userdashboardpages/UserProfile/UserProfile.css
+- /pages/userdashboardpages/UserProfile/UserProfile.tsx
+- /pages/userdashboardpages/userChangePassword/userChangePassword.css
+- /pages/userdashboardpages/userChangePassword/userChangePassword.tsx
+- /pages/userdashboardpages/userNotifcation/userNotifcation.css
+- /pages/userdashboardpages/userNotifcation/userNotifcation.tsx
+- /pages/userdashboardpages/userPagesRoute.tsx
+- /reportWebVitals.ts
+- /setupTests.ts
+- /utils/localStorage.ts

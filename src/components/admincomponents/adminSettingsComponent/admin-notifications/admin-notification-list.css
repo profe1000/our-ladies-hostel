@@ -1,0 +1,42 @@
+.adminCard {
+  background: #1b1b1b !important;
+  min-height: 60px !important;
+}
+
+.adminUnReadCard {
+  background:  #624f0b !important;
+  min-height: 60px !important;
+}
+
+.adminCardHeader {
+  font-size: 14px;
+}
+
+.adminCardText {
+  font-size: 12px;
+}
+
+.adminAmount {
+  background: #624f0b;
+  font-size: 12px;
+}
+
+.cardsBottonBorder {
+  border-bottom: 2px solid #ffffff !important;
+}
+
+.ant-spin-dot-item {
+  background-color: orange !important;
+}
+
+.viewUnitsBtn {
+  background-color: #947a1e;
+}
+
+.deleteAdminBtn {
+  background-color: #b4463f;
+}
+
+.editAdminBtn {
+  background-color: #89c664;
+}

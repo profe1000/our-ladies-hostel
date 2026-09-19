@@ -1,0 +1,35 @@
+.regFormInputPayment {
+  background-color: #1b1b1b;
+  border-color: #947a1e;
+  height: 50px;
+}
+
+.amountToPayText {
+  color: #947a1e !important;
+}
+
+.regPreFormText {
+  font-size: 12px;
+}
+
+.agreementBtn {
+  background: #947a1e;
+  height: 30px;
+  padding: 5px;
+  color: white;
+  margin-top: 5px;
+}
+
+.regButton {
+  background: #947a1e;
+  height: 50px;
+  color: white;
+  margin-top: 5px;
+}
+
+
+.bankAccountBg {
+  background-color: #1b1b1b;
+  border-color: #947a1e !important;
+}
+

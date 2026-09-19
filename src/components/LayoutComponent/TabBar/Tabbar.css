@@ -1,0 +1,30 @@
+.selectedcolor {
+  color: #dbb42b;
+}
+
+.subtext {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.safeAreaBottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottomBar {
+  background: #000000;
+  position: fixed;
+  bottom: 0px;
+  height: 70px;
+  width: 100%;
+  left: 0px;
+}
+
+.link {
+  text-decoration: none;
+}
+
+.tabBarSpace {
+  height: 70px;
+}

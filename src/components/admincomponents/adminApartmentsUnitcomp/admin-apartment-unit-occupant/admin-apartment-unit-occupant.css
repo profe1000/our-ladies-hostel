@@ -1,0 +1,20 @@
+.profileBorder {
+  border-bottom: 2px solid #947a1e !important;
+}
+
+.adminOccupantCard {
+  background: #1b1b1b !important;
+  min-height: 80px;
+}
+
+.editOccupantBtn {
+  background-color: #947a1e;
+}
+
+.ant-modal-content {
+  background-color: #1b1b1b !important; /* Change 'yourDesiredColor' to the color you want */
+}
+.ant-modal-confirm-title {
+  color: white !important;
+}
+

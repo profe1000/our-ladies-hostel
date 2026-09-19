@@ -1,0 +1,25 @@
+.buildingCard {
+  background: #1b1b1b !important;
+  min-height: 200px;
+}
+
+.buildingCardHeader {
+  font-size: 14px;
+}
+
+.buildingCardText {
+  font-size: 12px;
+}
+
+.buildingAmount {
+  background: #624f0b;
+  font-size: 12px;
+}
+
+.cardsBottonBorder {
+  border-bottom: 2px solid #ffffff !important;
+}
+
+.ant-spin-dot-item {
+  background-color: orange !important;
+}

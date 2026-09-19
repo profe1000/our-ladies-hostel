@@ -1,0 +1,98 @@
+.profile-settings-form label {
+  color: #515251;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 133.333% */
+}
+
+.user-profile-form-labels {
+  color: #515251;
+  margin-bottom: 10px;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 133.333% */
+}
+.edit-password-input {
+  background: none;
+  font-family: Poppins;
+  font-size: 12px;
+  height:50px;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+}
+.edit-password-input::placeholder {
+  color: #515251;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 133.333% */
+}
+.nextButton {
+  padding-inline: 40px;
+}
+.user-profile-form-edit {
+  border-bottom: 2px solid rgba(81, 82, 81, 0.56);
+  color: #515251;
+  font-family: Poppins;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 10px; /* 133.333% */
+}
+.edit-profile-input {
+  font-family: Poppins;
+  font-size: 12px;
+  padding: 10px 20px;
+  width: 100%;
+}
+
+.edit-profile-input::placeholder {
+  color: #515251;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 133.333% */
+}
+.inputSelectProfile {
+  width: 80%;
+  color: #515251;
+  font-family: Poppins;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 133.333% */
+}
+
+@media screen and (max-width: 768px) {
+  .user-profile-form-labels {
+    font-size: 12px;
+  }
+  .edit-profile-input {
+    width: 100%;
+  }
+  .user-profile-form-edit {
+    font-size: 14px;
+  }
+  .inputSelectProfile {
+    width: 100%;
+  }
+  .edit-profile-input::placeholder {
+    font-size: 10px;
+  }
+  .inputSelectProfile {
+    font-size: 10px !important;
+  }
+}
+
+.saveButton {
+  background: #947a1e;
+  height: 50px;
+  color: white;
+  margin-top: 5px;
+}

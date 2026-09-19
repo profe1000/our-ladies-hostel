@@ -1,0 +1,13 @@
+.chartBackground {
+  background: #1b1b1b;
+}
+
+.revenueChartAmount {
+  font-size: 14px;
+}
+
+.gridBackGround {
+  background-color: #1b1b1b;
+  border: 2px solid #60511c !important;
+  min-height: 50px;
+}

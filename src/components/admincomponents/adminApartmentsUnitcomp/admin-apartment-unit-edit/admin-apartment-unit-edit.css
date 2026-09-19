@@ -1,0 +1,17 @@
+.AdminFormInput {
+   background-color: #1b1b1b;
+  height: 50px;
+}
+
+.AdminFormInputHeader {
+  color: #e0b724;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.regButton {
+  background: #947a1e;
+  height: 50px;
+  color: white;
+  margin-top: 5px;
+}
