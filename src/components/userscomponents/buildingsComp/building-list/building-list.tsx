@@ -1,4 +1,13 @@
-import { Button, Empty, notification, Pagination, Result, Spin } from "antd";
+import { AppstoreOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Empty,
+  notification,
+  Pagination,
+  Result,
+  Segmented,
+  Spin,
+} from "antd";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -31,6 +40,7 @@ export const BuildingListUser: React.FC<IBuildingList> = ({
     initialDefaultFilter || {}
   );
   const [tableData, setTableData] = useState<ITenantBuildingsData[]>([]);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [api, contextHolder] = notification.useNotification();
 
   // Pagination Constant/Variables
@@ -194,9 +204,38 @@ export const BuildingListUser: React.FC<IBuildingList> = ({
                   {/* Building List */}
                   <div className="w3-col l12 s12">
                     <div className="w3-col w3-padding">
-                      <div className="w3-col">
+                      <div className="buildingViewToggle">
+                        <Segmented
+                          aria-label="Building view"
+                          value={viewMode}
+                          onChange={(value) =>
+                            setViewMode(value as "grid" | "list")
+                          }
+                          options={[
+                            {
+                              label: "Grid",
+                              value: "grid",
+                              icon: <AppstoreOutlined />,
+                            },
+                            {
+                              label: "List",
+                              value: "list",
+                              icon: <UnorderedListOutlined />,
+                            },
+                          ]}
+                        />
+                      </div>
+
+                      <div
+                        className={`buildingList buildingList${
+                          viewMode === "grid" ? "Grid" : "List"
+                        }`}
+                      >
                         {tableData.map((buildings, index) => (
-                          <div key={buildings.id || index}>
+                          <div
+                            className="buildingListItem"
+                            key={buildings.id || index}
+                          >
                             <div
                               onClick={() => {
                                 navigateForward(index);

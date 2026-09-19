@@ -1,3 +1,52 @@
+.buildingViewToggle {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.buildingViewToggle .ant-segmented {
+  background: #1b1b1b;
+  color: #ffffff;
+}
+
+.buildingViewToggle .ant-segmented-item-selected {
+  background: #624f0b;
+  color: #ffffff;
+}
+
+.buildingListGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.buildingListGrid .buildingCard {
+  grid-template-columns: 1fr;
+  height: 360px;
+}
+
+.buildingListGrid .buildingCardImage {
+  grid-row: 1;
+  height: 170px;
+  min-height: 170px;
+}
+
+.buildingListGrid .buildingCardContent {
+  min-height: 190px;
+  padding: 18px;
+}
+
+.buildingListGrid .buildingCardText {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.buildingListGrid .cardsBottonBorder {
+  display: none;
+}
+
 .buildingCard {
   background: #1b1b1b !important;
   display: grid;
@@ -49,6 +98,40 @@
 
 .ant-spin-dot-item {
   background-color: orange !important;
+}
+
+@media (max-width: 768px) {
+  .buildingViewToggle {
+    display: none;
+  }
+
+  .buildingListGrid {
+    display: block;
+  }
+
+  .buildingListGrid .buildingCard {
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 34%);
+    height: 240px;
+  }
+
+  .buildingListGrid .buildingCardImage {
+    grid-row: auto;
+    height: 100%;
+    min-height: 210px;
+  }
+
+  .buildingListGrid .buildingCardContent {
+    min-height: 0;
+  }
+
+  .buildingListGrid .buildingCardText {
+    display: block;
+    overflow: visible;
+  }
+
+  .buildingListGrid .cardsBottonBorder {
+    display: block;
+  }
 }
 
 @media (max-width: 520px) {
