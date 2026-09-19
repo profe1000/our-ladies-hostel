@@ -1,19 +1,46 @@
 .buildingCard {
   background: #1b1b1b !important;
-  min-height: 200px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 34%);
+  height: 240px;
+  min-height: 210px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.buildingCardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 22px;
 }
 
 .buildingCardHeader {
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 1.35;
+  margin: 0;
 }
 
 .buildingCardText {
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 12px 0 20px;
+  opacity: 0.86;
 }
 
 .buildingAmount {
   background: #624f0b;
   font-size: 12px;
+  margin-top: auto;
+  padding: 8px 16px;
+  border-radius: 999px;
+}
+
+.buildingCardImage {
+  width: 100%;
+  height: 100%;
+  min-height: 210px;
+  object-fit: cover;
 }
 
 .cardsBottonBorder {
@@ -22,4 +49,21 @@
 
 .ant-spin-dot-item {
   background-color: orange !important;
+}
+
+@media (max-width: 520px) {
+  .buildingCard {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .buildingCardContent {
+    padding: 18px;
+  }
+
+  .buildingCardImage {
+    grid-row: 1;
+    min-height: 180px;
+    max-height: 220px;
+  }
 }

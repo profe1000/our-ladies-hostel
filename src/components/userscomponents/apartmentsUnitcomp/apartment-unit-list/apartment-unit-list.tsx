@@ -188,40 +188,33 @@ export const ApartmentUnitListUser: React.FC<IApartmentUnitList> = ({
                       <p className="w3-text-white w3-center">
                         <b>{selectedBuilding.title}</b>
                       </p>
-                      <div className="w3-col">
+                      <div className="apartmentUnitGrid">
                         {tableData.map((apartmentUnits, index) => (
-                          <>
-                            <div
-                              key={index}
-                              className="w3-col w3-margin-bottom w3-margin-top"
-                            >
-                              <div
-                                onClick={() => {
-                                  navigateForward(index);
-                                }}
-                                className="cardsBottonBorder w3-col"
-                              >
-                                <span className="w3-left w3-text-white myfont1 unitsCardText">
-                                  {apartmentUnits.title}
-                                </span>
-                                <span className="w3-right">
-                                  {apartmentUnits.isOccupied ? (
-                                    <img
-                                      alt="Building"
-                                      src="/images/tags/occupiedTags.svg"
-                                      style={{ maxWidth: "100%" }}
-                                    />
-                                  ) : (
-                                    <img
-                                      alt="Building"
-                                      src="/images/tags/emptyTag.svg"
-                                      style={{ maxWidth: "100%" }}
-                                    />
-                                  )}
-                                </span>
-                              </div>
-                            </div>
-                          </>
+                          <button
+                            key={apartmentUnits.id || index}
+                            type="button"
+                            onClick={() => {
+                              navigateForward(index);
+                            }}
+                            className="apartmentUnitCard"
+                          >
+                            <span className="w3-text-white myfont1 unitsCardText">
+                              {apartmentUnits.title}
+                            </span>
+                            <img
+                              className="apartmentUnitStatus"
+                              alt={
+                                apartmentUnits.isOccupied
+                                  ? "Occupied"
+                                  : "Available"
+                              }
+                              src={
+                                apartmentUnits.isOccupied
+                                  ? "/images/tags/occupiedTags.svg"
+                                  : "/images/tags/emptyTag.svg"
+                              }
+                            />
+                          </button>
                         ))}
                       </div>
                     </div>

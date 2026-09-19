@@ -196,53 +196,38 @@ export const BuildingListUser: React.FC<IBuildingList> = ({
                     <div className="w3-col w3-padding">
                       <div className="w3-col">
                         {tableData.map((buildings, index) => (
-                          <>
-                            <div key={index}>
-                              <div
-                                onClick={() => {
-                                  navigateForward(index);
-                                }}
-                                className="w3-col w3-card-4 w3-round-large buildingCard w3-padding w3-margin-bottom"
-                              >
-                                <div className="w3-col">
-                                  <h5 className="myfont3 w3-text-white buildingCardHeader">
-                                    {buildings?.title}
-                                  </h5>
-                                </div>
+                          <div key={buildings.id || index}>
+                            <div
+                              onClick={() => {
+                                navigateForward(index);
+                              }}
+                              className="w3-col w3-card-4 w3-round-large buildingCard w3-margin-bottom"
+                            >
+                              <div className="buildingCardContent">
+                                <h5 className="myfont3 w3-text-white buildingCardHeader">
+                                  {buildings?.title}
+                                </h5>
 
-                                <div className="w3-col l6 s6 m6">
-                                  <p
-                                    style={{ paddingTop: "10px" }}
-                                    className="myfont1 w3-text-white buildingCardText"
-                                  >
-                                    {buildings?.description}
-                                  </p>
-                                </div>
+                                <p className="myfont1 w3-text-white buildingCardText">
+                                  {buildings?.description}
+                                </p>
 
-                                <div className="w3-col l6 s6 m6 w3-right-align">
-                                  <img
-                                    className="w3-round-large"
-                                    alt="Building"
-                                    src={buildings.imageUrl}
-                                    style={{
-                                      maxWidth: "100%",
-                                      height: "100px",
-                                    }}
-                                  />
-                                </div>
-
-                                <div className="w3-col w3-margin-bottom">
-                                  <span className="w3-padding w3-round-xlarge myfont1 w3-text-white buildingAmount">
-                                    {formatCurrency(buildings.price)}
-                                  </span>
-                                </div>
+                                <span className="buildingAmount myfont1 w3-text-white">
+                                  {formatCurrency(buildings.price)}
+                                </span>
                               </div>
 
-                              <div className="w3-col w3-margin-bottom">
-                                <h6 className="cardsBottonBorder"> </h6>
-                              </div>
+                              <img
+                                className="buildingCardImage"
+                                alt={buildings?.title || "Building"}
+                                src={buildings.imageUrl}
+                              />
                             </div>
-                          </>
+
+                            <div className="w3-col w3-margin-bottom">
+                              <h6 className="cardsBottonBorder"> </h6>
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>

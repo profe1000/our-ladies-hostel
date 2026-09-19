@@ -1,7 +1,50 @@
-.unitsCardText {
-  font-size: 14px;
+.apartmentUnitGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
 }
 
-.cardsBottonBorder {
-  border-bottom: 2px solid #ffffff !important;
+.apartmentUnitCard {
+  min-width: 0;
+  min-height: 130px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  background: #1b1b1b;
+  border: 1px solid #624f0b;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.apartmentUnitCard:hover,
+.apartmentUnitCard:focus-visible {
+  border-color: #b89a2d;
+  outline: none;
+}
+
+.unitsCardText {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.apartmentUnitStatus {
+  display: block;
+  max-width: 100%;
+  height: 22px;
+}
+
+@media (max-width: 600px) {
+  .apartmentUnitGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .apartmentUnitCard {
+    min-height: 112px;
+    padding: 14px;
+  }
 }
