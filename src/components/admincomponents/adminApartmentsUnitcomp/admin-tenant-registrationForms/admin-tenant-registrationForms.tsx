@@ -111,7 +111,7 @@ export const AdminTenantRegistrationForm: React.FC<{}> = () => {
   return (
     <div className="w3-container">
       <div className="w3-content">
-        <form onSubmit={handleSubmit}>
+        <form className="adminForm" onSubmit={handleSubmit}>
           {/* Forms Here */}
           <div className="w3-col">
             {/* Pre Form Text */}

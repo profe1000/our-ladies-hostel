@@ -131,7 +131,7 @@ const CreateAdminForm: React.FC<ICreateAdminForm> = ({
 
         <div className="w3-col w3-padding">
           <div style={{ paddingTop: "10px" }}>
-            <form onSubmit={handleSubmit}>
+            <form className="adminForm" onSubmit={handleSubmit}>
               {/* First Name */}
               <div className="w3-col w3-margin-bottom">
                 <div className="w3-col l12 s12 m12">

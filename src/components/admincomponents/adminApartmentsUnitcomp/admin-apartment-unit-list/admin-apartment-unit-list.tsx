@@ -1,4 +1,11 @@
-import { Button, Empty, notification, Pagination, Result, Spin } from "antd";
+import {
+  AppstoreOutlined,
+  DollarOutlined,
+  EditOutlined,
+  UserOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
+import { Button, notification, Pagination, Result, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { adminGetApartmentsApi } from "../../../../apiservice/admin-General-ApiService";
@@ -13,6 +20,7 @@ import {
   useAppDispatch,
 } from "../../../../Redux/reduxCustomHook";
 import { RootState } from "../../../../Redux/store";
+import { formatCurrency } from "../../../../utils/basic.utils";
 import { ILoadState } from "../../../../utils/loading.utils.";
 import "./admin-apartment-unit-list.css";
 type NotificationType = "success" | "info" | "warning" | "error";
@@ -21,12 +29,14 @@ type IAdminApartmentUnitList = {
   externalFilter?: any;
   initialDefaultFilter?: any;
   hidePagination?: boolean;
+  onTotalChange?: (total: number) => void;
 };
 
 export const AdminApartmentUnitList: React.FC<IAdminApartmentUnitList> = ({
   externalFilter,
   initialDefaultFilter,
   hidePagination = true,
+  onTotalChange,
 }) => {
   const [apartmentUnitsLoadState, setApartmentUnitLoadState] =
     useState<ILoadState>("loading");
@@ -40,7 +50,7 @@ export const AdminApartmentUnitList: React.FC<IAdminApartmentUnitList> = ({
   // Pagination Constant/Variables
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(1);
-  const perPage = 10;
+  const perPage = initialDefaultFilter?.perPage || 10;
 
   // For Navigator/Redux
   const selectedBuilding: IAdminBuildingsData = useAppSelector(
@@ -85,6 +95,10 @@ export const AdminApartmentUnitList: React.FC<IAdminApartmentUnitList> = ({
       setTableData(apartmentUnitsDataResult.data?.data || []);
       setApartmentUnitLoadState("completed");
       setTotalItems(apartmentUnitsDataResult.data?.meta?.total || 1);
+      onTotalChange?.(apartmentUnitsDataResult.data?.meta?.total || 0);
+      if (!apartmentUnitsDataResult.data?.data?.length) {
+        setApartmentUnitLoadState("noData");
+      }
     } else if (apartmentUnitsDataResult.httpState === "ERROR") {
       setApartmentUnitLoadState("error");
     } else if (apartmentUnitsDataResult.httpState === "LOADING") {
@@ -192,100 +206,107 @@ export const AdminApartmentUnitList: React.FC<IAdminApartmentUnitList> = ({
 
         {/* " Show No data" */}
         {apartmentUnitsLoadState === "noData" && (
-          <div className="w3-margin-top">
-            <Empty></Empty>
+          <div className="w3-col adminPanel adminEmpty">
+            <span className="adminEmptyIcon">
+              <AppstoreOutlined />
+            </span>
+            <p className="myfont1">
+              No apartment units have been added to{" "}
+              {selectedBuilding?.title || "this building"} yet.
+            </p>
           </div>
         )}
 
-        {/* " Show No data" */}
+        {/* " Show Apartment Units" */}
         {apartmentUnitsLoadState === "completed" && (
-          <div className="w3-margin-top">
-            <div className="w3-col">
-              <div className="w3-content">
-                <div>
-                  {/* Recent activities */}
-                  <div className="w3-col l12 s12">
-                    <div className="w3-col">
-                      <p className="w3-text-white w3-center">
-                        <b>{selectedBuilding.title}</b>
-                      </p>
-                      <div className="w3-col">
-                        {tableData.map((apartmentUnits, index) => (
-                          <>
-                            <div
-                              key={index}
-                              className="w3-col w3-margin-bottom w3-margin-top"
-                            >
-                              <div className="w3-col">
-                                <span className="w3-left w3-text-white myfont1 unitsCardText">
-                                  {Number(index) + Number(1)}.{" "}
-                                  {apartmentUnits.title}
-                                </span>
-                                <span className="w3-right">
-                                  {apartmentUnits.isOccupied ? (
-                                    <img
-                                      alt="Building"
-                                      src="/images/tags/occupiedTags.svg"
-                                      style={{ maxWidth: "100%" }}
-                                    />
-                                  ) : (
-                                    <img
-                                      alt="Building"
-                                      src="/images/tags/emptyTag.svg"
-                                      style={{ maxWidth: "100%" }}
-                                    />
-                                  )}
-                                </span>
-                              </div>
-                              <div className="w3-col w3-margin-bottom w3-padding w3-border w3-round">
-                                <div className="w3-col w3-center">
-                                  <button
-                                    onClick={() => {
-                                      navigateToEdit(index);
-                                    }}
-                                    className="w3-btn  w3-round-large myfont1 w3-small editBuildingBtn"
-                                  >
-                                    Edit
-                                  </button>
-                                  &nbsp; &nbsp;
-                                  <button
-                                    onClick={() => {
-                                      navigateToCost(index);
-                                    }}
-                                    className="w3-btn  w3-round-large myfont1 w3-small viewUnitsBtn"
-                                  >
-                                    Manage Cost
-                                  </button>
-                                  &nbsp; &nbsp;
-                                  <button
-                                    onClick={() => {
-                                      navigateToOccupant(index);
-                                    }}
-                                    className="w3-btn  w3-round-large myfont1 w3-small deleteBuildingsBtn"
-                                  >
-                                    Occupant
-                                  </button>
-                                </div>
-                                {apartmentUnits?.currentOccupant?.expired && (
-                                  <div className="w3-col w3-center">
-                                    <span className="w3-text-red w3-small">
-                                      *This Apartment rent is due.
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </>
-                        ))}
-                      </div>
+          <div className="w3-col">
+            <div className="adminUnitGrid">
+              {tableData.map((apartmentUnits, index) => (
+                <div
+                  key={apartmentUnits.id || index}
+                  className={`adminUnitCard ${
+                    apartmentUnits?.currentOccupant?.expired
+                      ? "adminUnitCardDue"
+                      : ""
+                  }`}
+                >
+                  <div className="adminUnitTop">
+                    <span className="adminUnitNumber myfont3">
+                      {(currentPage - 1) * perPage + index + 1}
+                    </span>
+                    <h5 className="adminUnitTitle myfont3">
+                      {apartmentUnits.title}
+                    </h5>
+                    <span
+                      className={`adminStatusPill myfont1 ${
+                        apartmentUnits.isOccupied
+                          ? "adminStatusOccupied"
+                          : "adminStatusVacant"
+                      }`}
+                    >
+                      {apartmentUnits.isOccupied ? "Occupied" : "Vacant"}
+                    </span>
+                  </div>
+
+                  <div className="adminUnitInfo myfont1">
+                    <span>
+                      Rent{" "}
+                      <b className="adminUnitPrice">
+                        {formatCurrency(apartmentUnits.price || 0)}
+                      </b>
+                    </span>
+                    <span className="adminUnitOccupant">
+                      <UserOutlined />{" "}
+                      {apartmentUnits?.currentOccupant?.tenant?.fullName ||
+                        "No occupant"}
+                    </span>
+                  </div>
+
+                  {apartmentUnits?.currentOccupant?.expired && (
+                    <div className="adminUnitDue myfont1">
+                      <WarningOutlined /> This apartment's rent is due.
                     </div>
+                  )}
+
+                  <div className="adminBtnRow adminUnitActions">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigateToOccupant(index);
+                      }}
+                      className="adminBtn adminBtnPrimary adminUnitMainBtn"
+                    >
+                      <UserOutlined /> Occupant
+                    </button>
+                    <button
+                      type="button"
+                      title="Manage cost"
+                      aria-label={`Manage cost for ${apartmentUnits.title}`}
+                      onClick={() => {
+                        navigateToCost(index);
+                      }}
+                      className="adminBtn adminBtnIcon"
+                    >
+                      <DollarOutlined />
+                    </button>
+                    <button
+                      type="button"
+                      title="Edit apartment"
+                      aria-label={`Edit ${apartmentUnits.title}`}
+                      onClick={() => {
+                        navigateToEdit(index);
+                      }}
+                      className="adminBtn adminBtnIcon"
+                    >
+                      <EditOutlined />
+                    </button>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
 
             {!hidePagination && (
-              <div className="w3-col w3-margin-top">
+              <div className="w3-col adminPagination">
                 <Pagination
                   current={currentPage || 1}
                   onChange={onPageChange}

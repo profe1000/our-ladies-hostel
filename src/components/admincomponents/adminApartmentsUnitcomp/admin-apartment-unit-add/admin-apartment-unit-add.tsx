@@ -68,7 +68,7 @@ export const AdminAddApartmentUnitForm: React.FC<{}> = () => {
   return (
     <div className="w3-container">
       <div className="w3-content">
-        <form onSubmit={handleSubmit}>
+        <form className="adminForm" onSubmit={handleSubmit}>
           {/* Form Header */}
           <div className="w3-col w3-margin-bottom">
             <h3 className="AdminFormInputHeader myfont1">

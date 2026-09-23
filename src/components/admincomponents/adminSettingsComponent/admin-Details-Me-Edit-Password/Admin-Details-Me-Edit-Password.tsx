@@ -72,7 +72,7 @@ export const AdminDetailsMeEditPassword: React.FC<
         {!showFormResult && (
           <div className="w3-container w3-col">
             <div>
-              <form onSubmit={handleSubmit}>
+              <form className="adminForm" onSubmit={handleSubmit}>
                 {/* Forms Here */}
 
                 <div className="w3-border-bottom w3-padding">

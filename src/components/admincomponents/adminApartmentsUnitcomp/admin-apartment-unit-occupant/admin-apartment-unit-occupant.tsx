@@ -1,4 +1,12 @@
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import {
+  CalendarOutlined,
+  ExclamationCircleFilled,
+  HistoryOutlined,
+  KeyOutlined,
+  SettingOutlined,
+  UserAddOutlined,
+  UserDeleteOutlined,
+} from "@ant-design/icons";
 import { Modal } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -208,122 +216,122 @@ export const AdminUnitOccupantComp: React.FC<{}> = () => {
 
   return (
     <>
-      <div className="w3-content">
-        <div className="w3-container">
-          <div className="w3-col  w3-padding adminOccupantCard w3-round-large w3-margin-bottom  w3-margin-top">
-            <div className="w3-col w3-margin-bottom w3-margin-top w3-bottombar">
-              <h3 className="w3-medium myfont1">
-                <b>
-                  {" "}
-                  {selectedBuilding.title}, {selectedApartment.title} - Occupant{" "}
-                </b>
-              </h3>
-            </div>
-          </div>
-        </div>
+      <div className="w3-content adminPageBody">
         {selectedApartment?.isOccupied ? (
           <>
-            {/* Form Header */}
+            {/* Current Occupant Details */}
             <AdminTenantDetails></AdminTenantDetails>
           </>
         ) : (
-          <div className="w3-container">
-            <div className="w3-col  w3-padding adminOccupantCard w3-center w3-round-large w3-margin-bottom  w3-margin-top">
-              <p className="w3-margin-top">
-                This Unit do not have any occupant
-              </p>
-              <p className="w3-margin-top w3-margin-bottom">
-                <button
-                  onClick={() => {
-                    navigateToPage(
-                      "/admin/apartment-tenant/add/" + selectedApartment.id
-                    );
-                  }}
-                  className="w3-btn  w3-round-large myfont1 w3-small editOccupantBtn"
-                >
-                  Add Occupant
-                </button>{" "}
-              </p>
-            </div>
+          <div className="adminPanel adminEmpty">
+            <span className="adminEmptyIcon">
+              <UserAddOutlined />
+            </span>
+            <p className="myfont1">
+              {selectedApartment?.title || "This unit"} does not have an
+              occupant yet.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                navigateToPage(
+                  "/admin/apartment-tenant/add/" + selectedApartment.id
+                );
+              }}
+              className="adminBtn adminBtnPrimary"
+            >
+              <UserAddOutlined /> Add Occupant
+            </button>
           </div>
         )}
 
-        <div className="w3-container">
-          <div className="w3-col  w3-padding adminOccupantCard w3-round-large w3-margin-bottom  w3-margin-top">
-            <p className="w3-margin-top">Action</p>
-            <p className="w3-margin-top w3-margin-bottom">
-              <button
-                onClick={() => {
-                  navigateToPage(
-                    "/admin/apartment-tenant-history/" + selectedApartment.id
-                  );
-                }}
-                className="w3-btn w3-margin-top   w3-round-large myfont1 w3-small editOccupantBtn"
-              >
-                Occupant History
-              </button>{" "}
-              {selectedApartment?.isOccupied ? (
-                <>
-                  &nbsp;
-                  <button
-                    onClick={() => {
-                      showRemoveOccupantApiConfirm();
-                    }}
-                    className="w3-btn w3-margin-top  w3-round-large myfont1 w3-small editOccupantBtn"
-                  >
-                    Remove Occupant
-                  </button>
-                  &nbsp;
-                  <button
-                    onClick={() => {
-                      showExtendOccupantApiConfirm();
-                    }}
-                    className="w3-btn w3-margin-top  w3-round-large myfont1 w3-small editOccupantBtn"
-                  >
-                    Extend Rent
-                  </button>
-                  &nbsp;
-                  <button
-                    onClick={() => {
-                      setShowResetPassword(true);
-                    }}
-                    className="w3-btn w3-margin-top  w3-round-large myfont1 w3-small editOccupantBtn"
-                  >
-                    Reset Password
-                  </button>
-                  {showResetPassword && (
-                    <div className="w3-col w3-margin-top">
-                      Set New Password <br />
-                      <div className="w3-col w3-margin-bottom">
-                        <div className="w3-col l12 s12 m12 w3-margin-top">
-                          <input
-                            required
-                            name="password"
-                            value={payload?.password || ""}
-                            onChange={handleInputChange}
-                            className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                            placeholder="Password (Optional)"
-                            type="password"
-                          />
-                        </div>{" "}
-                        <br />
-                      </div>
-                      <button
-                        onClick={() => {
-                          showResetPasswordApiConfirm();
-                        }}
-                        className="w3-btn w3-margin-top  w3-round-large myfont1 w3-small editOccupantBtn"
-                      >
-                        Set New Password
-                      </button>
-                    </div>
-                  )}
-                </>
-              ) : (
-                ""
-              )}
-            </p>
+        {/* Actions */}
+        <div className="adminPanel">
+          <div className="adminPanelHeader">
+            <h3 className="adminPanelTitle myfont3">
+              <span className="adminPanelIcon">
+                <SettingOutlined />
+              </span>
+              Actions
+            </h3>
           </div>
+
+          <div className="adminBtnRow">
+            <button
+              type="button"
+              onClick={() => {
+                navigateToPage(
+                  "/admin/apartment-tenant-history/" + selectedApartment.id
+                );
+              }}
+              className="adminBtn"
+            >
+              <HistoryOutlined /> Occupant History
+            </button>
+            {selectedApartment?.isOccupied && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    showExtendOccupantApiConfirm();
+                  }}
+                  className="adminBtn"
+                >
+                  <CalendarOutlined /> Extend Rent
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowResetPassword(!showResetPassword);
+                  }}
+                  className="adminBtn"
+                >
+                  <KeyOutlined /> Reset Password
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    showRemoveOccupantApiConfirm();
+                  }}
+                  className="adminBtn adminBtnDanger"
+                >
+                  <UserDeleteOutlined /> Remove Occupant
+                </button>
+              </>
+            )}
+          </div>
+
+          {selectedApartment?.isOccupied && showResetPassword && (
+            <div className="adminResetPassword">
+              <label
+                htmlFor="occupant-new-password"
+                className="adminDetailLabel myfont1"
+              >
+                Set New Password
+              </label>
+              <div className="adminResetPasswordRow">
+                <input
+                  id="occupant-new-password"
+                  required
+                  name="password"
+                  value={payload?.password || ""}
+                  onChange={handleInputChange}
+                  className="w3-input w3-text-white adminInput"
+                  placeholder="New password"
+                  type="password"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    showResetPasswordApiConfirm();
+                  }}
+                  className="adminBtn adminBtnPrimary"
+                >
+                  Save Password
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

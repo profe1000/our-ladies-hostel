@@ -1,4 +1,6 @@
 import "../../App.css";
+import "../../components/admincomponents/adminForm.css";
+import "../../components/admincomponents/adminPage.css";
 import { Routes, Route } from "react-router-dom";
 import Nopage from "../Nopage/Nopage";
 import AdminHomePage from "./AdminHome/AdminHome";

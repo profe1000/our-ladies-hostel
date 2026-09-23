@@ -1,0 +1,154 @@
+.adminCtxWrapper {
+  padding: 8px 16px 0;
+}
+
+/* Breadcrumb */
+.adminCtxCrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.adminCtxCrumbs a {
+  color: rgba(255, 255, 255, 0.7) !important;
+  text-decoration: none;
+}
+
+.adminCtxCrumbs a:hover {
+  color: #d4b24c !important;
+}
+
+.adminCtxCrumbSep {
+  font-size: 9px;
+  opacity: 0.5;
+}
+
+.adminCtxCrumbCurrent {
+  color: #d4b24c;
+}
+
+/* Card */
+.adminCtxCard {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  overflow: hidden;
+  background: #1b1b1b;
+  border: 1px solid rgba(212, 178, 76, 0.3);
+  border-radius: 16px;
+}
+
+.adminCtxImage {
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  object-fit: cover;
+}
+
+.adminCtxImagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  color: rgba(212, 178, 76, 0.5);
+  background: #111111;
+}
+
+.adminCtxBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+}
+
+.adminCtxBuilding,
+.adminCtxApartment {
+  padding: 18px 20px;
+}
+
+.adminCtxApartment {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(148, 122, 30, 0.06);
+}
+
+.adminCtxBody > :only-child {
+  grid-column: 1 / -1;
+}
+
+.adminCtxEyebrow {
+  color: #d4b24c;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+.adminCtxTitle {
+  color: #ffffff;
+  font-size: 22px;
+  line-height: 1.2;
+  margin: 4px 0 0;
+}
+
+.adminCtxText {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 6px 0 0;
+}
+
+.adminCtxChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.adminCtxChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  color: #d4b24c;
+  background: rgba(148, 122, 30, 0.14);
+}
+
+.adminCtxApartmentRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.adminCtxApartmentTitle {
+  color: #ffffff;
+  font-size: 18px;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .adminCtxCard {
+    grid-template-columns: 1fr;
+  }
+
+  .adminCtxImage {
+    min-height: 140px;
+    max-height: 170px;
+  }
+
+  .adminCtxBody {
+    grid-template-columns: 1fr;
+  }
+
+  .adminCtxApartment {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}

@@ -1,3 +1,5 @@
+import { useParams } from "react-router-dom";
+import AdminContextHeader from "../../../components/admincomponents/adminContextHeader/adminContextHeader";
 import AdminEditBuildingForm from "../../../components/admincomponents/adminBuildingsComp/admin-building-edit/admin-builiding-edit-form";
 import AdminEditBuildingImage from "../../../components/admincomponents/adminBuildingsComp/admin-building-edit/admin-builiding-edit-image";
 import Tabbar from "../../../components/LayoutComponent/TabBar/Tabbar";
@@ -5,6 +7,7 @@ import { TopBarAdmin } from "../../../components/LayoutComponent/TopBar-Admin/To
 import "./AdminBuildingsEditPage.css";
 
 export const AdminBuildingsEditPage = () => {
+  const params = useParams();
   return (
     <>
       <TopBarAdmin
@@ -13,6 +16,8 @@ export const AdminBuildingsEditPage = () => {
         backButtonHref={"/admin/Buildings"}
         showProfile={false}
       ></TopBarAdmin>
+
+      <AdminContextHeader buildingId={params?.id} pageTitle="Edit Building"></AdminContextHeader>
 
       <div className="w3-col w3-margin-top">
         <AdminEditBuildingForm></AdminEditBuildingForm>

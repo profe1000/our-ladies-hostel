@@ -1,5 +1,5 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminAddBuildingsApi } from "../../../../apiservice/admin-General-ApiService";
 import { sampleApiCall } from "../../../../apiservice/authService";
@@ -14,8 +14,20 @@ export const AdminAddBuilding: React.FC<{}> = () => {
     getFormData({})
   );
   const [formLoading, setFormLoading] = useState<boolean>(false);
+  const [imagePreview, setImagePreview] = useState<string>("");
 
   const navigate = useNavigate();
+
+  // Show a preview of the selected image
+  useEffect(() => {
+    if (!payLoad?.image) {
+      setImagePreview("");
+      return;
+    }
+    const previewUrl = URL.createObjectURL(payLoad.image);
+    setImagePreview(previewUrl);
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [payLoad?.image]);
 
   // Use to collect Input change Change
   const handleInputChange = (event: any) => {
@@ -69,10 +81,14 @@ export const AdminAddBuilding: React.FC<{}> = () => {
   return (
     <div className="w3-col w3-container">
       <div className="w3-content">
-        <form onSubmit={handleSubmit}>
+        <form className="adminForm" onSubmit={handleSubmit}>
           {/* Form Header */}
           <div className="w3-col w3-margin-bottom">
             <h3 className="AdminFormInputHeader myfont1"> Add Building </h3>
+            <p className="adminFormHint myfont1">
+              Fill in the building details below. Tenants will see this
+              information when choosing where to stay.
+            </p>
           </div>
 
           {/* Forms Here */}
@@ -102,7 +118,7 @@ export const AdminAddBuilding: React.FC<{}> = () => {
                 </span>
               </div>
               <div className="w3-col l12 s12 m12">
-                <input
+                <textarea
                   required
                   name="description"
                   value={payLoad?.description || ""}
@@ -133,41 +149,43 @@ export const AdminAddBuilding: React.FC<{}> = () => {
               </div>
             </div>
 
-            {/* Rent Price */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-text-white w3-small  myfont1">Price</span>
+            <div className="w3-col adminFormRow">
+              {/* Rent Price */}
+              <div className="w3-col w3-margin-bottom">
+                <div className="w3-col l12 s12 m12">
+                  <span className="w3-text-white w3-small  myfont1">Price</span>
+                </div>
+                <div className="w3-col l12 s12 m12">
+                  <input
+                    required
+                    name="price"
+                    value={payLoad?.price || ""}
+                    type={"number"}
+                    onChange={handleInputChange}
+                    className="w3-input w3-border w3-col w3-text-white w3-round-large AdminFormInput"
+                    placeholder="Amount of Rent"
+                  />
+                </div>
               </div>
-              <div className="w3-col l12 s12 m12">
-                <input
-                  required
-                  name="price"
-                  value={payLoad?.price || ""}
-                  type={"number"}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large AdminFormInput"
-                  placeholder="Amount of Rent"
-                />
-              </div>
-            </div>
 
-            {/* Service Charge */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-text-white w3-small myfont1">
-                  Service Charge
-                </span>
-              </div>
-              <div className="w3-col l12 s12 m12">
-                <input
-                  required
-                  name="serviceCharge"
-                  value={payLoad?.serviceCharge || ""}
-                  type={"number"}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large AdminFormInput"
-                  placeholder="Amount of Service Charge"
-                />
+              {/* Service Charge */}
+              <div className="w3-col w3-margin-bottom">
+                <div className="w3-col l12 s12 m12">
+                  <span className="w3-text-white w3-small myfont1">
+                    Service Charge
+                  </span>
+                </div>
+                <div className="w3-col l12 s12 m12">
+                  <input
+                    required
+                    name="serviceCharge"
+                    value={payLoad?.serviceCharge || ""}
+                    type={"number"}
+                    onChange={handleInputChange}
+                    className="w3-input w3-border w3-col w3-text-white w3-round-large AdminFormInput"
+                    placeholder="Amount of Service Charge"
+                  />
+                </div>
               </div>
             </div>
 
@@ -186,6 +204,13 @@ export const AdminAddBuilding: React.FC<{}> = () => {
                   className="w3-input w3-border w3-col w3-text-white w3-round-large AdminFormInput"
                   placeholder="Select A file"
                 />
+                {imagePreview && (
+                  <img
+                    className="adminFormImagePreview"
+                    src={imagePreview}
+                    alt="Selected building"
+                  />
+                )}
               </div>
             </div>
           </div>

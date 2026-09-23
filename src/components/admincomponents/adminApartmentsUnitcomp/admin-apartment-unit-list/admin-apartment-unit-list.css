@@ -5,3 +5,108 @@
 .cardsBottonBorder {
   border-bottom: 2px solid #ffffff !important;
 }
+
+/* Admin apartment unit grid */
+.adminUnitGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.adminUnitCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #1b1b1b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.adminUnitCard:hover {
+  border-color: rgba(212, 178, 76, 0.45);
+  transform: translateY(-2px);
+}
+
+.adminUnitCardDue {
+  border-color: rgba(255, 123, 114, 0.45);
+}
+
+.adminUnitTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.adminUnitNumber {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #d4b24c;
+  background: rgba(148, 122, 30, 0.18);
+}
+
+.adminUnitTitle {
+  flex: 1;
+  min-width: 0;
+  color: #ffffff;
+  font-size: 15px;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adminUnitInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.adminUnitPrice {
+  color: #ffffff;
+}
+
+.adminUnitOccupant {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adminUnitDue {
+  font-size: 12px;
+  color: #ff7b72;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255, 123, 114, 0.1);
+}
+
+.adminUnitActions {
+  margin-top: auto;
+  flex-wrap: nowrap;
+}
+
+.adminUnitMainBtn {
+  flex: 1;
+}
+
+@media (max-width: 900px) {
+  .adminUnitGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .adminUnitGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}

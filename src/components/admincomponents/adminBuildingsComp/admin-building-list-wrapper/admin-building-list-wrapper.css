@@ -2,3 +2,84 @@
     background-color: #947A1E;
     width:120px;
 }
+/* Admin Buildings page */
+.adminBldgPage {
+  padding: 16px 16px 90px;
+}
+
+.adminBldgHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(212, 178, 76, 0.25);
+}
+
+.adminBldgEyebrow {
+  color: #d4b24c;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.adminBldgHeading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffffff;
+  font-size: 32px;
+  line-height: 1.15;
+  margin: 6px 0 4px;
+}
+
+.adminBldgCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: #d4b24c;
+  background: rgba(148, 122, 30, 0.18);
+  border: 1px solid rgba(212, 178, 76, 0.4);
+}
+
+.adminBldgSubheading {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  margin: 0;
+}
+
+.adminBldgAddBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border-radius: 999px;
+  font-size: 14px;
+  color: #ffffff !important;
+  text-decoration: none;
+  background: linear-gradient(135deg, #947a1e, #624f0b);
+  box-shadow: 0 8px 24px rgba(148, 122, 30, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.adminBldgAddBtn:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .adminBldgHeading {
+    font-size: 26px;
+  }
+
+  .adminBldgAddBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}

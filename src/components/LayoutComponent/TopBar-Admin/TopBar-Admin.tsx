@@ -68,8 +68,8 @@ export const TopBarAdmin: React.FC<ITopBarAdmin> = ({
                       }}
                       style={{height:"70px"}}
                       className="favicon-header"
-                      src="/images/logo.svg"
-                      alt=""
+                      src="/images/our-ladies-logo.png"
+                      alt="Our Ladies Hostel"
                     />
                   </span>
                 </div>

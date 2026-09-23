@@ -177,6 +177,7 @@ export interface IAdminApartmentData {
   price: number;
   serviceCharge: number;
   isOccupied: boolean;
+  buildingId?: number;
   currentOccupant?: CurrentOccupant;
   dateModified: string;
   dateCreated: string;

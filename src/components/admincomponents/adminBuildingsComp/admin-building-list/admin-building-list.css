@@ -35,3 +35,194 @@
 .editBuildingBtn {
   background-color: #89c664;
 }
+
+/* Admin Buildings card grid */
+.adminBldgGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.adminBldgCard {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #1b1b1b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.adminBldgCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(212, 178, 76, 0.45);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
+}
+
+.adminBldgImageWrap {
+  position: relative;
+  height: 180px;
+  background: #111111;
+}
+
+.adminBldgImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adminBldgPrice {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(212, 178, 76, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.adminBldgBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 18px 18px;
+}
+
+.adminBldgTitle {
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.adminBldgText {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 6px 0 14px;
+}
+
+.adminBldgMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.adminBldgChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: #d4b24c;
+  background: rgba(148, 122, 30, 0.14);
+}
+
+.adminBldgActions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.adminBldgBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.adminBldgBtnPrimary {
+  flex: 1;
+  padding: 0 16px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #947a1e, #624f0b);
+}
+
+.adminBldgBtnPrimary:hover {
+  background: #947a1e;
+}
+
+.adminBldgBtnIcon {
+  width: 40px;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.85);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.adminBldgBtnIcon:hover {
+  color: #d4b24c;
+  border-color: #d4b24c;
+}
+
+.adminBldgBtnDanger:hover {
+  color: #ff7b72;
+  border-color: #ff7b72;
+  background: rgba(180, 70, 63, 0.12);
+}
+
+.adminBldgPagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.adminBldgPagination .ant-pagination-item,
+.adminBldgPagination .ant-pagination-prev .ant-pagination-item-link,
+.adminBldgPagination .ant-pagination-next .ant-pagination-item-link {
+  background: #1b1b1b;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.adminBldgPagination .ant-pagination-item a,
+.adminBldgPagination .anticon {
+  color: #ffffff;
+}
+
+.adminBldgPagination .ant-pagination-item-active {
+  border-color: #d4b24c;
+}
+
+.adminBldgPagination .ant-pagination-item-active a {
+  color: #d4b24c;
+}
+
+.adminBldgEmpty {
+  padding: 60px 0;
+}
+
+.adminBldgEmptyText {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.adminBldgEmpty .adminBldgBtnPrimary {
+  flex: none;
+}
+
+@media (max-width: 900px) {
+  .adminBldgGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .adminBldgGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

@@ -1,0 +1,459 @@
+/*
+  Shared building blocks for admin pages (panels, buttons, pills, details).
+  All class names are prefixed with "admin" so they do not clash with the
+  tenant-facing pages.
+*/
+
+.adminPageBody {
+  padding: 16px 16px 90px;
+}
+
+/* Section header inside a page */
+.adminSectionHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.adminSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+  font-size: 22px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.adminSectionSub {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  margin: 4px 0 0;
+}
+
+.adminCountBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-family: "Poppins", sans-serif;
+  color: #d4b24c;
+  background: rgba(148, 122, 30, 0.18);
+  border: 1px solid rgba(212, 178, 76, 0.4);
+}
+
+/* Panels */
+.adminPanel {
+  display: flow-root;
+  background: #1b1b1b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 18px;
+}
+
+.adminPanelHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.adminPanelTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+  font-size: 16px;
+  margin: 0;
+}
+
+.adminPanelIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  font-size: 15px;
+  color: #d4b24c;
+  background: rgba(148, 122, 30, 0.18);
+}
+
+/* Buttons */
+.adminBtnRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.adminBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 13px;
+  font-family: "Poppins", sans-serif;
+  color: rgba(255, 255, 255, 0.9);
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.adminBtn:hover {
+  color: #d4b24c;
+  border-color: #d4b24c;
+}
+
+.adminBtnPrimary {
+  color: #ffffff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #947a1e, #624f0b);
+}
+
+.adminBtnPrimary:hover {
+  color: #ffffff;
+  border-color: transparent;
+  background: #947a1e;
+}
+
+.adminBtnDanger:hover {
+  color: #ff7b72;
+  border-color: #ff7b72;
+  background: rgba(180, 70, 63, 0.12);
+}
+
+.adminBtnIcon {
+  width: 38px;
+  padding: 0;
+  font-size: 15px;
+}
+
+/* Status pills */
+.adminStatusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.adminStatusPill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.adminStatusVacant {
+  color: #7fd18b;
+  background: rgba(127, 209, 139, 0.12);
+}
+
+.adminStatusOccupied {
+  color: #d4b24c;
+  background: rgba(212, 178, 76, 0.14);
+}
+
+.adminStatusDue {
+  color: #ff7b72;
+  background: rgba(255, 123, 114, 0.14);
+}
+
+/* Label / value details */
+.adminDetailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.adminDetailItem {
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.adminDetailFull {
+  grid-column: 1 / -1;
+}
+
+.adminDetailLabel {
+  display: block;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.adminDetailValue {
+  display: block;
+  color: #ffffff;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.adminCapitalize {
+  text-transform: capitalize;
+}
+
+/* Rows in a list (history, costs) */
+.adminListRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #1b1b1b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 10px;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.adminListRowClickable {
+  cursor: pointer;
+}
+
+.adminListRowClickable:hover {
+  border-color: rgba(212, 178, 76, 0.45);
+  transform: translateY(-1px);
+}
+
+.adminAvatar {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-family: "Poppins-Bold", sans-serif;
+  font-size: 14px;
+  color: #1b1b1b;
+  background: linear-gradient(135deg, #d4b24c, #947a1e);
+}
+
+.adminListMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.adminListTitle {
+  color: #ffffff;
+  font-size: 14px;
+  margin: 0;
+}
+
+.adminListSub {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  margin: 2px 0 0;
+  word-break: break-word;
+}
+
+.adminListAside {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+/* Empty state */
+.adminEmpty {
+  text-align: center;
+  padding: 36px 16px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.adminEmptyIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 24px;
+  color: #d4b24c;
+  background: rgba(148, 122, 30, 0.14);
+  margin-bottom: 12px;
+}
+
+.adminEmpty p {
+  margin: 0 0 16px;
+  font-size: 13px;
+}
+
+/* Pagination on dark pages */
+.adminPagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.adminPagination .ant-pagination-item,
+.adminPagination .ant-pagination-prev .ant-pagination-item-link,
+.adminPagination .ant-pagination-next .ant-pagination-item-link {
+  background: #1b1b1b;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.adminPagination .ant-pagination-item a,
+.adminPagination .anticon {
+  color: #ffffff;
+}
+
+.adminPagination .ant-pagination-item-active {
+  border-color: #d4b24c;
+}
+
+.adminPagination .ant-pagination-item-active a {
+  color: #d4b24c;
+}
+
+@media (max-width: 600px) {
+  .adminDetailGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminPanel {
+    padding: 16px;
+  }
+
+  .adminSectionTitle {
+    font-size: 20px;
+  }
+}
+
+/* Plain dark input used outside of forms */
+.adminInput {
+  height: 42px;
+  padding: 0 14px;
+  font-size: 14px;
+  color: #ffffff !important;
+  background-color: #111111 !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 10px;
+}
+
+.adminInput:focus {
+  outline: none;
+  border-color: #d4b24c !important;
+  box-shadow: 0 0 0 3px rgba(212, 178, 76, 0.18);
+}
+
+.adminResetPassword {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.adminResetPasswordRow {
+  display: flex;
+  gap: 8px;
+}
+
+.adminResetPasswordRow .adminInput {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Tenant profile */
+.adminTenantHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.adminAvatarLarge {
+  width: 56px;
+  height: 56px;
+  font-size: 18px;
+}
+
+.adminTenantName {
+  color: #ffffff;
+  font-size: 18px;
+  margin: 0 0 4px;
+}
+
+.adminSubheading {
+  color: #d4b24c;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 20px 0 10px;
+}
+
+.adminRentGrid {
+  margin-bottom: 4px;
+}
+
+.adminDetailHighlight {
+  border-color: rgba(255, 123, 114, 0.35);
+  background: rgba(255, 123, 114, 0.06);
+}
+
+.adminDetailHighlight .adminDetailValue {
+  color: #ff9d96;
+}
+
+.adminGuarantor + .adminGuarantor {
+  margin-top: 8px;
+}
+
+.adminListChevron {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Costs */
+.adminCostBody {
+  padding-bottom: 0;
+}
+
+.adminCostTotal {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+.adminCostTotal b {
+  color: #ffffff;
+  font-size: 15px;
+  margin-left: 4px;
+}
+
+.adminCostRow {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.adminCostAmount {
+  color: #ff9d96;
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .adminResetPasswordRow {
+    flex-direction: column;
+  }
+}

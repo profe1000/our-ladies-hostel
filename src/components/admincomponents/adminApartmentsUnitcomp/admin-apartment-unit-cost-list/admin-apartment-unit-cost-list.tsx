@@ -1,4 +1,8 @@
-import { DeleteOutlined, ExclamationCircleFilled } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  ExclamationCircleFilled,
+  WalletOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Empty,
@@ -228,8 +232,13 @@ export const AdminApartmentUnitCost: React.FC<IAdminApartmentUnitCost> = ({
           <div className="w3-col w3-padding-bottom">
             <Result
               status="500"
-              title="Error"
-              subTitle="Sorry, something went wrong, it could be a network Related error"
+              title={<span className="w3-text-white">Error</span>}
+              subTitle={
+                <span className="w3-text-white">
+                  Sorry, something went wrong, it could be a network Related
+                  error
+                </span>
+              }
               extra={
                 <Button
                   onClick={() => setLoadApartmentUnitCostsData(true)}
@@ -244,79 +253,83 @@ export const AdminApartmentUnitCost: React.FC<IAdminApartmentUnitCost> = ({
 
         {/* " Show No data" */}
         {apartmentUnitCostsLoadState === "noData" && (
-          <div className="w3-margin-top w3-col w3-border-bottom">
-            <div className="w3-col">
-              <div className="w3-content">
-                <div className="w3-col w3-padding">
-                  <h4 className="myfont1">Cost Incured on this Apartment</h4>
-                </div>
-                <div className="w3-col w3-padding">
-                  <p>No Cost Incured on this Apartment Yet.</p>
-                  {/* <Empty></Empty> */}
-                </div>
+          <div className="w3-content adminPageBody adminCostBody">
+            <div className="adminPanel">
+              <div className="adminPanelHeader">
+                <h3 className="adminPanelTitle myfont3">
+                  <span className="adminPanelIcon">
+                    <WalletOutlined />
+                  </span>
+                  Costs Incurred
+                </h3>
               </div>
+              <p className="adminListSub myfont1">
+                No cost has been recorded on this apartment yet.
+              </p>
             </div>
           </div>
         )}
 
-        {/* " Show No data" */}
+        {/* " Show Costs" */}
         {apartmentUnitCostsLoadState === "completed" && (
-          <div className="w3-margin-top w3-col w3-border-bottom">
-            <div className="w3-col">
-              <div className="w3-content">
-                <div>
-                  {/* Recent activities */}
-                  <div className="w3-col l12 s12">
-                    <div className="w3-col w3-padding">
-                      <h4 className="myfont1">
-                        Cost Incured on this Apartment
-                      </h4>
-                      <div className="w3-col">
-                        {tableData.map((apartmentUnitCosts, index) => (
-                          <>
-                            <div
-                              className="w3-col w3-margin-bottom"
-                              key={index}
-                            >
-                              <span>
-                                {Number(index) + Number(1)}.{" "}
-                                {apartmentUnitCosts.title}
-                              </span>
-                              <br />
-                              <span className="w3-small">
-                                <span className={"w3-left"}>
-                                  <span className="w3-text-red">
-                                    {formatCurrency(
-                                      apartmentUnitCosts.amount || 0
-                                    )}
-                                  </span>
-                                  &nbsp;-{" "}
-                                  {convertToShortDate(
-                                    apartmentUnitCosts.dateIssued
-                                  )}
-                                </span>
-                                <span className={"w3-right"}>
-                                  <span style={{ zoom: "1.5" }}>
-                                    <DeleteOutlined
-                                      onClick={() => {
-                                        showRemoveCostApiConfirm(index);
-                                      }}
-                                    />
-                                  </span>
-                                </span>
-                              </span>
-                            </div>
-                          </>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div className="w3-content adminPageBody adminCostBody">
+            <div className="adminPanel">
+              <div className="adminPanelHeader">
+                <h3 className="adminPanelTitle myfont3">
+                  <span className="adminPanelIcon">
+                    <WalletOutlined />
+                  </span>
+                  Costs Incurred
+                  <span className="adminCountBadge">{totalItems}</span>
+                </h3>
+                <span className="adminCostTotal myfont1">
+                  {totalItems > tableData.length ? "Page total" : "Total"}{" "}
+                  <b className="myfont3">
+                    {formatCurrency(
+                      tableData.reduce(
+                        (sum, cost) => sum + Number(cost.amount || 0),
+                        0
+                      )
+                    )}
+                  </b>
+                </span>
               </div>
+
+              {tableData.map((apartmentUnitCosts, index) => (
+                <div
+                  className="adminListRow adminCostRow"
+                  key={apartmentUnitCosts.id || index}
+                >
+                  <div className="adminListMain">
+                    <h5 className="adminListTitle myfont3">
+                      {apartmentUnitCosts.title}
+                    </h5>
+                    <p className="adminListSub myfont1">
+                      {convertToShortDate(apartmentUnitCosts.dateIssued)}
+                    </p>
+                  </div>
+                  <div className="adminListAside">
+                    <span className="adminCostAmount myfont3">
+                      {formatCurrency(apartmentUnitCosts.amount || 0)}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    title="Remove cost"
+                    aria-label={`Remove ${apartmentUnitCosts.title}`}
+                    onClick={() => {
+                      showRemoveCostApiConfirm(index);
+                    }}
+                    className="adminBtn adminBtnIcon adminBtnDanger"
+                  >
+                    <DeleteOutlined />
+                  </button>
+                </div>
+              ))}
             </div>
 
             {!hidePagination && (
-              <div className="w3-col w3-margin-top">
+              <div className="w3-col adminPagination">
                 <Pagination
                   current={currentPage || 1}
                   onChange={onPageChange}

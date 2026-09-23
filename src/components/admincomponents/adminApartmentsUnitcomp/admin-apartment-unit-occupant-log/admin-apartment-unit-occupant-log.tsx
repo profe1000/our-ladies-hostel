@@ -1,4 +1,5 @@
-import { Button, Empty, notification, Pagination, Result, Spin } from "antd";
+import { HistoryOutlined, RightOutlined } from "@ant-design/icons";
+import { Button, notification, Pagination, Result, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { adminGetOccupantHistoryApi } from "../../../../apiservice/admin-General-ApiService";
@@ -13,6 +14,7 @@ import {
   useAppDispatch,
 } from "../../../../Redux/reduxCustomHook";
 import { RootState } from "../../../../Redux/store";
+import { convertToShortDate } from "../../../../utils/date.utils";
 import { ILoadState } from "../../../../utils/loading.utils.";
 import "./admin-apartment-unit-occupant-log.css";
 type NotificationType = "success" | "info" | "warning" | "error";
@@ -178,84 +180,91 @@ export const AdminApartmentOccupantLog: React.FC<
 
         {/* " Show No data" */}
         {occupantLogsLoadState === "noData" && (
-          <div className="w3-margin-top w3-container">
-            <div className="w3-col">
-              <div className="w3-content">
-                <div className="w3-col">
-                  <p className="w3-text-white w3-center">
-                    <b>
-                      Occupant History on{" "}
-                      {`${selectedBuilding.title} ${selectedUnit.title}`}
-                    </b>
-                  </p>
-                </div>
-
-                <div className="w3-col">
-                  <p className="w3-text-white w3-center">
-                    No Tenants Have Occupied This Apartment Yet
-                  </p>
-                </div>
-              </div>
+          <div className="w3-content adminPageBody">
+            <div className="adminPanel adminEmpty">
+              <span className="adminEmptyIcon">
+                <HistoryOutlined />
+              </span>
+              <p className="myfont1">
+                No tenants have occupied{" "}
+                {selectedUnit?.title || "this apartment"} yet.
+              </p>
             </div>
           </div>
         )}
 
-        {/* " Show No data" */}
+        {/* " Show Occupant History" */}
         {occupantLogsLoadState === "completed" && (
-          <div className="w3-margin-top w3-container">
-            <div className="w3-col">
-              <div className="w3-content">
-                <div>
-                  {/* Recent activities */}
-                  <div className="w3-col l12 s12">
-                    <div className="w3-col">
-                      <p className="w3-text-white w3-center">
-                        <b>
-                          Occupant History on{" "}
-                          {`${selectedBuilding.title} ${selectedUnit.title}`}
-                        </b>
-                      </p>
-                      <div className="w3-col">
-                        {tableData.map((occupantLogs, index) => (
-                          <>
-                            <div
-                              onClick={() => {
-                                navigateToTenantDetails(index);
-                              }}
-                              key={index}
-                              className="w3-col w3-card-4 w3-round-large adminCard w3-padding w3-margin-bottom"
-                            >
-                              <div className="w3-col">
-                                <h5 className="myfont3 w3-text-white adminCardHeader">
-                                  {occupantLogs?.tenant.fullName}
-                                </h5>
-                              </div>
-
-                              <div className="w3-col">
-                                <p
-                                  style={{
-                                    paddingTop: "2px",
-                                    paddingLeft: "2px",
-                                  }}
-                                  className="myfont1 w3-text-white adminCardText"
-                                >
-                                  {occupantLogs?.tenant.email}
-                                  <br />
-                                  {occupantLogs?.tenant.phoneNumber}
-                                </p>
-                              </div>
-                            </div>
-                          </>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div className="w3-content adminPageBody">
+            <div className="adminSectionHeader">
+              <div>
+                <h2 className="adminSectionTitle myfont5">
+                  Occupant History
+                  <span className="adminCountBadge">{totalItems}</span>
+                </h2>
+                <p className="adminSectionSub myfont1">
+                  Everyone who has occupied {selectedUnit?.title || "this unit"}
+                  . Select a tenant to see their details.
+                </p>
               </div>
             </div>
 
+            <div className="w3-col">
+              {tableData.map((occupantLogs, index) => (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  key={occupantLogs.id || index}
+                  onClick={() => {
+                    navigateToTenantDetails(index);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") navigateToTenantDetails(index);
+                  }}
+                  className="adminListRow adminListRowClickable"
+                >
+                  <span className="adminAvatar">
+                    {(occupantLogs?.tenant?.fullName || "?")
+                      .split(" ")
+                      .filter(Boolean)
+                      .slice(0, 2)
+                      .map((name) => name[0].toUpperCase())
+                      .join("")}
+                  </span>
+                  <div className="adminListMain">
+                    <h5 className="adminListTitle myfont3">
+                      {occupantLogs?.tenant?.fullName}
+                    </h5>
+                    <p className="adminListSub myfont1">
+                      {occupantLogs?.tenant?.email}
+                      {occupantLogs?.tenant?.phoneNumber &&
+                        ` · ${occupantLogs.tenant.phoneNumber}`}
+                    </p>
+                    {occupantLogs?.startDate && (
+                      <p className="adminListSub myfont1">
+                        {convertToShortDate(occupantLogs.startDate)} –{" "}
+                        {convertToShortDate(occupantLogs.endDate)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="adminListAside">
+                    <span
+                      className={`adminStatusPill myfont1 ${
+                        occupantLogs?.active
+                          ? "adminStatusVacant"
+                          : "adminStatusOccupied"
+                      }`}
+                    >
+                      {occupantLogs?.active ? "Current" : "Past"}
+                    </span>
+                  </div>
+                  <RightOutlined className="adminListChevron" />
+                </div>
+              ))}
+            </div>
+
             {!hidePagination && (
-              <div className="w3-col w3-margin-top">
+              <div className="w3-col adminPagination">
                 <Pagination
                   current={currentPage || 1}
                   onChange={onPageChange}

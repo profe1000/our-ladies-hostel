@@ -1,3 +1,9 @@
+import {
+  CalendarOutlined,
+  EditOutlined,
+  SafetyCertificateOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import {
   IAdminOccupantData,
@@ -27,200 +33,168 @@ export const AdminTenantDetails: React.FC<{}> = () => {
     navigate(`/admin/apartment-tenant-occupancy/edit/${selectedTenant.id}`);
   };
 
+  // Build initials for the avatar e.g "Jane Doe" => "JD"
+  const initials = (selectedTenant?.fullName || "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((name) => name[0].toUpperCase())
+    .join("");
+
+  const personalDetails = [
+    { label: "Phone Number", value: selectedTenant?.phoneNumber },
+    { label: "Email", value: selectedTenant?.email, plain: true },
+    { label: "Gender", value: selectedTenant?.gender },
+    { label: "Marital Status", value: selectedTenant?.maritalStatus },
+    { label: "Religion", value: selectedTenant?.religion },
+    { label: "Number Of Occupants", value: selectedTenant?.noOfOccupants },
+    { label: "Number Of Vehicles", value: selectedTenant?.noOfVehicles },
+    { label: "Old Address", value: selectedTenant?.address, full: true },
+    { label: "Reason", value: selectedTenant?.reason, full: true },
+  ];
+
+  const guarantors = (selectedTenant?.tenantGuarantors || []).filter(
+    (guarantor) => guarantor?.fullName
+  );
+
   return (
-    <div className="w3-container">
-      <div className="w3-content">
-        <div className="w3-col  w3-padding adminTenantCard w3-round-large w3-margin-bottom  w3-margin-top">
-          <div className="w3-col w3-margin-bottom w3-margin-top  w3-right-align">
+    <>
+      {/* Tenant Profile */}
+      <div className="adminPanel">
+        <div className="adminPanelHeader">
+          <div className="adminTenantHead">
+            <span className="adminAvatar adminAvatarLarge">
+              {initials || <UserOutlined />}
+            </span>
+            <div>
+              <h3 className="adminTenantName myfont3">
+                {selectedTenant?.fullName}
+              </h3>
+              <span
+                className={`adminStatusPill myfont1 ${
+                  selectedTenant?.activated
+                    ? "adminStatusVacant"
+                    : "adminStatusDue"
+                }`}
+              >
+                {selectedTenant?.activated ? "Rent active" : "Rent inactive"}
+              </span>
+            </div>
+          </div>
+          <div className="adminBtnRow">
             <button
+              type="button"
               onClick={() => {
                 navigateToEdit();
               }}
-              className="w3-btn  w3-round-large myfont1 w3-small editOccupantBtn"
+              className="adminBtn"
             >
-              Edit Details
+              <EditOutlined /> Edit Details
             </button>
-            &nbsp;
             <button
+              type="button"
               onClick={() => {
                 navigateToEditDate();
               }}
-              className="w3-btn  w3-round-large myfont1 w3-small editOccupantBtn"
+              className="adminBtn"
             >
-              Edit Date
+              <CalendarOutlined /> Edit Date
             </button>
           </div>
+        </div>
 
-          {/* FullName */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">FULLNAME</p>
-            <p>
-              <b className="myfont1"> {selectedTenant.fullName}</b>
-            </p>
+        {/* Rent Period */}
+        <div className="adminDetailGrid adminRentGrid">
+          <div className="adminDetailItem">
+            <span className="adminDetailLabel myfont1">Last Rent Payment</span>
+            <span className="adminDetailValue myfont3">
+              {selectedOccupant?.startDate
+                ? convertToShortDate(selectedOccupant.startDate)
+                : "-"}
+            </span>
           </div>
-
-          {/* Phone Number*/}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">PHONE NUMBER</p>
-            <p>
-              <b className="myfont1 normaliseCap">
-                {selectedTenant.phoneNumber}
-              </b>
-            </p>
-          </div>
-
-          {/* Email */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">EMAIL</p>
-            <p>
-              <b className="myfont1"> {selectedTenant.email}</b>
-            </p>
-          </div>
-
-          {/* Gender */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">Gender</p>
-            <p>
-              <b className="myfont1 normaliseCap"> {selectedTenant.gender}</b>
-            </p>
-          </div>
-
-          {/* Marital Status */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">Marital Status</p>
-            <p>
-              <b className="myfont1 normaliseCap">
-                {" "}
-                {selectedTenant.maritalStatus}
-              </b>
-            </p>
-          </div>
-
-          {/* Religion */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">Religion</p>
-            <p>
-              <b className="myfont1 normaliseCap"> {selectedTenant.religion}</b>
-            </p>
-          </div>
-
-          {/* Reason */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">Reason</p>
-            <p>
-              <b className="myfont1 normaliseCap"> {selectedTenant.reason}</b>
-            </p>
-          </div>
-
-          {/* Address */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">Old Address</p>
-            <p>
-              <b className="myfont1 normaliseCap"> {selectedTenant.address}</b>
-            </p>
-          </div>
-
-          {/* Number Of Occupant */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">Number Of Occupant</p>
-            <p>
-              <b className="myfont1 normaliseCap">
-                {" "}
-                {selectedTenant.noOfOccupants}
-              </b>
-            </p>
-          </div>
-
-          {/* Number Of Vehicles */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">Number Of Vehicles</p>
-            <p>
-              <b className="myfont1 normaliseCap">
-                {" "}
-                {selectedTenant.noOfVehicles}
-              </b>
-            </p>
-          </div>
-
-          {/* Gurantor Header One */}
-          <div className="w3-col w3-margin-bottom">
-            <h3 className="w3-text-white myfont1 w3-medium">
-              <b> Gurantor 1</b>
-            </h3>
-          </div>
-
-          {/* First Guarantor's Full Name */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">First Guarantor's Full Name</p>
-            <p>
-              <b className="myfont1 normaliseCap">
-                {selectedTenant?.tenantGuarantors?.[0]?.fullName}
-              </b>
-            </p>
-          </div>
-
-          {/* First Guarantor's Address */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">First Guarantor's Address</p>
-            <p>
-              <b className="myfont1 normaliseCap">
-                {selectedTenant?.tenantGuarantors?.[0]?.address}
-              </b>
-            </p>
-          </div>
-
-          {/* First Guarantor's Phone Number */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">First Guarantor's Phone Number</p>
-            <p>
-              <b className="myfont1 normaliseCap">
-                {selectedTenant?.tenantGuarantors?.[0]?.phoneNumber}
-              </b>
-            </p>
-          </div>
-
-          {/* First Guarantor's Occupation */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">First Guarantor's Occupation</p>
-            <p>
-              <b className="myfont1 normaliseCap">
-                {selectedTenant?.tenantGuarantors?.[0]?.occupation}
-              </b>
-            </p>
-          </div>
-
-          {/* Rent*/}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">Rent Active </p>
-            <p>
-              <b className="myfont1 w3-text-green normaliseCap">
-                {selectedTenant.activated + ""}
-              </b>
-            </p>
-          </div>
-
-          {/* Last Rent Payment */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">Last Rent Payment </p>
-            <p>
-              <b className="myfont1 normaliseCap">
-                {convertToShortDate(selectedOccupant?.startDate)}
-              </b>
-            </p>
-          </div>
-
-          {/* Next Rent Payment */}
-          <div className="w3-col w3-margin-bottom  w3-border-bottom profileBorder">
-            <p className="w3-small myfont1">Next Rent Payment </p>
-            <p>
-              <b className="myfont1 w3-text-red normaliseCap">
-                {convertToShortDate(selectedOccupant?.endDate)}
-              </b>
-            </p>
+          <div className="adminDetailItem adminDetailHighlight">
+            <span className="adminDetailLabel myfont1">Next Rent Payment</span>
+            <span className="adminDetailValue myfont3">
+              {selectedOccupant?.endDate
+                ? convertToShortDate(selectedOccupant.endDate)
+                : "-"}
+            </span>
           </div>
         </div>
+
+        {/* Personal Details */}
+        <h4 className="adminSubheading myfont1">Personal Details</h4>
+        <div className="adminDetailGrid">
+          {personalDetails.map((detail) => (
+            <div
+              key={detail.label}
+              className={`adminDetailItem ${
+                detail.full ? "adminDetailFull" : ""
+              }`}
+            >
+              <span className="adminDetailLabel myfont1">{detail.label}</span>
+              <span
+                className={`adminDetailValue myfont1 ${
+                  detail.plain ? "" : "adminCapitalize"
+                }`}
+              >
+                {detail.value ?? "-"}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+
+      {/* Guarantors */}
+      {guarantors.length > 0 && (
+        <div className="adminPanel">
+          <div className="adminPanelHeader">
+            <h3 className="adminPanelTitle myfont3">
+              <span className="adminPanelIcon">
+                <SafetyCertificateOutlined />
+              </span>
+              Guarantors
+            </h3>
+          </div>
+          {guarantors.map((guarantor, index) => (
+            <div key={guarantor.id || index} className="adminGuarantor">
+              <h4 className="adminSubheading myfont1">
+                Guarantor {index + 1}
+              </h4>
+              <div className="adminDetailGrid">
+                <div className="adminDetailItem">
+                  <span className="adminDetailLabel myfont1">Full Name</span>
+                  <span className="adminDetailValue myfont1 adminCapitalize">
+                    {guarantor.fullName}
+                  </span>
+                </div>
+                <div className="adminDetailItem">
+                  <span className="adminDetailLabel myfont1">
+                    Phone Number
+                  </span>
+                  <span className="adminDetailValue myfont1">
+                    {guarantor.phoneNumber || "-"}
+                  </span>
+                </div>
+                <div className="adminDetailItem">
+                  <span className="adminDetailLabel myfont1">Occupation</span>
+                  <span className="adminDetailValue myfont1 adminCapitalize">
+                    {guarantor.occupation || "-"}
+                  </span>
+                </div>
+                <div className="adminDetailItem">
+                  <span className="adminDetailLabel myfont1">Address</span>
+                  <span className="adminDetailValue myfont1 adminCapitalize">
+                    {guarantor.address || "-"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 

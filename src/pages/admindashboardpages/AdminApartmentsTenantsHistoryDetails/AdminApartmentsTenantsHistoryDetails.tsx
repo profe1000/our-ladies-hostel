@@ -1,3 +1,4 @@
+import AdminContextHeader from "../../../components/admincomponents/adminContextHeader/adminContextHeader";
 import AdminTenantDetails from "../../../components/admincomponents/adminApartmentsUnitcomp/admin-tenant-detail/admin-tenant-detail";
 import Tabbar from "../../../components/LayoutComponent/TabBar/Tabbar";
 import { TopBarAdmin } from "../../../components/LayoutComponent/TopBar-Admin/TopBar-Admin";
@@ -13,7 +14,9 @@ export const AdminApartmentsTenantsHistoryDetails = () => {
         showProfile={false}
       ></TopBarAdmin>
 
-      <div className="w3-col w3-margin-top">
+      <AdminContextHeader showApartment={true} pageTitle="Tenant Details"></AdminContextHeader>
+
+      <div className="w3-content adminPageBody">
         <AdminTenantDetails></AdminTenantDetails>
       </div>
 

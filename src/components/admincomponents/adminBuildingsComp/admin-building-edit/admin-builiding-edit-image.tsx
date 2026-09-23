@@ -1,5 +1,5 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { adminEditBuildingsImageApi } from "../../../../apiservice/admin-General-ApiService";
 import { IAdminBuildingsData } from "../../../../apiservice/admin-General-ApiService.type";
@@ -20,6 +20,18 @@ export const AdminEditBuildingImage: React.FC<{}> = () => {
     getFormData({})
   );
   const [formLoading, setFormLoading] = useState<boolean>(false);
+  const [imagePreview, setImagePreview] = useState<string>("");
+
+  // Show a preview of the newly selected image
+  useEffect(() => {
+    if (!payLoad?.image) {
+      setImagePreview("");
+      return;
+    }
+    const previewUrl = URL.createObjectURL(payLoad.image);
+    setImagePreview(previewUrl);
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [payLoad?.image]);
 
   // For Navigator/Redux
   const selectedBuilding: IAdminBuildingsData = useAppSelector(
@@ -81,7 +93,7 @@ export const AdminEditBuildingImage: React.FC<{}> = () => {
   return (
     <div className="w3-container">
       <div className="w3-content">
-        <form onSubmit={handleSubmit}>
+        <form className="adminForm" onSubmit={handleSubmit}>
           {/* Form Header */}
           <div className="w3-col w3-margin-bottom">
             <h3 className="AdminFormInputHeader myfont1">
@@ -101,13 +113,9 @@ export const AdminEditBuildingImage: React.FC<{}> = () => {
               </div>
               <div className="w3-col l12 s12 m12">
                 <img
-                  className="w3-round-large"
+                  className="adminFormImagePreview"
                   alt="Building"
                   src={selectedBuilding.imageUrl}
-                  style={{
-                    maxWidth: "100%",
-                    height: "100px",
-                  }}
                 />
               </div>
             </div>
@@ -128,6 +136,13 @@ export const AdminEditBuildingImage: React.FC<{}> = () => {
                   className="w3-input w3-border w3-col w3-text-white w3-round-large AdminFormInput"
                   placeholder="Select A file"
                 />
+                {imagePreview && (
+                  <img
+                    className="adminFormImagePreview"
+                    src={imagePreview}
+                    alt="New building"
+                  />
+                )}
               </div>
             </div>
           </div>

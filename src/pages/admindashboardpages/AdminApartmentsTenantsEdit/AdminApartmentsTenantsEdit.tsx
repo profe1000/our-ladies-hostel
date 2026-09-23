@@ -1,3 +1,4 @@
+import AdminContextHeader from "../../../components/admincomponents/adminContextHeader/adminContextHeader";
 import AdminTenantEditForm from "../../../components/admincomponents/adminApartmentsUnitcomp/admin-tenant-edit-form/admin-tenant-edit-form";
 import Tabbar from "../../../components/LayoutComponent/TabBar/Tabbar";
 import { TopBarAdmin } from "../../../components/LayoutComponent/TopBar-Admin/TopBar-Admin";
@@ -12,6 +13,8 @@ export const AdminApartmentsTenantsEdit = () => {
         backButtonHref={"/admin/apartment/1"}
         showProfile={false}
       ></TopBarAdmin>
+
+      <AdminContextHeader showApartment={true} pageTitle="Edit Tenant"></AdminContextHeader>
 
       <div className="w3-col w3-margin-top">
         <AdminTenantEditForm></AdminTenantEditForm>

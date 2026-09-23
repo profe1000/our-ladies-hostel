@@ -120,7 +120,7 @@ const guarantorFields: IFormField[] = [
   { name: "address", label: "Address", placeholder: "Address" },
 ];
 
-// Only the first guarantor is collected for now
+// Guarantors to collect (index into payLoad.guarantors)
 const guarantorsToCollect = [0,1];
 
 export const TenantRegistrationForm: React.FC<{}> = () => {

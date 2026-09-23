@@ -78,7 +78,7 @@ export const AdminEditBuildingForm: React.FC<{}> = () => {
   return (
     <div className="w3-container">
       <div className="w3-content">
-        <form onSubmit={handleSubmit}>
+        <form className="adminForm" onSubmit={handleSubmit}>
           {/* Form Header */}
           <div className="w3-col w3-margin-bottom">
             <h3 className="AdminFormInputHeader myfont1"> Edit Building </h3>
@@ -111,7 +111,7 @@ export const AdminEditBuildingForm: React.FC<{}> = () => {
                 </span>
               </div>
               <div className="w3-col l12 s12 m12">
-                <input
+                <textarea
                   required
                   name="description"
                   value={payLoad?.description || ""}

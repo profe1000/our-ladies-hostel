@@ -1,4 +1,11 @@
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import {
+  AppstoreOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleFilled,
+  EyeOutlined,
+  ToolOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Empty,
@@ -18,6 +25,7 @@ import { IAdminBuildingsData } from "../../../../apiservice/admin-General-ApiSer
 import { sampleApiCall } from "../../../../apiservice/authService";
 import useFormatApiRequest from "../../../../hooks/formatApiRequest";
 import { useAppDispatch } from "../../../../Redux/reduxCustomHook";
+import { formatCurrency } from "../../../../utils/basic.utils";
 import { appZIndex } from "../../../../utils/appconst";
 import { ILoadState } from "../../../../utils/loading.utils.";
 import "./admin-building-list.css";
@@ -27,12 +35,14 @@ type IAdminBuildingList = {
   externalFilter?: any;
   initialDefaultFilter?: any;
   hidePagination?: boolean;
+  onTotalChange?: (total: number) => void;
 };
 
 export const AdminBuildingList: React.FC<IAdminBuildingList> = ({
   externalFilter,
   initialDefaultFilter,
   hidePagination = true,
+  onTotalChange,
 }) => {
   const [buildingsLoadState, setBuildingLoadState] =
     useState<ILoadState>("loading");
@@ -50,7 +60,7 @@ export const AdminBuildingList: React.FC<IAdminBuildingList> = ({
   // Pagination Constant/Variables
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(1);
-  const perPage = 10;
+  const perPage = initialDefaultFilter?.perPage || 10;
 
   // For Navigator/Redux
   const dispatch = useAppDispatch();
@@ -86,6 +96,10 @@ export const AdminBuildingList: React.FC<IAdminBuildingList> = ({
       setTableData(buildingsDataResult.data?.data || []);
       setBuildingLoadState("completed");
       setTotalItems(buildingsDataResult.data?.meta?.total || 1);
+      onTotalChange?.(buildingsDataResult.data?.meta?.total || 0);
+      if (!buildingsDataResult.data?.data?.length) {
+        setBuildingLoadState("noData");
+      }
     } else if (buildingsDataResult.httpState === "ERROR") {
       setBuildingLoadState("error");
     } else if (buildingsDataResult.httpState === "LOADING") {
@@ -227,103 +241,103 @@ export const AdminBuildingList: React.FC<IAdminBuildingList> = ({
 
         {/* " Show No data" */}
         {buildingsLoadState === "noData" && (
-          <div className="w3-margin-top">
-            <Empty></Empty>
+          <div className="w3-col adminBldgEmpty">
+            <Empty
+              description={
+                <span className="myfont1 adminBldgEmptyText">
+                  No buildings yet. Add your first building to get started.
+                </span>
+              }
+            >
+              <button
+                type="button"
+                onClick={() => navigate("/admin/buildings-add")}
+                className="adminBldgBtn adminBldgBtnPrimary myfont3"
+              >
+                Add Building
+              </button>
+            </Empty>
           </div>
         )}
 
-        {/* " Show No data" */}
+        {/* " Show Buildings" */}
         {buildingsLoadState === "completed" && (
-          <div className="w3-col w3-margin-top">
-            <div className="w3-col">
-              <div className="w3-content">
-                <div>
-                  {/* Recent activities */}
-                  <div className="w3-col l12 s12">
-                    <div className="w3-col w3-padding">
-                      <div className="w3-col">
-                        {tableData.map((buildings, index) => (
-                          <>
-                            <div
-                              key={index}
-                              className="w3-col w3-card-4 w3-round-large buildingCard w3-padding w3-margin-bottom"
-                            >
-                              <div className="w3-col">
-                                <h5 className="myfont3 w3-text-white buildingCardHeader">
-                                  {buildings?.title}
-                                </h5>
-                              </div>
+          <div className="w3-col">
+            <div className="adminBldgGrid">
+              {tableData.map((buildings, index) => (
+                <div key={buildings.id || index} className="adminBldgCard">
+                  <div className="adminBldgImageWrap">
+                    <img
+                      className="adminBldgImage"
+                      alt={buildings?.title || "Building"}
+                      src={buildings?.imageUrl}
+                    />
+                    <span className="adminBldgPrice myfont3">
+                      {formatCurrency(buildings?.price)}
+                    </span>
+                  </div>
 
-                              <div className="w3-col l5 s5 m5">
-                                <img
-                                  className="w3-round-large"
-                                  alt="Building"
-                                  src={buildings?.imageUrl}
-                                  style={{
-                                    maxWidth: "100%",
-                                    height: "100px",
-                                  }}
-                                />
-                              </div>
+                  <div className="adminBldgBody">
+                    <h5 className="adminBldgTitle myfont3">
+                      {buildings?.title}
+                    </h5>
+                    <p className="adminBldgText myfont1">
+                      {buildings?.description}
+                    </p>
 
-                              <div className="w3-col l7 s7 m7">
-                                <p
-                                  style={{
-                                    paddingTop: "10px",
-                                    paddingLeft: "5px",
-                                  }}
-                                  className="myfont1 w3-text-white buildingCardText"
-                                >
-                                  {buildings?.description}
-                                </p>
-                              </div>
+                    <div className="adminBldgMeta myfont1">
+                      <span className="adminBldgChip">
+                        <AppstoreOutlined /> {buildings?.noOfApartments || 0}{" "}
+                        Units
+                      </span>
+                      {!!buildings?.serviceCharge && (
+                        <span className="adminBldgChip">
+                          <ToolOutlined />{" "}
+                          {formatCurrency(buildings.serviceCharge)} service
+                        </span>
+                      )}
+                    </div>
 
-                              <div className="w3-col w3-margin-top w3-margin-bottom">
-                                <div className="w3-col w3-center">
-                                  <button
-                                    onClick={() => {
-                                      navigateToView(index);
-                                    }}
-                                    className="w3-btn  w3-round-large myfont1 w3-small viewUnitsBtn"
-                                  >
-                                    View Units
-                                  </button>
-                                  &nbsp; &nbsp; &nbsp;
-                                  <button
-                                    onClick={() => {
-                                      navigateToEdit(index);
-                                    }}
-                                    className="w3-btn  w3-round-large myfont1 w3-small editBuildingBtn"
-                                  >
-                                    Edit
-                                  </button>
-                                  &nbsp; &nbsp; &nbsp;
-                                  <button
-                                    onClick={() => {
-                                      showRemoveBuildingApiConfirm(index);
-                                    }}
-                                    className="w3-btn  w3-round-large myfont1 w3-small deleteBuildingsBtn"
-                                  >
-                                    Delete
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="w3-col w3-margin-bottom">
-                              <h6 className="cardsBottonBorder"> </h6>
-                            </div>
-                          </>
-                        ))}
-                      </div>
+                    <div className="adminBldgActions">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigateToView(index);
+                        }}
+                        className="adminBldgBtn adminBldgBtnPrimary myfont3"
+                      >
+                        <EyeOutlined /> View Units
+                      </button>
+                      <button
+                        type="button"
+                        title="Edit building"
+                        aria-label={`Edit ${buildings?.title}`}
+                        onClick={() => {
+                          navigateToEdit(index);
+                        }}
+                        className="adminBldgBtn adminBldgBtnIcon"
+                      >
+                        <EditOutlined />
+                      </button>
+                      <button
+                        type="button"
+                        title="Delete building"
+                        aria-label={`Delete ${buildings?.title}`}
+                        onClick={() => {
+                          showRemoveBuildingApiConfirm(index);
+                        }}
+                        className="adminBldgBtn adminBldgBtnIcon adminBldgBtnDanger"
+                      >
+                        <DeleteOutlined />
+                      </button>
                     </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
 
             {!hidePagination && (
-              <div className="w3-col w3-margin-top">
+              <div className="w3-col adminBldgPagination">
                 <Pagination
                   current={currentPage || 1}
                   onChange={onPageChange}
