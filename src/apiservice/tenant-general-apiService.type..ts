@@ -35,6 +35,7 @@ export interface ITenantApartmentData {
   title: string;
   price: number;
   isOccupied: boolean;
+  buildingId?: number;
   dateModified: string;
   dateCreated: string;
 }

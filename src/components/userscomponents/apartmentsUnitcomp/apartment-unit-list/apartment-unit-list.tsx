@@ -185,9 +185,6 @@ export const ApartmentUnitListUser: React.FC<IApartmentUnitList> = ({
                   {/* Apartment List */}
                   <div className="w3-col l12 s12">
                     <div className="w3-col w3-padding">
-                      <p className="w3-text-white w3-center">
-                        <b>{selectedBuilding.title}</b>
-                      </p>
                       <div className="apartmentUnitGrid">
                         {tableData.map((apartmentUnits, index) => (
                           <button

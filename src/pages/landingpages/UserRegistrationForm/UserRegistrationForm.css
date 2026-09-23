@@ -1,0 +1,195 @@
+.regPageWrapper {
+  padding: 8px 16px 0;
+}
+
+/* Progress Steps */
+.regSteps {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.regStep {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 12px;
+}
+
+.regStep:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: calc(50% + 18px);
+  right: calc(-50% + 18px);
+  height: 2px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.regStepDone:not(:last-child)::after {
+  background: #947a1e;
+}
+
+.regStepDot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #1b1b1b;
+}
+
+.regStepDone .regStepDot {
+  color: #ffffff;
+  border-color: #947a1e;
+  background: #947a1e;
+}
+
+.regStepActive {
+  color: #ffffff;
+}
+
+.regStepActive .regStepDot {
+  color: #d4b24c;
+  border: 2px solid #d4b24c;
+  box-shadow: 0 0 0 4px rgba(212, 178, 76, 0.18);
+}
+
+/* Summary Card */
+.regSummaryCard {
+  display: grid;
+  grid-template-columns: minmax(220px, 38%) minmax(0, 1fr);
+  overflow: hidden;
+  background: #1b1b1b;
+  border: 1px solid rgba(212, 178, 76, 0.3);
+  border-radius: 16px;
+}
+
+.regSummaryImage {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 230px;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+.regSummaryContent {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.regSummaryEyebrow {
+  color: #d4b24c;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+.regSummaryTitle {
+  color: #ffffff;
+  font-size: 30px;
+  line-height: 1.2;
+  margin: 8px 0 4px;
+}
+
+.regSummaryBuilding {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffffff;
+  font-size: 14px;
+  margin: 0;
+}
+
+.regSummaryText {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 8px 0 18px;
+}
+
+.regSummaryStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: auto;
+}
+
+.regSummaryStat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.regSummaryStatLabel {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.regSummaryStatValue {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.regStatusAvailable {
+  color: #7fd18b;
+}
+
+.regStatusOccupied {
+  color: #ff7b72;
+}
+
+.regSummaryLoading .ant-skeleton-title,
+.regSummaryLoading .ant-skeleton-paragraph > li {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+@media (max-width: 600px) {
+  .regSummaryCard {
+    grid-template-columns: 1fr;
+  }
+
+  .regSummaryImage {
+    min-height: 170px;
+    max-height: 200px;
+  }
+
+  .regSummaryContent {
+    padding: 18px;
+  }
+
+  .regSummaryTitle {
+    font-size: 24px;
+  }
+
+  .regSummaryStats {
+    gap: 8px;
+  }
+
+  .regSummaryStat {
+    padding: 8px 10px;
+  }
+
+  .regSummaryStatValue {
+    font-size: 12px;
+  }
+
+  .regStepLabel {
+    font-size: 10px;
+  }
+}

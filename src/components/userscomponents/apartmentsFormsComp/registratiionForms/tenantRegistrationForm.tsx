@@ -1,11 +1,13 @@
-import { LoadingOutlined } from "@ant-design/icons";
+import {
+  LoadingOutlined,
+  SafetyCertificateOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { sampleApiCall } from "../../../../apiservice/authService";
+import { useNavigate } from "react-router-dom";
 import { tenantRegistrationApi } from "../../../../apiservice/tenant-general-apiService";
 import {
   ITenantApartmentData,
-  ITenantBuildingsData,
   ITenantRegistration,
 } from "../../../../apiservice/tenant-general-apiService.type.";
 import useFormatApiRequest from "../../../../hooks/formatApiRequest";
@@ -16,57 +18,131 @@ import {
 import { RootState } from "../../../../Redux/store";
 import "./tenantRegistration.css";
 
+type IFormField = {
+  name: string;
+  label: string;
+  placeholder?: string;
+  type?: string;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  fullWidth?: boolean;
+  options?: { value: string; label: string }[];
+};
+
+const personalFields: IFormField[] = [
+  { name: "firstName", label: "First Name", placeholder: "First Name" },
+  { name: "lastName", label: "Last Name", placeholder: "Last Name" },
+  { name: "email", label: "Email", placeholder: "Email", type: "email" },
+  {
+    name: "phoneNumber",
+    label: "Phone Number",
+    placeholder: "Phone Number",
+    type: "tel",
+  },
+  {
+    name: "nin",
+    label: "NIN",
+    placeholder: "National Identification Number",
+    type: "number",
+    minLength: 11,
+    maxLength: 11,
+  },
+  {
+    name: "occupation",
+    label: "Occupation",
+    placeholder: "Occupation",
+  },
+  {
+    name: "address",
+    label: "Address",
+    placeholder: "Address",
+    fullWidth: true,
+  },
+  {
+    name: "gender",
+    label: "Gender",
+    options: [
+      { value: "", label: "Select Gender" },
+      { value: "male", label: "Male" },
+      { value: "female", label: "Female" },
+    ],
+  },
+  {
+    name: "maritalStatus",
+    label: "Marital Status",
+    options: [
+      { value: "", label: "Select" },
+      { value: "single", label: "Single" },
+      { value: "married", label: "Married" },
+    ],
+  },
+  {
+    name: "religion",
+    label: "Religion",
+    required: false,
+    options: [
+      { value: "", label: "Select Religion" },
+      { value: "christain", label: "Christian" },
+      { value: "muslim", label: "Muslim" },
+      { value: "others", label: "Others" },
+    ],
+  },
+  {
+    name: "noOfOccupants",
+    label: "No. of Occupants",
+    placeholder: "Number of Occupants",
+    type: "number",
+  },
+  {
+    name: "noOfVehicles",
+    label: "No. of Vehicles",
+    placeholder: "Number of Vehicles",
+    type: "number",
+  },
+  {
+    name: "reason",
+    label: "Reason",
+    placeholder: "Why are you looking for accommodation?",
+    fullWidth: true,
+  },
+];
+
+const guarantorFields: IFormField[] = [
+  { name: "fullName", label: "Full Name", placeholder: "Full Name" },
+  {
+    name: "phoneNumber",
+    label: "Phone Number",
+    placeholder: "Phone Number",
+    type: "tel",
+  },
+  { name: "occupation", label: "Occupation", placeholder: "Occupation" },
+  { name: "address", label: "Address", placeholder: "Address" },
+];
+
+// Only the first guarantor is collected for now
+const guarantorsToCollect = [0,1];
+
 export const TenantRegistrationForm: React.FC<{}> = () => {
   const [loadApi, setLoadApi] = useState(false);
-  const [payLoad, setpayLoad] = useState<any>({});
+  const [payLoad, setpayLoad] = useState<any>({ guarantors: [{}, {}] });
   const [formLoading, setFormLoading] = useState<boolean>(false);
 
   // For Navigator/Redux
-  const selectedBuilding: ITenantBuildingsData = useAppSelector(
-    (state: RootState) => state?.TenantSelectedBuilding
-  );
-
   const selectedApartment: ITenantApartmentData = useAppSelector(
     (state: RootState) => state?.TenantSelectedApartment
   );
 
-  const params = useParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  // Keep the apartment in sync (it may be reloaded after a page refresh)
   useEffect(() => {
-    setpayLoad({ apartmentId: selectedApartment.id, guarantors: [{}, {}] });
-    // setpayLoad({
-    //   apartmentId: selectedApartment.id,
-    //   firstName: "John",
-    //   lastName: "Doe",
-    //   email: "john.doe@example.com",
-    //   phoneNumber: "+2348012345678",
-    //   nin: "12345678901",
-    //   address: "123 Sample Street, Lagos, Nigeria",
-    //   gender: "male",
-    //   maritalStatus: "single",
-    //   religion: "christian",
-    //   reason: "Work relocation to the area",
-    //   occupation: "Software Engineer",
-    //   noOfOccupants: "2",
-    //   noOfVehicles: "1",
-    //   guarantors: [
-    //     {
-    //       fullName: "Jane Smith",
-    //       address: "456 Guarantor Avenue, Abuja, Nigeria",
-    //       phoneNumber: "+2348087654321",
-    //       occupation: "Business Analyst",
-    //     },
-    //     {
-    //       fullName: "Michael Johnson",
-    //       address: "789 Reference Road, Port Harcourt, Nigeria",
-    //       phoneNumber: "+2348098765432",
-    //       occupation: "Civil Engineer",
-    //     },
-    //   ],
-    // });
-  }, []);
+    setpayLoad((values: any) => ({
+      ...values,
+      apartmentId: selectedApartment?.id,
+    }));
+  }, [selectedApartment?.id]);
 
   // Use to collect Input change Change
   const handleInputChange = (event: any) => {
@@ -85,7 +161,6 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
       ...values,
       guarantors: [...payLoad.guarantors],
     }));
-    // console.log(payLoad);
   };
 
   // Use to Submit Form
@@ -126,398 +201,114 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
     }
   };
 
+  // Render a single input/select field
+  const renderField = (
+    field: IFormField,
+    value: string,
+    onChange: (event: any) => void,
+    id: string
+  ) => (
+    <div
+      key={id}
+      className={`regField ${field.fullWidth ? "regFieldFull" : ""}`}
+    >
+      <label htmlFor={id} className="regLabel myfont1">
+        {field.label}
+        {field.required !== false && <span className="regRequired">*</span>}
+      </label>
+      {field.options ? (
+        <select
+          id={id}
+          name={field.name}
+          value={value}
+          onChange={onChange}
+          required={field.required !== false}
+          className="w3-input w3-text-white regFormInput myfont1"
+        >
+          {field.options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          id={id}
+          name={field.name}
+          value={value}
+          onChange={onChange}
+          required={field.required !== false}
+          type={field.type || "text"}
+          minLength={field.minLength}
+          maxLength={field.maxLength}
+          placeholder={field.placeholder}
+          className="w3-input w3-text-white regFormInput myfont1"
+        />
+      )}
+    </div>
+  );
+
   return (
     <div className="w3-container">
-      <div className="w3-content">
+      <div className="w3-content regFormWrapper">
         <form onSubmit={handleSubmit}>
-          {/* Forms Here */}
-          <div className="w3-col">
-            {/* Pre Form Text */}
-            <div className="w3-col w3-margin-bottom">
-              <p className="w3-text-white w3-center">
-                <b>{`${selectedBuilding.title} - ${selectedApartment.title}`}</b>
-              </p>
-              <p className="w3-text-white regPreFormText myfont1">
-                {selectedBuilding.description}
-              </p>
-            </div>
-            {/* Personal Information  */}
-            <div className="w3-col w3-margin-bottom">
-              <h3 className="w3-text-white myfont1 w3-medium">
-                <b> Personal Information </b>
-              </h3>
-            </div>
-            {/* First Name */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">
-                  {" "}
-                  FirstName{" "}
-                </span>
-                <input
-                  required
-                  name="firstName"
-                  value={payLoad?.firstName || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput "
-                  placeholder="First Name"
-                />
-              </div>
-            </div>
-            {/* Last Name */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">
-                  Last Name
-                </span>
-                <input
-                  required
-                  name="lastName"
-                  value={payLoad?.lastName || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput "
-                  placeholder="Last Name"
-                />
-              </div>
-            </div>
-            {/* Email */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">Email</span>
-                <input
-                  required
-                  name="email"
-                  value={payLoad?.email || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                  placeholder="Email"
-                  type="email"
-                />
-              </div>
-            </div>
-            {/* Phone Number */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">
-                  Phone Number
-                </span>
-                <input
-                  required
-                  name="phoneNumber"
-                  value={payLoad?.phoneNumber || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput "
-                  placeholder="PhoneNumber"
-                  type="tel"
-                />
-              </div>
-            </div>
-
-            {/* NIN */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">NIN</span>
-                <input
-                  required
-                  maxLength={11}
-                  minLength={11}
-                  name="nin"
-                  value={payLoad?.nin || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput "
-                  placeholder="National Identification Number"
-                  type="number"
-                />
-              </div>
-            </div>
-
-            {/* Address */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">Address</span>
-                <input
-                  required
-                  name="address"
-                  value={payLoad?.address || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput "
-                  placeholder="Address"
-                />
-              </div>
-            </div>
-            {/* Gender  */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">Gender</span>
-                <select
-                  name="gender"
-                  value={payLoad?.gender || ""}
-                  onChange={handleInputChange}
-                  required
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput "
-                >
-                  <option value=""> Select Gender </option>
-                  <option value="male"> Male</option>
-                  <option value="female"> Female </option>
-                </select>
-              </div>
-            </div>
-            {/* Marital Status */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">
-                  Marital Status
-                </span>
-                <select
-                  name="maritalStatus"
-                  value={payLoad?.maritalStatus || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                  required
-                >
-                  <option value=""> Select </option>
-                  <option value="single"> Single </option>
-                  <option value="married"> Married </option>
-                </select>
-              </div>
-            </div>
-            {/* Religion */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">Religion</span>
-                <select
-                  name="religion"
-                  value={payLoad?.religion || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                >
-                  <option value=""> Select Religion </option>
-                  <option value="christain">Christian</option>
-                  <option value="muslim">Muslim</option>
-                  <option value="others">Others</option>
-                </select>
-              </div>
-            </div>
-            {/* Reason */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">Reason</span>
-                <input
-                  required
-                  name="reason"
-                  value={payLoad?.reason || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                  placeholder="Reason"
-                />
-              </div>
-            </div>
-
-            {/* Occupation */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">
-                  Occupation
-                </span>
-                <input
-                  required
-                  name="occupation"
-                  value={payLoad?.occupation || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                  placeholder="Occupation"
-                />
-              </div>
-            </div>
-
-            {/* No. of Occupants */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">
-                  No. of Occupants
-                </span>
-                <input
-                  required
-                  name="noOfOccupants"
-                  value={payLoad?.noOfOccupants || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                  placeholder="Number of Occupants"
-                  type="number"
-                />
-              </div>
-            </div>
-            {/* No. of Vehicles */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">
-                  No. of Vehicles
-                </span>
-                <input
-                  required
-                  name="noOfVehicles"
-                  value={payLoad?.noOfVehicles || ""}
-                  onChange={handleInputChange}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                  placeholder="Number of Vehicles"
-                  type="number"
-                />
-              </div>
-            </div>
-            {/* Gurantor Header One */}
-            <div className="w3-col w3-margin-bottom">
-              <h3 className="w3-text-white myfont1 w3-medium">
-                <b> Gurantor 1</b>
-              </h3>
-            </div>
-            {/* Full Name */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">
-                  Full Name
-                </span>
-                <input
-                  required
-                  name="fullName"
-                  value={payLoad?.guarantors?.[0]?.fullName || ""}
-                  onChange={(e) => {
-                    handleInputChangeForArray(e, 0);
-                  }}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                  placeholder="Full Name"
-                />
-              </div>
-            </div>
-            {/* Address */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">Address</span>
-                <input
-                  required
-                  name="address"
-                  value={payLoad?.guarantors?.[0]?.address || ""}
-                  onChange={(e) => {
-                    handleInputChangeForArray(e, 0);
-                  }}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                  placeholder="Address"
-                />
-              </div>
-            </div>
-            {/* Phone Number */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">
-                  Phone Number
-                </span>
-                <input
-                  required
-                  name="phoneNumber"
-                  value={payLoad?.guarantors?.[0]?.phoneNumber || ""}
-                  onChange={(e) => {
-                    handleInputChangeForArray(e, 0);
-                  }}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                  placeholder="Phone Number"
-                  type="tel" // Using type="tel" for phone number input
-                />
-              </div>
-            </div>
-            {/* Occupation */}
-            <div className="w3-col w3-margin-bottom">
-              <div className="w3-col l12 s12 m12">
-                <span className="w3-small w3-text-white myfont1">
-                  Occupation
-                </span>
-                <input
-                  required
-                  name="occupation"
-                  value={payLoad?.guarantors?.[0]?.occupation || ""}
-                  onChange={(e) => {
-                    handleInputChangeForArray(e, 0);
-                  }}
-                  className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                  placeholder="Occupation"
-                />
-              </div>
-            </div>
-            {/* Gurantor Header Two */}
-            {/* <div className="w3-col w3-margin-bottom">
-            <h3 className="w3-text-white myfont1 w3-medium">
-              <b> Gurantor 2</b>
-            </h3>
-          </div> */}
-            {/* Full Name */}
-            {/* <div className="w3-col w3-margin-bottom">
-            <div className="w3-col l12 s12 m12">
-              <span className="w3-small w3-text-white myfont1">Full Name</span>
-              <input
-                required
-                name="fullName"
-                value={payLoad?.guarantors?.[1]?.fullName || ""}
-                onChange={(e) => {
-                  handleInputChangeForArray(e, 1);
-                }}
-                className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                placeholder="Full Name"
-              />
-            </div>
-          </div> */}
-            {/* Address */}
-            {/* <div className="w3-col w3-margin-bottom">
-            <div className="w3-col l12 s12 m12">
-              <span className="w3-small w3-text-white myfont1">Address</span>
-              <input
-                required
-                name="address"
-                value={payLoad?.guarantors?.[1]?.address || ""}
-                onChange={(e) => {
-                  handleInputChangeForArray(e, 1);
-                }}
-                className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                placeholder="Address"
-              />
-            </div>
-          </div> */}
-            {/* Phone Number */}
-            {/* <div className="w3-col w3-margin-bottom">
-            <div className="w3-col l12 s12 m12">
-              <span className="w3-small w3-text-white myfont1">
-                Phone Number
+          {/* Personal Information */}
+          <section className="regSection">
+            <div className="regSectionHeader">
+              <span className="regSectionIcon">
+                <UserOutlined />
               </span>
-              <input
-                required
-                name="phoneNumber"
-                value={payLoad?.guarantors?.[1]?.phoneNumber || ""}
-                onChange={(e) => {
-                  handleInputChangeForArray(e, 1);
-                }}
-                className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                placeholder="Phone Number"
-                type="tel" // Using type="tel" for phone number input
-              />
+              <div>
+                <h3 className="regSectionTitle myfont3">
+                  Personal Information
+                </h3>
+                <p className="regSectionHint myfont1">
+                  Tell us about yourself. Fields marked * are required.
+                </p>
+              </div>
             </div>
-          </div> */}
-            {/* Occupation */}
-            {/* <div className="w3-col w3-margin-bottom">
-            <div className="w3-col l12 s12 m12">
-              <span className="w3-small w3-text-white myfont1">Occupation</span>
-              <input
-                required
-                name="occupation"
-                value={payLoad?.guarantors?.[1]?.occupation || ""}
-                onChange={(e) => {
-                  handleInputChangeForArray(e, 1);
-                }}
-                className="w3-input w3-border w3-col w3-text-white w3-round-large regFormInput"
-                placeholder="Occupation"
-              />
+            <div className="regGrid">
+              {personalFields.map((field) =>
+                renderField(
+                  field,
+                  payLoad?.[field.name] || "",
+                  handleInputChange,
+                  `reg-${field.name}`
+                )
+              )}
             </div>
-          </div> */}
-          </div>
+          </section>
+
+          {/* Guarantors */}
+          {guarantorsToCollect.map((index) => (
+            <section className="regSection" key={index}>
+              <div className="regSectionHeader">
+                <span className="regSectionIcon">
+                  <SafetyCertificateOutlined />
+                </span>
+                <div>
+                  <h3 className="regSectionTitle myfont3">
+                    Guarantor {index + 1}
+                  </h3>
+                  <p className="regSectionHint myfont1">
+                    Someone who can vouch for you.
+                  </p>
+                </div>
+              </div>
+              <div className="regGrid">
+                {guarantorFields.map((field) =>
+                  renderField(
+                    field,
+                    payLoad?.guarantors?.[index]?.[field.name] || "",
+                    (e) => handleInputChangeForArray(e, index),
+                    `reg-guarantor-${index}-${field.name}`
+                  )
+                )}
+              </div>
+            </section>
+          ))}
 
           {/* Button Here */}
-
           <div className="w3-col regButtonSpace">
             <br />
           </div>
@@ -525,8 +316,8 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
           <div className="w3-padding regButtonHolder">
             <div className="w3-content">
               <button
-                className="w3-btn regButton w3-col w3-round-large"
-                disabled={formLoading}
+                className="w3-btn regButton w3-col w3-round-large myfont3"
+                disabled={formLoading || !payLoad?.apartmentId}
               >
                 {!formLoading ? (
                   "Register"

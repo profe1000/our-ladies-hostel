@@ -26,6 +26,20 @@ export const tenantApartmentApi = async (body: any) => {
   return result;
 };
 
+export const tenantBuildingDetailsApi = async (id: string | number) => {
+  const axios = await instance(null, null, true);
+  const { data } = await axios.get(`api/v1/tenant/buildings/${id}`);
+  const result: any = await data;
+  return result;
+};
+
+export const tenantApartmentDetailsApi = async (id: string | number) => {
+  const axios = await instance(null, null, true);
+  const { data } = await axios.get(`api/v1/tenant/apartments/${id}`);
+  const result: any = await data;
+  return result;
+};
+
 export const tenantRegistrationApi = async (body: any) => {
   const axios = await instance(null, null, true);
   const { data } = await axios.post("api/v1/tenant/auth/register", body);

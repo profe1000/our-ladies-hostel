@@ -1,3 +1,77 @@
+.regFormWrapper {
+  padding-top: 20px;
+}
+
+.regSection {
+  background: #1b1b1b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.regSectionHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.regSectionIcon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 18px;
+  color: #d4b24c;
+  background: rgba(148, 122, 30, 0.18);
+}
+
+.regSectionTitle {
+  color: #ffffff;
+  font-size: 16px;
+  margin: 0;
+}
+
+.regSectionHint {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  margin: 2px 0 0;
+}
+
+.regGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 18px;
+}
+
+.regField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.regFieldFull {
+  grid-column: 1 / -1;
+}
+
+.regLabel {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+}
+
+.regRequired {
+  color: #d4b24c;
+  margin-left: 3px;
+}
+
+/* Base styles (shared class names used by other forms too) */
 .regFormInput {
   background-color: #1b1b1b;
   height: 50px;
@@ -25,4 +99,55 @@
   height: 50px;
   color: white;
   margin-top: 5px;
+}
+
+/* Tenant registration form only */
+.regFormWrapper .regFormInput {
+  background-color: #111111 !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 10px;
+  padding: 0 14px;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.regFormWrapper .regFormInput::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.regFormWrapper .regFormInput:focus {
+  outline: none;
+  border-color: #d4b24c !important;
+  box-shadow: 0 0 0 3px rgba(212, 178, 76, 0.18);
+}
+
+.regFormWrapper .regFormInput option {
+  background: #1b1b1b;
+  color: #ffffff;
+}
+
+.regFormWrapper .regButtonHolder {
+  border-top: 1px solid rgba(212, 178, 76, 0.25);
+  z-index: 5;
+}
+
+.regFormWrapper .regButton {
+  background: linear-gradient(135deg, #947a1e, #624f0b);
+  font-size: 15px;
+}
+
+.regFormWrapper .regButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .regSection {
+    padding: 18px 16px;
+  }
+
+  .regGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
 }

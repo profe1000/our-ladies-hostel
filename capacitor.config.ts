@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.woodlodge.app',
-  appName: 'Wood Lodge App',
+  appName: 'Our Ladies Lodge',
   webDir: 'build',
   server: {
     androidScheme: 'https'
