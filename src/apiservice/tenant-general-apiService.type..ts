@@ -122,3 +122,46 @@ export interface IUserSettingsData {
   accountName: any;
   bankName: any;
 }
+
+// Payment link emailed to the tenant when their request is approved
+export interface ITenantPaymentLinkApi {
+  data: ITenantPaymentLinkData;
+  message: string;
+  statusCode: number;
+  success: boolean;
+}
+
+export interface ITenantPaymentLinkData {
+  id: number;
+  amount: number;
+  rent: number;
+  serviceCharge?: number;
+  paymentStatusId: number;
+  paymentStatus: "Pending" | "Accepted" | "Rejected";
+  paymentVerified: boolean;
+  startDate?: string;
+  endDate?: string;
+  charges: { title: string; amount: number }[];
+  tenant: {
+    firstName?: string;
+    lastName?: string;
+    fullName?: string;
+    email: string;
+  };
+  apartment?: {
+    id: number;
+    title: string;
+    building?: {
+      id: number;
+      title: string;
+      description?: string;
+      imageUrl?: string;
+    };
+  };
+  bankAccount: {
+    bankName?: string;
+    accountName?: string;
+    accountNumber?: string;
+  };
+  paystackMetadata: any;
+}

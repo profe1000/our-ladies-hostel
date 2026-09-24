@@ -39,6 +39,7 @@ import {
   getRequestName,
   getRequestStatus,
   getRequestStatusClass,
+  getRequestStatusLabel,
 } from "./tenantRequest.utils";
 import "../adminContextHeader/adminContextHeader.css";
 import "./adminTenantRequests.css";
@@ -177,7 +178,7 @@ export const AdminTenantRequestDetails = () => {
           : "Reject this tenant request?",
       content:
         statusId === "Accepted"
-          ? "The applicant will be notified to make payment."
+          ? "The applicant will be emailed a link to pay online with Paystack or by bank transfer."
           : "The applicant's request will be declined.",
       icon: <ExclamationCircleFilled />,
       centered: true,
@@ -219,6 +220,8 @@ export const AdminTenantRequestDetails = () => {
   const name = getRequestName(request);
   const status = getRequestStatus(request);
   const isPending = status.toLowerCase().startsWith("pend");
+  // Once paid, the tenant is an occupant and the request can no longer change
+  const isCompleted = status.toLowerCase().startsWith("complet");
   const guarantors = (request.guarantors || request.tenantGuarantors || [])
     .filter((guarantor) => guarantor?.fullName);
 
@@ -295,7 +298,7 @@ export const AdminTenantRequestDetails = () => {
                   status
                 )}`}
               >
-                {status}
+                {getRequestStatusLabel(status)}
               </span>
               {request.dateCreated && (
                 <span className="adminListSub myfont1 reqSubmitted">
@@ -308,7 +311,7 @@ export const AdminTenantRequestDetails = () => {
           <div className="adminBtnRow">
             <button
               type="button"
-              disabled={!!savingStatus || status === "Accepted"}
+              disabled={!!savingStatus || status === "Accepted" || isCompleted}
               onClick={() => confirmStatus("Accepted")}
               className="adminBtn adminBtnPrimary"
             >
@@ -321,7 +324,7 @@ export const AdminTenantRequestDetails = () => {
             </button>
             <button
               type="button"
-              disabled={!!savingStatus || status === "Rejected"}
+              disabled={!!savingStatus || status === "Rejected" || isCompleted}
               onClick={() => confirmStatus("Rejected")}
               className="adminBtn adminBtnDanger"
             >
@@ -337,8 +340,12 @@ export const AdminTenantRequestDetails = () => {
 
         {!isPending && (
           <p className="adminListSub myfont1 reqDecided">
-            <InfoCircleOutlined /> This request has already been{" "}
-            {status.toLowerCase()}. You can still change it if needed.
+            <InfoCircleOutlined />{" "}
+            {isCompleted
+              ? "The tenant has paid and this request is complete."
+              : status === "Accepted"
+              ? "This request has been accepted. The tenant has been emailed a link to pay, and will show under pending payments until they pay with Paystack or you approve their bank transfer."
+              : `This request has already been ${status.toLowerCase()}. You can still change it if needed.`}
           </p>
         )}
 

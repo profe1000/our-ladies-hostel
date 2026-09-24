@@ -5,6 +5,7 @@ import Nopage from "../Nopage/Nopage";
 import LandingPagesLayout from "../Layout/Layout";
 import UserRegistrationForm from "./UserRegistrationForm/UserRegistrationForm";
 import UserPaymentForm from "./UserPaymentForm/UserPaymentForm";
+import PaymentLinkPage from "./PaymentLink/PaymentLinkPage";
 import UserApartmentUnitsPage from "./UserApartmentUnitsPage/UserApartmentUnitsPage";
 
 const LandingPagesRoute = () => {
@@ -21,6 +22,7 @@ const LandingPagesRoute = () => {
           element={<UserRegistrationForm />}
         />
         <Route path="/user-tenant-payment/:id" element={<UserPaymentForm />} />
+        <Route path="/pay/:token" element={<PaymentLinkPage />} />
         <Route path="*" element={<Nopage />} />
       </Route>
     </Routes>

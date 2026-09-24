@@ -17,6 +17,7 @@ import {
   getRequestName,
   getRequestStatus,
   getRequestStatusClass,
+  getRequestStatusLabel,
   requestStatuses,
 } from "./tenantRequest.utils";
 import "./adminTenantRequests.css";
@@ -123,7 +124,7 @@ export const AdminTenantRequestList = () => {
                 statusId === status ? "reqChipActive" : ""
               }`}
             >
-              {status || "All"}
+              {status ? getRequestStatusLabel(status) : "All"}
             </button>
           ))}
         </div>
@@ -180,6 +181,9 @@ export const AdminTenantRequestList = () => {
             const apartmentTitle = request?.apartment?.title;
             const buildingTitle =
               request?.building?.title || request?.apartment?.building?.title;
+            const buildingImageUrl =
+              request?.building?.imageUrl ||
+              request?.apartment?.building?.imageUrl;
             return (
               <div
                 key={request.id}
@@ -193,7 +197,17 @@ export const AdminTenantRequestList = () => {
                 }}
                 className="adminListRow adminListRowClickable"
               >
-                <span className="adminAvatar">{getInitials(name) || "?"}</span>
+                {buildingImageUrl ? (
+                  <img
+                    className="reqListBuildingImage"
+                    src={buildingImageUrl}
+                    alt={buildingTitle || "Building"}
+                  />
+                ) : (
+                  <span className="adminAvatar">
+                    {getInitials(name) || "?"}
+                  </span>
+                )}
                 <div className="adminListMain">
                   <h5 className="adminListTitle myfont3">{name}</h5>
                   <p className="adminListSub myfont1">
@@ -215,7 +229,7 @@ export const AdminTenantRequestList = () => {
                       status
                     )}`}
                   >
-                    {status}
+                    {getRequestStatusLabel(status)}
                   </span>
                   {request.dateCreated && (
                     <p className="adminListSub myfont1 reqDate">

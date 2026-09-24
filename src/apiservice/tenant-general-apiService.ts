@@ -1,5 +1,6 @@
 import instance from "../utils/axios.wrapper";
 import { convertObjToQueryParams } from "../utils/basic.utils";
+import { ITenantPaymentLinkApi } from "./tenant-general-apiService.type.";
 
 export const sampleApiCall = async (body?: any) => {
   const axios = await instance("", "https://dummyjson.com/", true);
@@ -67,6 +68,23 @@ export const tenantGetSettingsApi = async (body?: any) => {
   const axios = await instance(null, null, true);
   const { data } = await axios.get(
     `api/v1/tenant/settings${convertObjToQueryParams(body)}`
+  );
+  const result: any = await data;
+  return result;
+};
+
+// Payment links emailed to tenants when their request is approved (no login needed)
+export const tenantGetPaymentLinkApi = async (token: string) => {
+  const axios = await instance("", null, true);
+  const { data } = await axios.get(`api/v1/tenant/payment-links/${token}`);
+  const result: ITenantPaymentLinkApi = await data;
+  return result;
+};
+
+export const tenantPaymentLinkTransferNoticeApi = async (token: string) => {
+  const axios = await instance("", null, true);
+  const { data } = await axios.post(
+    `api/v1/tenant/payment-links/${token}/transfer-notice`
   );
   const result: any = await data;
   return result;
