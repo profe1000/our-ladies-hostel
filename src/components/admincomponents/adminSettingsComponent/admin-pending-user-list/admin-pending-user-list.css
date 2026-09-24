@@ -164,3 +164,23 @@
   font-size: 16px;
   background: #111111;
 }
+
+/* Receipt opens in a pop-up */
+button.payReqReceipt {
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: transparent;
+  border: none;
+  cursor: zoom-in;
+}
+
+.payReqReceipt:hover img,
+.payReqReceipt:hover .payReqReceiptFile,
+.payReqReceipt:focus-visible img,
+.payReqReceipt:focus-visible .payReqReceiptFile {
+  border-color: #d4b24c;
+}
+
+.payReqReceipt:focus-visible {
+  outline: none;
+}

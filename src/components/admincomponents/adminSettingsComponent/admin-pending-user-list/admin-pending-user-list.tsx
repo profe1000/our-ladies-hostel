@@ -25,6 +25,10 @@ import { useAppDispatch } from "../../../../Redux/reduxCustomHook";
 import { appZIndex } from "../../../../utils/appconst";
 import type { ILoadState } from "../../../../utils/loading.utils.";
 import "./admin-pending-user-list.css";
+import {
+  AdminFilePreviewModal,
+  IPreviewFile,
+} from "../../adminFilePreview/adminFilePreview";
 import { formatCurrency } from "../../../../utils/basic.utils";
 import { convertToShortDate } from "../../../../utils/date.utils";
 import type { IPendingRentPaymentData } from "../../../../apiservice/admin-General-ApiService.type";
@@ -55,6 +59,9 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
     initialDefaultFilter || {}
   );
   const [tableData, setTableData] = useState<IPendingRentPaymentData[]>([]);
+  const [receiptPreview, setReceiptPreview] = useState<IPreviewFile | null>(
+    null
+  );
 
   const [selectedUserIndex, setSelectedUserIndex] = useState(0);
   const [api, contextHolder] = notification.useNotification();
@@ -252,6 +259,15 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
     <>
       {/* " The context is use to hold the notification from ant design" */}
       {contextHolder}
+
+      {/* Transfer receipt pop-up */}
+      <AdminFilePreviewModal
+        files={receiptPreview ? [receiptPreview] : []}
+        openIndex={receiptPreview ? 0 : null}
+        onChange={(index) => {
+          if (index === null) setReceiptPreview(null);
+        }}
+      />
       <div>
         {/* " Show Loading Indicator" */}
         {pendingUsersLoadState === "loading" && (
@@ -356,10 +372,15 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
                   </div>
 
                   {pendingUsers?.transferReceiptUrl && (
-                    <a
-                      href={pendingUsers.transferReceiptUrl}
-                      target="_blank"
-                      rel="noreferrer"
+                    <button
+                      type="button"
+                      aria-label={`View transfer receipt from ${name}`}
+                      onClick={() =>
+                        setReceiptPreview({
+                          label: `Transfer receipt · ${name}`,
+                          url: pendingUsers.transferReceiptUrl as string,
+                        })
+                      }
                       className="payReqReceipt myfont1"
                     >
                       {/\.pdf($|\?)/i.test(pendingUsers.transferReceiptUrl) ? (
@@ -373,7 +394,7 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
                         />
                       )}
                       <span>View receipt</span>
-                    </a>
+                    </button>
                   )}
 
                   <div className="payReqAmounts myfont1">

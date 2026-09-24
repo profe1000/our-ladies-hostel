@@ -376,6 +376,8 @@ export interface IAdminSettingsData {
   accountNumber: any;
   accountName: any;
   bankName: any;
+  // Shown in emails, eg. "Our Ladies Hostel"
+  businessName?: string;
 }
 
 // Pending Rent Payment

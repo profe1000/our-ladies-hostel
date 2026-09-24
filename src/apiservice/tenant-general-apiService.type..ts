@@ -121,6 +121,7 @@ export interface IUserSettingsData {
   accountNumber: any;
   accountName: any;
   bankName: any;
+  businessName?: string;
 }
 
 // Payment link emailed to the tenant when their request is approved

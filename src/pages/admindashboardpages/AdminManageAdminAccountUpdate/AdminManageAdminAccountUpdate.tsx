@@ -1,4 +1,5 @@
 import CreateAdminBankForm from "../../../components/admincomponents/adminSettingsComponent/CreateAdmin-Form/CreateAdmin-Bank-Form";
+import CreateAdminBusinessForm from "../../../components/admincomponents/adminSettingsComponent/CreateAdmin-Form/CreateAdmin-Business-Form";
 import CreateAdminForm from "../../../components/admincomponents/adminSettingsComponent/CreateAdmin-Form/CreateAdmin-Form";
 import Tabbar from "../../../components/LayoutComponent/TabBar/Tabbar";
 import { TopBarAdmin } from "../../../components/LayoutComponent/TopBar-Admin/TopBar-Admin";
@@ -16,6 +17,7 @@ export const AdminManageAdminAccountUpdate = () => {
         isEditMode={true}
         adminUserData={selectedAdmin}
       ></CreateAdminForm> */}
+      <CreateAdminBusinessForm></CreateAdminBusinessForm>
       <CreateAdminBankForm></CreateAdminBankForm>
       <Tabbar></Tabbar>
     </>

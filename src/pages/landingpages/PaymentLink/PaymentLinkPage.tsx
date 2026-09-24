@@ -26,6 +26,7 @@ import { ILoadState } from "../../../utils/loading.utils.";
 import "../UserRegistrationForm/UserRegistrationForm.css";
 import "../../../components/userscomponents/apartmentsFormsComp/paymentForms/tenantPayment.css";
 import "./PaymentLinkPage.css";
+import { AdminFilePreviewModal } from "../../../components/admincomponents/adminFilePreview/adminFilePreview";
 
 // Paystack confirms payments to the server a few seconds after the popup closes
 const CONFIRM_POLL_MS = 3000;
@@ -39,6 +40,7 @@ export const PaymentLinkPage = () => {
   const [sendingNotice, setSendingNotice] = useState(false);
   const [receipt, setReceipt] = useState<File | null>(null);
   const [replacingReceipt, setReplacingReceipt] = useState(false);
+  const [receiptOpen, setReceiptOpen] = useState(false);
   const [copiedField, setCopiedField] = useState("");
 
   const loadPayment = useCallback(async () => {
@@ -382,14 +384,13 @@ export const PaymentLinkPage = () => {
                     Receipt sent {convertToShortDate(payment.transferSubmittedAt!)}
                   </span>
                   <div className="payLinkReceiptActions">
-                    <a
-                      href={payment.transferReceiptUrl}
-                      target="_blank"
-                      rel="noreferrer"
+                    <button
+                      type="button"
                       className="payCopyBtn myfont1"
+                      onClick={() => setReceiptOpen(true)}
                     >
                       <FileTextOutlined /> View receipt
-                    </a>
+                    </button>
                     {!replacingReceipt && (
                       <button
                         type="button"
@@ -401,6 +402,20 @@ export const PaymentLinkPage = () => {
                     )}
                   </div>
                 </div>
+              )}
+
+              {/* Receipt pop-up */}
+              {payment.transferReceiptUrl && (
+                <AdminFilePreviewModal
+                  files={[
+                    {
+                      label: "Your payment receipt",
+                      url: payment.transferReceiptUrl,
+                    },
+                  ]}
+                  openIndex={receiptOpen ? 0 : null}
+                  onChange={(index) => setReceiptOpen(index !== null)}
+                />
               )}
 
               {/* Receipt upload */}

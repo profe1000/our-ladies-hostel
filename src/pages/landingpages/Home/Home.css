@@ -3,6 +3,8 @@
   position: relative;
   overflow: hidden;
   padding: 24px 16px 8px;
+  /* Start below the floated top-bar spacer */
+  clear: both;
 }
 
 .homeHeroGlow {

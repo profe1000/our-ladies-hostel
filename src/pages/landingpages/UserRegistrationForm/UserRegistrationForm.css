@@ -1,5 +1,7 @@
 .regPageWrapper {
   padding: 8px 16px 0;
+  /* Start below the floated top-bar spacer */
+  clear: both;
 }
 
 /* Progress Steps */

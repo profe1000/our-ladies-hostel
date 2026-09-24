@@ -26,6 +26,13 @@ export const adminSaveBankAccountApi = async (body?: any) => {
   return result;
 };
 
+export const adminSaveGeneralSettingsApi = async (body?: any) => {
+  const axios = await instance(null, null, true, true);
+  const { data } = await axios.post(`api/v1/admin/settings/general`, body);
+  const result: any = await data;
+  return result;
+};
+
 export const adminGetNotificationApi = async (body?: any) => {
   const axios = await instance(null, null, true, true);
   const { data } = await axios.get(

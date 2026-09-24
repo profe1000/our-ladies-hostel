@@ -6,6 +6,8 @@
 
 .adminPageBody {
   padding: 16px 16px 90px;
+  /* Start below the floated top-bar spacer */
+  clear: both;
 }
 
 /* Section header inside a page */

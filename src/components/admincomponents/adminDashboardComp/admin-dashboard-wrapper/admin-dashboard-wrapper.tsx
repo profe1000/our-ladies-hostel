@@ -37,10 +37,10 @@ export const AdminDashBoardWrapper = () => {
 
   return (
     <>
-      <div className="w3-content adminPageBody">
+      <div className="w3-content">
         {/* Welcome Header */}
-        <div className="dashHeader">
-          <div>
+        <div className="mb-8 mt-8">
+          <div className="mb-4">
             <span className="dashEyebrow myfont1">
               {currentDate.toLocaleDateString("en-GB", {
                 weekday: "long",
