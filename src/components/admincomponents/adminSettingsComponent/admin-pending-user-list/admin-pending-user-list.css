@@ -35,3 +35,80 @@
 .editAdminBtn {
   background-color: #89c664;
 }
+
+/* Pending payment cards */
+.payReqCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  background: #1b1b1b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: border-color 0.2s ease;
+}
+
+.payReqCard:hover {
+  border-color: rgba(212, 178, 76, 0.4);
+}
+
+.payReqMain {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+
+.payReqAmounts {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 12px;
+}
+
+.payReqLine {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.payReqLine span:last-child {
+  color: #ffffff;
+}
+
+.payReqTotal {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #d4b24c;
+}
+
+.payReqTotal span:last-child {
+  color: #d4b24c;
+  font-size: 15px;
+}
+
+.payReqActions {
+  flex-direction: column;
+}
+
+@media (max-width: 900px) {
+  .payReqCard {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .payReqActions {
+    flex-direction: row;
+  }
+
+  .payReqActions .adminBtn {
+    flex: 1;
+  }
+}

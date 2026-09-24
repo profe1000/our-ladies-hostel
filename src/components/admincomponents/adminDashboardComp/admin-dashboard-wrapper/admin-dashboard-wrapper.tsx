@@ -1,10 +1,18 @@
-import { SearchOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { IAdminAuthType } from "../../../../apiservice/admin-AuthService.type";
 import { useAppSelector } from "../../../../Redux/reduxCustomHook";
 import { RootState } from "../../../../Redux/store";
 import { AdminDashboard } from "../admin-dashboard/admin-dashboard";
+import AdminDashboardAlerts from "../admin-dashboard-alerts/admin-dashboard-alerts";
 import "./admin-dashboard-wrapper.css";
+
+// "Good morning" / "Good afternoon" / "Good evening"
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+};
 
 export const AdminDashBoardWrapper = () => {
   const [payLoadFilter, setpayLoadFilter] = useState<any>({});
@@ -16,76 +24,89 @@ export const AdminDashBoardWrapper = () => {
 
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
+  const credentials = adminAuthData.data?.credentials;
 
-  // Use to collect Change
+  // Apply a filter as soon as it changes
   const handleInputChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
-    setpayLoadFilter((values) => ({ ...values, [name]: value }));
-  };
-
-  // Use to Update Filter
-  const updateFilter = () => {
-    setExternalFilter({ ...payLoadFilter });
+    const nextFilter = { ...payLoadFilter, [name]: value };
+    setpayLoadFilter(nextFilter);
+    setExternalFilter(nextFilter);
   };
 
   return (
     <>
-      <div className="w3-container w3-margin-top">
-        <div className="w3-content">
-          {/* Selector */}
-          <div className="w3-col w3-margin-top">
-            <div className="w3-col l6 s6 m6" style={{ padding: "2px" }}>
+      <div className="w3-content adminPageBody">
+        {/* Welcome Header */}
+        <div className="dashHeader">
+          <div>
+            <span className="dashEyebrow myfont1">
+              {currentDate.toLocaleDateString("en-GB", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </span>
+            <h2 className="dashTitle myfont5">
+              {getGreeting()}
+              {credentials?.firstName ? `, ${credentials.firstName}` : ""}
+            </h2>
+            <p className="adminSectionSub myfont1">
+              Here is how your hostel is doing.
+            </p>
+          </div>
+
+          {/* Filters */}
+          <div className="dashFilters">
+            <label className="dashFilter">
+              <span className="dashFilterLabel myfont1">Building</span>
               <select
                 name="buildingId"
                 value={payLoadFilter?.buildingId || ""}
                 onChange={handleInputChange}
-                onBlur={updateFilter}
-                className="w3-col w3-input w3-text-white w3-border w3-round-large dashboardSelect myfont1 w3-small"
+                className="w3-input w3-text-white adminInput myfont1"
               >
-                <>
-                  <option value="">All Buildings</option>
-                  {adminAuthData.data?.credentials.buildings.map(
-                    (building, index) => (
-                      <option key={index} value={building.id}>
-                        {building.title}
-                      </option>
-                    )
-                  )}
-                </>
+                <option value="">All Buildings</option>
+                {credentials?.buildings?.map((building, index) => (
+                  <option key={index} value={building.id}>
+                    {building.title}
+                  </option>
+                ))}
               </select>
-            </div>
-            <div className="w3-col l4 s4 m4" style={{ padding: "2px" }}>
+            </label>
+            <label className="dashFilter dashFilterYear">
+              <span className="dashFilterLabel myfont1">Year</span>
               <select
                 name="year"
-                value={payLoadFilter?.year || ""}
+                value={payLoadFilter?.year || currentYear}
                 onChange={handleInputChange}
-                onBlur={updateFilter}
-                className="w3-col w3-input w3-text-white w3-border w3-round-large dashboardSelect myfont1 w3-small"
+                className="w3-input w3-text-white adminInput myfont1"
               >
-                <option value="">Year</option>
-                {adminAuthData.data?.credentials.years.map((year, index) => (
-                  <option key={index} value={year}>
+                {[
+                  currentYear,
+                  ...(credentials?.years || []).filter(
+                    (year) => year !== currentYear
+                  ),
+                ].map((year) => (
+                  <option key={year} value={year}>
                     {year + ""}
                   </option>
                 ))}
               </select>
-            </div>
-            <div className="w3-col l2 s2 m2" style={{ padding: "2px" }}>
-              <button className="w3-btn w3-center w3-round-large addDashboardbtn w3-center w3-col">
-                <SearchOutlined />
-              </button>
-            </div>
-          </div>
-
-          {/* Component */}
-          <div className="w3-col l12 s12 m12" style={{ padding: "2px" }}>
-            <AdminDashboard
-              initialDefaultFilter={{ year: currentYear }}
-              externalFilter={externalFilter}
-            ></AdminDashboard>
+            </label>
           </div>
         </div>
+
+        {/* Needs attention */}
+        <AdminDashboardAlerts></AdminDashboardAlerts>
+
+        {/* Dashboard */}
+        <AdminDashboard
+          initialDefaultFilter={{ year: currentYear }}
+          externalFilter={externalFilter}
+        ></AdminDashboard>
       </div>
     </>
   );

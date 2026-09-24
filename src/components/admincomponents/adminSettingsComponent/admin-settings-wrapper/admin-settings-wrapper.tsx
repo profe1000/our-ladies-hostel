@@ -47,7 +47,7 @@ export const AdminSettingWrapper: React.FC<{}> = () => {
             }}
             className="w3-col w3-btn w3-left-align  w3-border-bottom  myfont1  w3-margin-top"
           >
-            Manage Pending Approval
+            Pending Payments
           </button>
 
           {authData.data?.credentials?.adminRole?.id === 1 && (

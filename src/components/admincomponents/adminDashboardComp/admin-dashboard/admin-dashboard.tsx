@@ -16,6 +16,7 @@ import AdminTableRevenueTab from "../../adminCharts/adminTable-Revenue-Tab";
 import AdminTableRevenueTabCurrent from "../../adminCharts/adminTable-Revenue-Tab-Current";
 import AdminTableUpcomingRevenue from "../../adminCharts/adminTable-Upcoming-Revenue";
 import "./admin-dashboard.css";
+import AdminDashboardSummary from "../admin-dashboard-summary/admin-dashboard-summary";
 import RevenueGrid from "../../adminCharts/adminTable-Upcoming-Revenue-grid";
 import RevenueGridOverDue from "../../adminCharts/adminTable-OverDue-Revenue-grid";
 type NotificationType = "success" | "info" | "warning" | "error";
@@ -168,7 +169,12 @@ export const AdminDashboard: React.FC<IAdminDashboard> = ({
         {/* " Show No data" */}
         {adminDashboardLoadState === "completed" && (
           <>
-            <div className="w3-col w3-margin-top">
+            <AdminDashboardSummary></AdminDashboardSummary>
+
+            <h3 className="adminSectionTitle myfont5 dashSectionTitle">
+              Reports
+            </h3>
+            <div className="w3-col dashCharts">
               <AdminChartRevenue></AdminChartRevenue>
               {/* <AdminTableRevenueTab></AdminTableRevenueTab> */}
               <AdminTableRevenueTabCurrent></AdminTableRevenueTabCurrent>

@@ -2,10 +2,15 @@
 
 import React from "react";
 
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import {
+  CheckOutlined,
+  ClockCircleOutlined,
+  CloseOutlined,
+  ExclamationCircleFilled,
+  HomeOutlined,
+} from "@ant-design/icons";
 import {
   Button,
-  Empty,
   Modal,
   notification,
   Pagination,
@@ -33,12 +38,14 @@ type IAdminPendingUsersList = {
   externalFilter?: any;
   initialDefaultFilter?: any;
   hidePagination?: boolean;
+  onTotalChange?: (total: number) => void;
 };
 
 export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
   externalFilter,
   initialDefaultFilter,
   hidePagination = true,
+  onTotalChange,
 }) => {
   const [pendingUsersLoadState, setPendingUsersLoadState] =
     useState<ILoadState>("loading");
@@ -55,7 +62,7 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
   // Pagination Constant/Variables
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(1);
-  const perPage = 10;
+  const perPage = initialDefaultFilter?.perPage || 10;
 
   // For Navigator/Redux
   const dispatch = useAppDispatch();
@@ -91,6 +98,10 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
       setTableData(pendingUsersDataResult.data?.data || []);
       setPendingUsersLoadState("completed");
       setTotalItems(pendingUsersDataResult.data?.meta?.total || 1);
+      onTotalChange?.(pendingUsersDataResult.data?.meta?.total || 0);
+      if (!pendingUsersDataResult.data?.data?.length) {
+        setPendingUsersLoadState("noData");
+      }
     } else if (pendingUsersDataResult.httpState === "ERROR") {
       setPendingUsersLoadState("error");
     } else if (pendingUsersDataResult.httpState === "LOADING") {
@@ -117,12 +128,12 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
     setSelectedUserIndex(index);
     confirm({
       title:
-        "Are you sure you want to Approved this User, This cannot be undone",
+        "Confirm this payment? The tenant will be approved. This cannot be undone.",
       icon: <ExclamationCircleFilled rev={undefined} />,
       content: "",
       centered: true,
       okText: "Yes",
-      okType: "danger",
+      okType: "primary",
       cancelText: "No",
       zIndex: appZIndex.modal,
       onOk() {
@@ -140,7 +151,7 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
   const showRemoveUserApiConfirm = (index) => {
     setSelectedUserIndex(index);
     confirm({
-      title: "Are you sure you want to Revoke this User, This cannot be undone",
+      title: "Decline this payment? This cannot be undone.",
       icon: <ExclamationCircleFilled rev={undefined} />,
       content: "",
       centered: true,
@@ -236,14 +247,6 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
     setLoadPendingUsersData(true);
   };
 
-  // Navigate to the next Page
-  const navigateToView = async (index: number) => {
-    // Navigate to the detail view page for the selected user
-    if (tableData[index] && tableData[index].id) {
-      navigate(`/admin/rent-payments/${tableData[index].id}`);
-    }
-  };
-
   return (
     <>
       {/* " The context is use to hold the notification from ant design" */}
@@ -285,104 +288,101 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
 
         {/* " Show No data" */}
         {pendingUsersLoadState === "noData" && (
-          <div className="w3-margin-top">
-            <Empty></Empty>
+          <div className="adminPanel adminEmpty">
+            <span className="adminEmptyIcon">
+              <CheckOutlined />
+            </span>
+            <p className="myfont1">
+              All caught up. There are no payments waiting for approval.
+            </p>
           </div>
         )}
 
-        {/* " Show No data" */}
+        {/* " Show Pending Payments" */}
         {pendingUsersLoadState === "completed" && (
-          <div className="w3-col w3-margin-top">
-            <div className="w3-col">
-              <div className="w3-content">
-                <div>
-                  {/* Recent activities */}
-                  <div className="w3-col l12 s12">
-                    <div className="w3-col w3-padding">
-                      <div className="w3-col">
-                        {tableData.map((pendingUsers, index) => (
-                          <React.Fragment key={index}>
-                            <div className="w3-col w3-card-4 w3-round-large adminCard w3-padding w3-margin-bottom">
-                              <div className="w3-col">
-                                <h5 className="myfont3 w3-text-white adminCardHeader">
-                                  {pendingUsers?.tenant?.fullName} <br />
-                                  {pendingUsers?.tenant?.phoneNumber}
-                                </h5>
-                              </div>
-
-                              <div className="w3-col">
-                                <p
-                                  style={{
-                                    paddingTop: "2px",
-                                    paddingLeft: "2px",
-                                  }}
-                                  className="myfont1 w3-text-white adminCardText"
-                                >
-                                  {pendingUsers?.apartment?.building?.title +
-                                    " - " +
-                                    pendingUsers?.apartment?.title +
-                                    ""}
-                                  <br />
-                                  Rent :{" "}
-                                  {formatCurrency(pendingUsers?.netAmount)}
-                                  <br />
-                                  Service Charge :{" "}
-                                  {formatCurrency(pendingUsers?.serviceCharge)}
-                                  <br />
-                                  Total : {formatCurrency(pendingUsers?.amount)}
-                                  <br />
-                                  {convertToShortDate(
-                                    pendingUsers?.dateCreated
-                                  )}
-                                </p>
-                              </div>
-
-                              <div className="w3-col w3-margin-top w3-margin-bottom">
-                                <div className="w3-col ">
-                                  <button
-                                    onClick={() => {
-                                      navigateToView(index);
-                                    }}
-                                    className="w3-btn  w3-round-large myfont1 w3-small viewUnitsBtn"
-                                  >
-                                    View
-                                  </button>
-                                  &nbsp; &nbsp; &nbsp;
-                                  <button
-                                    onClick={() => {
-                                      showApprovedUserApiConfirm(index);
-                                    }}
-                                    className="w3-btn  w3-round-large myfont1 w3-small editAdminBtn"
-                                  >
-                                    Accept
-                                  </button>
-                                  &nbsp; &nbsp; &nbsp;
-                                  <button
-                                    onClick={() => {
-                                      showRemoveUserApiConfirm(index);
-                                    }}
-                                    className="w3-btn  w3-round-large myfont1 w3-small deleteAdminBtn"
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="w3-col w3-margin-bottom">
-                              <h6 className="cardsBottonBorder"> </h6>
-                            </div>
-                          </React.Fragment>
-                        ))}
-                      </div>
+          <div className="w3-col">
+            {tableData.map((pendingUsers, index) => {
+              const name = pendingUsers?.tenant?.fullName || "Tenant";
+              const initials = name
+                .split(" ")
+                .filter(Boolean)
+                .slice(0, 2)
+                .map((part) => part[0].toUpperCase())
+                .join("");
+              return (
+                <div key={pendingUsers.id || index} className="payReqCard">
+                  <div className="payReqMain">
+                    <span className="adminAvatar">{initials || "?"}</span>
+                    <div className="adminListMain">
+                      <h5 className="adminListTitle myfont3">{name}</h5>
+                      <p className="adminListSub myfont1">
+                        {pendingUsers?.tenant?.phoneNumber}
+                        {pendingUsers?.tenant?.email &&
+                          ` · ${pendingUsers.tenant.email}`}
+                      </p>
+                      <p className="adminListSub myfont1">
+                        <HomeOutlined />{" "}
+                        {[
+                          pendingUsers?.apartment?.building?.title,
+                          pendingUsers?.apartment?.title,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ") || "-"}
+                      </p>
+                      <p className="adminListSub myfont1">
+                        <ClockCircleOutlined />{" "}
+                        {convertToShortDate(pendingUsers?.dateCreated)}
+                        {pendingUsers?.paymentReference &&
+                          ` · Ref ${pendingUsers.paymentReference}`}
+                      </p>
                     </div>
                   </div>
+
+                  <div className="payReqAmounts myfont1">
+                    <div className="payReqLine">
+                      <span>Rent</span>
+                      <span>{formatCurrency(pendingUsers?.netAmount || 0)}</span>
+                    </div>
+                    <div className="payReqLine">
+                      <span>Service Charge</span>
+                      <span>
+                        {formatCurrency(pendingUsers?.serviceCharge || 0)}
+                      </span>
+                    </div>
+                    <div className="payReqLine payReqTotal">
+                      <span>Total</span>
+                      <span className="myfont3">
+                        {formatCurrency(pendingUsers?.amount || 0)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="adminBtnRow payReqActions">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        showApprovedUserApiConfirm(index);
+                      }}
+                      className="adminBtn adminBtnPrimary"
+                    >
+                      <CheckOutlined /> Confirm Payment
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        showRemoveUserApiConfirm(index);
+                      }}
+                      className="adminBtn adminBtnDanger"
+                    >
+                      <CloseOutlined /> Decline
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </div>
+              );
+            })}
 
             {!hidePagination && (
-              <div className="w3-col w3-margin-top">
+              <div className="w3-col adminPagination">
                 <Pagination
                   current={currentPage || 1}
                   onChange={onPageChange}
