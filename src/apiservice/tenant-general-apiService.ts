@@ -81,10 +81,16 @@ export const tenantGetPaymentLinkApi = async (token: string) => {
   return result;
 };
 
-export const tenantPaymentLinkTransferNoticeApi = async (token: string) => {
+export const tenantPaymentLinkTransferNoticeApi = async (
+  token: string,
+  receipt: File
+) => {
   const axios = await instance("", null, true);
+  const formData = new FormData();
+  formData.append("receipt", receipt);
   const { data } = await axios.post(
-    `api/v1/tenant/payment-links/${token}/transfer-notice`
+    `api/v1/tenant/payment-links/${token}/transfer-notice`,
+    formData
   );
   const result: any = await data;
   return result;

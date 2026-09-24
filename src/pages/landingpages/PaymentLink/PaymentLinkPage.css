@@ -46,3 +46,37 @@
   background: rgba(220, 53, 69, 0.15);
   border-color: rgba(220, 53, 69, 0.5);
 }
+
+.payLinkReceipt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.payLinkReceiptActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.payLinkReceiptActions a {
+  text-decoration: none;
+}
+
+.payLinkReceiptForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.payLinkFileInput {
+  background-color: #1b1b1b;
+  padding: 12px 8px;
+}

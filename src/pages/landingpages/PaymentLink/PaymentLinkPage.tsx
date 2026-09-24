@@ -4,7 +4,9 @@ import {
   BankOutlined,
   CheckOutlined,
   CopyOutlined,
+  ClockCircleOutlined,
   CreditCardOutlined,
+  FileTextOutlined,
   HomeOutlined,
   LoadingOutlined,
   WalletOutlined,
@@ -18,6 +20,7 @@ import {
 } from "../../../apiservice/tenant-general-apiService";
 import { ITenantPaymentLinkData } from "../../../apiservice/tenant-general-apiService.type.";
 import { formatCurrency } from "../../../utils/basic.utils";
+import { convertToShortDate } from "../../../utils/date.utils";
 import { ILoadState } from "../../../utils/loading.utils.";
 // Shares the summary card and payment styles with the registration/payment pages
 import "../UserRegistrationForm/UserRegistrationForm.css";
@@ -34,7 +37,8 @@ export const PaymentLinkPage = () => {
   const [loadState, setLoadState] = useState<ILoadState>("loading");
   const [confirming, setConfirming] = useState(false);
   const [sendingNotice, setSendingNotice] = useState(false);
-  const [noticeSent, setNoticeSent] = useState(false);
+  const [receipt, setReceipt] = useState<File | null>(null);
+  const [replacingReceipt, setReplacingReceipt] = useState(false);
   const [copiedField, setCopiedField] = useState("");
 
   const loadPayment = useCallback(async () => {
@@ -82,11 +86,17 @@ export const PaymentLinkPage = () => {
     });
   };
 
-  const sendTransferNotice = async () => {
+  const sendTransferNotice = async (event: any) => {
+    event.preventDefault();
+    if (!receipt) return;
     setSendingNotice(true);
     try {
-      await tenantPaymentLinkTransferNoticeApi(token);
-      setNoticeSent(true);
+      const result = await tenantPaymentLinkTransferNoticeApi(token, receipt);
+      setPayment((current) =>
+        current ? { ...current, ...result?.data, id: current.id } : current
+      );
+      setReceipt(null);
+      setReplacingReceipt(false);
     } catch (error: any) {
       alert(
         error?.response?.data?.message ||
@@ -152,6 +162,8 @@ export const PaymentLinkPage = () => {
   const building = payment.apartment?.building;
   const isPaid = payment.paymentStatus === "Accepted";
   const isRejected = payment.paymentStatus === "Rejected";
+  const transferSubmitted = !!payment.transferSubmittedAt;
+  const showReceiptForm = !transferSubmitted || replacingReceipt;
 
   const paymentLines = [
     { label: "Rent", value: payment.rent },
@@ -214,7 +226,7 @@ export const PaymentLinkPage = () => {
       <div className="w3-container">
         <div className="w3-content payFormWrapper">
           {/* Payment status */}
-          {(isPaid || isRejected || confirming) && (
+          {(isPaid || isRejected || confirming || transferSubmitted) && (
             <div
               className={`payLinkStatus myfont1 ${
                 isPaid
@@ -232,6 +244,14 @@ export const PaymentLinkPage = () => {
               )}
               {isRejected && (
                 <>This payment was declined. Please contact us for help.</>
+              )}
+              {!isPaid && !isRejected && !confirming && transferSubmitted && (
+                <>
+                  <ClockCircleOutlined /> Transfer submitted on{" "}
+                  {convertToShortDate(payment.transferSubmittedAt!)}. We are
+                  confirming your payment and will email your login details to{" "}
+                  {payment.tenant.email}.
+                </>
               )}
               {!isPaid && !isRejected && confirming && (
                 <>
@@ -355,20 +375,64 @@ export const PaymentLinkPage = () => {
                   </div>
                 ))}
               </div>
-              {noticeSent ? (
-                <p className="payLinkNotice myfont1">
-                  <CheckOutlined /> Thank you. We will confirm your transfer and
-                  email your login details to {payment.tenant.email}.
-                </p>
-              ) : (
-                <button
-                  type="button"
-                  className="w3-btn payLinkSecondaryButton w3-round-large myfont3"
-                  onClick={sendTransferNotice}
-                  disabled={sendingNotice}
-                >
-                  {sendingNotice ? <LoadingOutlined /> : "I have made the transfer"}
-                </button>
+              {/* Receipt already sent */}
+              {transferSubmitted && (
+                <div className="payLinkReceipt">
+                  <span className="payBankLabel myfont1">
+                    Receipt sent {convertToShortDate(payment.transferSubmittedAt!)}
+                  </span>
+                  <div className="payLinkReceiptActions">
+                    <a
+                      href={payment.transferReceiptUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="payCopyBtn myfont1"
+                    >
+                      <FileTextOutlined /> View receipt
+                    </a>
+                    {!replacingReceipt && (
+                      <button
+                        type="button"
+                        className="payCopyBtn myfont1"
+                        onClick={() => setReplacingReceipt(true)}
+                      >
+                        Upload a different receipt
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Receipt upload */}
+              {showReceiptForm && (
+                <form onSubmit={sendTransferNotice} className="payLinkReceiptForm">
+                  <label htmlFor="payment-receipt" className="payBankLabel myfont1">
+                    Upload your payment receipt (image or PDF)
+                  </label>
+                  <input
+                    id="payment-receipt"
+                    type="file"
+                    accept="image/*,application/pdf"
+                    required
+                    onChange={(event) =>
+                      setReceipt(event.target.files?.[0] || null)
+                    }
+                    className="w3-input w3-text-white payLinkFileInput myfont1"
+                  />
+                  <button
+                    type="submit"
+                    className="w3-btn payLinkSecondaryButton w3-round-large myfont3"
+                    disabled={sendingNotice || !receipt}
+                  >
+                    {sendingNotice ? (
+                      <LoadingOutlined />
+                    ) : transferSubmitted ? (
+                      "Send new receipt"
+                    ) : (
+                      "I have made the transfer"
+                    )}
+                  </button>
+                </form>
               )}
             </section>
           )}

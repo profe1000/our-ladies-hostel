@@ -404,6 +404,9 @@ export interface IPendingRentPaymentData {
   paymentReceivedAt?: string;
   paymentReference?: string;
   paymentGateway?: string;
+  // Set once the tenant uploads a bank transfer receipt
+  transferReceiptUrl?: string;
+  transferSubmittedAt?: string;
   dateModified: string;
   dateCreated: string;
 }

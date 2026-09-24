@@ -141,6 +141,9 @@ export interface ITenantPaymentLinkData {
   paymentVerified: boolean;
   startDate?: string;
   endDate?: string;
+  // Set once the tenant uploads a bank transfer receipt
+  transferReceiptUrl?: string;
+  transferSubmittedAt?: string;
   charges: { title: string; amount: number }[];
   tenant: {
     firstName?: string;

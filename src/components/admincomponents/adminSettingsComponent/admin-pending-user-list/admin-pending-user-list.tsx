@@ -7,6 +7,7 @@ import {
   ClockCircleOutlined,
   CloseOutlined,
   ExclamationCircleFilled,
+  FileTextOutlined,
   HomeOutlined,
 } from "@ant-design/icons";
 import {
@@ -310,7 +311,12 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
                 .map((part) => part[0].toUpperCase())
                 .join("");
               return (
-                <div key={pendingUsers.id || index} className="payReqCard">
+                <div
+                  key={pendingUsers.id || index}
+                  className={`payReqCard ${
+                    pendingUsers?.transferReceiptUrl ? "payReqCardWithReceipt" : ""
+                  }`}
+                >
                   <div className="payReqMain">
                     <span className="adminAvatar">{initials || "?"}</span>
                     <div className="adminListMain">
@@ -335,8 +341,40 @@ export const AdminPendingUsersList: React.FC<IAdminPendingUsersList> = ({
                         {pendingUsers?.paymentReference &&
                           ` · Ref ${pendingUsers.paymentReference}`}
                       </p>
+                      {/* Bank transfer receipt uploaded by the tenant */}
+                      {pendingUsers?.transferSubmittedAt ? (
+                        <span className="payReqTransfer payReqTransferSent myfont1">
+                          <CheckOutlined /> Transfer submitted{" "}
+                          {convertToShortDate(pendingUsers.transferSubmittedAt)}
+                        </span>
+                      ) : (
+                        <span className="payReqTransfer myfont1">
+                          Awaiting payment
+                        </span>
+                      )}
                     </div>
                   </div>
+
+                  {pendingUsers?.transferReceiptUrl && (
+                    <a
+                      href={pendingUsers.transferReceiptUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="payReqReceipt myfont1"
+                    >
+                      {/\.pdf($|\?)/i.test(pendingUsers.transferReceiptUrl) ? (
+                        <span className="payReqReceiptFile">
+                          <FileTextOutlined /> PDF
+                        </span>
+                      ) : (
+                        <img
+                          src={pendingUsers.transferReceiptUrl}
+                          alt={`Transfer receipt from ${name}`}
+                        />
+                      )}
+                      <span>View receipt</span>
+                    </a>
+                  )}
 
                   <div className="payReqAmounts myfont1">
                     <div className="payReqLine">
