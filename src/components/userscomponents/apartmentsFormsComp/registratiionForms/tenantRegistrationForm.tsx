@@ -123,9 +123,48 @@ const guarantorFields: IFormField[] = [
 // Guarantors to collect (index into payLoad.guarantors)
 const guarantorsToCollect = [0,1];
 
+// TODO(remove): TEMPORARY TEST DATA - delete this block and the
+// `testPrefill` use below once testing is done. It only applies to
+// `npm start` (development), never to a production build.
+const testPrefill =
+  process.env.NODE_ENV === "development"
+    ? {
+        firstName: "Test",
+        lastName: "Tenant",
+        email: "test.tenant.apt28@example.com",
+        phoneNumber: "+2348012345678",
+        nin: "12345678901",
+        occupation: "Student",
+        address: "12 Sample Street, Lagos, Nigeria",
+        gender: "female",
+        maritalStatus: "single",
+        religion: "christain",
+        noOfOccupants: "1",
+        noOfVehicles: "0",
+        reason: "Test registration from the development environment",
+        guarantors: [
+          {
+            fullName: "Jane Guarantor",
+            phoneNumber: "+2348087654321",
+            occupation: "Teacher",
+            address: "45 Guarantor Avenue, Abuja, Nigeria",
+          },
+          {
+            fullName: "John Guarantor",
+            phoneNumber: "+2348098765432",
+            occupation: "Engineer",
+            address: "78 Reference Road, Port Harcourt, Nigeria",
+          },
+        ],
+      }
+    : {};
+
 export const TenantRegistrationForm: React.FC<{}> = () => {
   const [loadApi, setLoadApi] = useState(false);
-  const [payLoad, setpayLoad] = useState<any>({ guarantors: [{}, {}] });
+  const [payLoad, setpayLoad] = useState<any>({
+    guarantors: [{}, {}],
+    ...JSON.parse(JSON.stringify(testPrefill)), // TODO(remove): temporary test data
+  });
   const [formLoading, setFormLoading] = useState<boolean>(false);
 
   // For Navigator/Redux
