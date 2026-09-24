@@ -1,0 +1,79 @@
+/* Tenant requests - filters */
+.reqFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+}
+
+.reqSearch {
+  position: relative;
+  flex: 1 1 260px;
+}
+
+.reqSearchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+}
+
+.reqSearchInput {
+  width: 100%;
+  padding-left: 38px !important;
+}
+
+.reqChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.reqChip {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.reqChip:hover {
+  color: #d4b24c;
+  border-color: #d4b24c;
+}
+
+.reqChipActive,
+.reqChipActive:hover {
+  color: #ffffff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #947a1e, #624f0b);
+}
+
+.reqDate {
+  margin-top: 6px;
+}
+
+/* Tenant request details */
+.reqSubmitted {
+  display: block;
+  margin-top: 4px;
+}
+
+.reqDecided {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 4px;
+}
+
+.adminBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

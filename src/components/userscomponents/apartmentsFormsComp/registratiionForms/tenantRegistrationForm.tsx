@@ -230,8 +230,10 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
         type: "TENANT_ADD_REGISTRATION_RESULT_DATA",
         payload: registrationResult.data,
       });
-      alert("Your form have being saved, please proceed to make payment");
-      navigate(`/landing/user-tenant-payment/${selectedApartment.id}`);
+      alert(
+        "Your form has been submitted. An email will be sent to you shortly to make payment."
+      );
+      navigate("/", { replace: true });
       // Handle Success Here
     } else if (result.httpState === "ERROR") {
       setFormLoading(false);

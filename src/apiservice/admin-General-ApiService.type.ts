@@ -454,3 +454,34 @@ export interface INotificationsData {
 export interface Meta {
   total: number;
 }
+
+// Admin Apartment (Tenant) Requests
+// The exact response shape is not documented yet, so fields are optional
+export interface IAdminApartmentRequestData {
+  id: number;
+  firstName?: string;
+  lastName?: string;
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+  gender?: string;
+  maritalStatus?: string;
+  religion?: string;
+  occupation?: string;
+  address?: string;
+  nin?: string;
+  reason?: string;
+  noOfOccupants?: number | string;
+  noOfVehicles?: number | string;
+  apartmentId?: number;
+  apartment?: Partial<IAdminApartmentData> & {
+    building?: Partial<IAdminBuildingsData>;
+  };
+  statusId?: string;
+  status?: string | { id?: string | number; name?: string };
+  guarantors?: TenantGuarantor[];
+  tenantGuarantors?: TenantGuarantor[];
+  dateCreated?: string;
+  dateModified?: string;
+  [key: string]: any;
+}

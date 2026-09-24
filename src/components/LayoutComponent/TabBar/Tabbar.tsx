@@ -3,6 +3,7 @@ import {
   HomeOutlined,
   InsertRowLeftOutlined,
   SettingOutlined,
+  SolutionOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -41,6 +42,11 @@ const Tabbar = () => {
       title: "Buildings",
     },
     {
+      icon: <SolutionOutlined />,
+      url: "/admin/tenant-requests",
+      title: "Requests",
+    },
+    {
       icon: <SettingOutlined />,
       url: "/admin/Settings",
       title: "Settings",
@@ -57,6 +63,11 @@ const Tabbar = () => {
       icon: <InsertRowLeftOutlined />,
       url: "/admin/Buildings",
       title: "Buildings",
+    },
+    {
+      icon: <SolutionOutlined />,
+      url: "/admin/tenant-requests",
+      title: "Requests",
     },
     {
       icon: <SettingOutlined />,
@@ -78,6 +89,9 @@ const Tabbar = () => {
       setMenu(generalMenu);
     }
   };
+  // Share the bar equally between the tabs
+  const tabWidth = `${100 / (menu.length || 1)}%`;
+
   return (
     <>
       <div className="w3-col tabBarSpace">
@@ -87,7 +101,8 @@ const Tabbar = () => {
         {menu.map((menu: IMenuType, index: number) => (
           <div
             key={index}
-            className="w3-col l4 s4 m4 w3-center w3-padding-top tabbarcolor"
+            className="w3-col w3-center w3-padding-top tabbarcolor"
+            style={{ width: tabWidth }}
           >
             <div className="w3-padding" style={{ marginTop: "2px" }}>
               <Link className="link" to={menu.url}>

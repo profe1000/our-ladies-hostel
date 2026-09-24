@@ -1,4 +1,11 @@
-import { LoadingOutlined } from "@ant-design/icons";
+import {
+  BankOutlined,
+  CheckOutlined,
+  CopyOutlined,
+  FileTextOutlined,
+  LoadingOutlined,
+  WalletOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useFormatApiRequest from "../../../../hooks/formatApiRequest";
@@ -10,7 +17,6 @@ import PaystackPop from "@paystack/inline-js";
 import { RootState } from "../../../../Redux/store";
 import "./tenantPayment.css";
 import {
-  ITenantBuildingsData,
   ITenantApartmentData,
   ITenantRegistrationData,
   ITenantPaymentResult,
@@ -30,7 +36,7 @@ export const TenantPaymentForm: React.FC<{}> = () => {
   const [loadApi, setLoadApi] = useState(false);
   const [payLoad, setpayLoad] = useState<any>({});
   const [formLoading, setFormLoading] = useState<boolean>(false);
-  const [agreePayment, setAgreePayment] = useState<boolean>(false);
+  const [copiedField, setCopiedField] = useState<string>("");
 
   const [rentPaymentDetailsLoadState, setRentPaymentDetailsLoadState] =
     useState<ILoadState>("loading");
@@ -41,10 +47,6 @@ export const TenantPaymentForm: React.FC<{}> = () => {
     useState<ITenantPaymentResult | null>(null);
 
   // For Navigator/Redux
-  const selectedBuilding: ITenantBuildingsData = useAppSelector(
-    (state: RootState) => state?.TenantSelectedBuilding
-  );
-
   const selectedApartment: ITenantApartmentData = useAppSelector(
     (state: RootState) => state?.TenantSelectedApartment
   );
@@ -68,19 +70,6 @@ export const TenantPaymentForm: React.FC<{}> = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   setrentPrice(selectedApartment?.price);
-  //   setCautionPrice(selectedApartment?.price * 0.1);
-  //   setLegalPrice(selectedApartment?.price * 0.1);
-  //   setServicePrice(selectedApartment?.price * 0.1);
-  //   settotalPrice(
-  //     Number(rentPrice) +
-  //       Number(legalPrice) +
-  //       Number(cautionPrice) +
-  //       Number(servicePrice)
-  //   );
-  // }, []);
-
   const fetchSettings = async () => {
     try {
       const response = await tenantGetSettingsApi();
@@ -97,11 +86,16 @@ export const TenantPaymentForm: React.FC<{}> = () => {
     fetchSettings();
   }, []);
 
+  // Keep the rent in sync (the apartment may be reloaded after a refresh)
+  useEffect(() => {
+    if (selectedApartment?.price) setrentPrice(selectedApartment.price);
+  }, [selectedApartment?.price]);
+
   // Load The Rengt Payment Details
   const rentPaymentDetailsDataResult = useFormatApiRequest(
     () =>
-      tenantRentPaymentDetailsApi(tenantRegistrationData.token, {
-        apartmentId: selectedApartment.id || 1,
+      tenantRentPaymentDetailsApi(tenantRegistrationData?.token, {
+        apartmentId: selectedApartment.id || params?.id || 1,
       }),
     loadRentPaymentDetails,
     () => {
@@ -145,7 +139,18 @@ export const TenantPaymentForm: React.FC<{}> = () => {
     const value =
       name === "agreePayment" ? event.target.checked : event.target.value;
     setpayLoad((values: any) => ({ ...values, [name]: value }));
-    console.log(event.target.checked);
+  };
+
+  // Copy bank details to the clipboard
+  const copyToClipboard = async (field: string, value?: string | number) => {
+    if (value === undefined || value === null || value === "") return;
+    try {
+      await navigator.clipboard.writeText(String(value));
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(""), 2000);
+    } catch (error) {
+      console.error("Could not copy:", error);
+    }
   };
 
   // Use to Submit Form
@@ -162,7 +167,7 @@ export const TenantPaymentForm: React.FC<{}> = () => {
   // A custom hook to save form data
   const result = useFormatApiRequest(
     () =>
-      tenantRentPaymentApi(tenantRegistrationData.token, {
+      tenantRentPaymentApi(tenantRegistrationData?.token, {
         amount: totalPrice,
         apartmentId: selectedApartment.id || params?.id || 0,
       }),
@@ -180,7 +185,6 @@ export const TenantPaymentForm: React.FC<{}> = () => {
     if (result.httpState === "SUCCESS") {
       setFormLoading(false);
       setTenantPaymentResultData(result.data);
-      // console.log(result.data);
 
       // payWithPayStack(result.data?.paystackMetadata);
 
@@ -197,11 +201,10 @@ export const TenantPaymentForm: React.FC<{}> = () => {
 
   const payWithPayStack = (meta: any) => {
     const paystack = new PaystackPop();
-    // console.log(meta);
     paystack.newTransaction({
       key: process.env.REACT_APP_PAYSTACK_PK,
       email:
-        tenantRegistrationData.credentials.email ||
+        tenantRegistrationData?.credentials?.email ||
         "annonymouslinkmie@gmail.com",
       amount: totalPrice * 100 || 0,
       currency: "NGN",
@@ -216,6 +219,30 @@ export const TenantPaymentForm: React.FC<{}> = () => {
       },
     });
   };
+
+  const paymentLines = [
+    { label: "Rent", value: rentPrice },
+    { label: "Legal Fee", value: legalPrice },
+    { label: "Caution Fee", value: cautionPrice },
+    { label: "Service Charge", value: servicePrice },
+  ];
+
+  const bankDetails = [
+    { key: "bankName", label: "Bank Name", value: userSettingsData?.bankName },
+    {
+      key: "accountName",
+      label: "Account Name",
+      value: userSettingsData?.accountName,
+    },
+    {
+      key: "accountNumber",
+      label: "Account Number",
+      value: userSettingsData?.accountNumber,
+      copy: true,
+    },
+  ];
+
+  const agreementUrl = tenantRegistrationData?.credentials?.agreementFormUrl;
 
   return (
     <>
@@ -261,146 +288,189 @@ export const TenantPaymentForm: React.FC<{}> = () => {
           </div>
         )}
 
-        {/* " Show No data" */}
+        {/* " Show Payment Form" */}
         {rentPaymentDetailsLoadState === "completed" && (
           <div className="w3-container">
-            <div className="w3-content">
+            <div className="w3-content payFormWrapper">
               <form onSubmit={handleSubmit}>
-                {/* Forms Here */}
-                <div className="w3-col">
-                  {/* Pre Form Text */}
-                  <div className="w3-col w3-margin-bottom">
-                    <p className="w3-text-white w3-center">
-                      <b>{`${selectedBuilding.title} - ${selectedApartment.title}`}</b>
-                    </p>
-                    <p className="w3-text-white regPreFormText myfont1">
-                      {selectedBuilding.description}
-                    </p>
-                  </div>
-
-                  <div className="w3-col w3-margin-bottom">
-                    <p>
-                      <input
-                        name="agreePayment"
-                        onChange={handleInputChange}
-                        className="w3-check"
-                        type="checkbox"
-                        value={payLoad?.agreePayment || false}
-                      />
-                      <span className="w3-text-white regPreFormText myfont1">
-                        &nbsp; Click box to agree to the above tenance
+                <div className="payGrid">
+                  {/* Payment Summary */}
+                  <section className="paySection">
+                    <div className="paySectionHeader">
+                      <span className="paySectionIcon">
+                        <WalletOutlined />
                       </span>
-                    </p>
-                    <p>
-                      <br />
-                      <span className="agreementBtn w3-round-large">
-                        <a
-                          href={
-                            tenantRegistrationData.credentials.agreementFormUrl
-                          }
-                          target="_blank"
-                          rel="noreferrer"
-                          className="w3-text-white"
-                          style={{ textDecoration: "none" }}
-                        >
-                          DownLoad Agreement
-                        </a>
-                      </span>
-                    </p>
-                  </div>
+                      <div>
+                        <h3 className="paySectionTitle myfont3">
+                          Payment Summary
+                        </h3>
+                        <p className="paySectionHint myfont1">
+                          Breakdown of what you are paying for.
+                        </p>
+                      </div>
+                    </div>
 
-                  <div className="w3-col w3-margin-bottom">
-                    <h2 className="w3-col myfont1 w3-medium w3-text-white">
-                      Payment Summary
-                    </h2>
-                    <br /> <br />
-                    <span className="w3-text-yellow  w3-col myfont1 amountToPayText">
-                      Rent
-                    </span>
-                    <br />
-                    <p className=" w3-text-white w3-col myfont1">
-                      {" "}
-                      {formatCurrency(rentPrice || 0)}{" "}
-                    </p>
-                    <br /> <br />
-                    <span className="w3-text-yellow   w3-col myfont1 amountToPayText">
-                      Legal Fees
-                    </span>
-                    <br />
-                    <p className="w3-text-white w3-col myfont1">
-                      {" "}
-                      {formatCurrency(legalPrice || 0)}{" "}
-                    </p>
-                    <br /> <br />
-                    <span className="w3-text-yellow  w3-col myfont1 amountToPayText">
-                      Caution Fees
-                    </span>
-                    <br />
-                    <p className="w3-text-white w3-col myfont1">
-                      {" "}
-                      {formatCurrency(cautionPrice || 0)}{" "}
-                    </p>
-                  </div>
+                    <div className="payLines">
+                      {paymentLines.map((line) => (
+                        <div className="payLine myfont1" key={line.label}>
+                          <span className="payLineLabel">{line.label}</span>
+                          <span className="payLineValue">
+                            {formatCurrency(line.value || 0)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
 
-                  <div className="w3-col w3-margin-bottom">
-                    <span className="w3-text-yellow  w3-col myfont1 amountToPayText">
-                      Service Fees
-                    </span>
-                    <br />
-                    <p className="w3-text-white w3-col myfont1">
-                      {" "}
-                      {formatCurrency(servicePrice || 0)}{" "}
-                    </p>
-                  </div>
-
-                  {/* Amount To Pay */}
-                  <div className="w3-col w3-margin-bottom">
-                    <div className="w3-col l12 s12 m12">
-                      <span className="w3-text-yellow   w3-col myfont1 amountToPayText">
+                    <div className="payTotal">
+                      <span className="payTotalLabel myfont1">
                         Total Amount to Pay
                       </span>
-                      <br />
-                      <input
-                        required
-                        name="amountToPay"
-                        readOnly
-                        value={formatCurrency(totalPrice || 0)}
-                        className="w3-input w3-border w3-col w3-text-white w3-round-large w3-border-yellow regFormInputPayment"
-                        placeholder="Amount To Pay"
-                      />
+                      <span className="payTotalValue myfont5">
+                        {formatCurrency(totalPrice || 0)}
+                      </span>
+                    </div>
+                  </section>
+
+                  {/* Bank Transfer Details */}
+                  <section className="paySection">
+                    <div className="paySectionHeader">
+                      <span className="paySectionIcon">
+                        <BankOutlined />
+                      </span>
+                      <div>
+                        <h3 className="paySectionTitle myfont3">
+                          Pay by Bank Transfer
+                        </h3>
+                        <p className="paySectionHint myfont1">
+                          Transfer the total amount to the account below.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="payBankList">
+                      {bankDetails.map((detail) => (
+                        <div className="payBankRow" key={detail.key}>
+                          <div className="payBankText">
+                            <span className="payBankLabel myfont1">
+                              {detail.label}
+                            </span>
+                            <span className="payBankValue myfont3">
+                              {detail.value || "-"}
+                            </span>
+                          </div>
+                          {detail.copy && detail.value && (
+                            <button
+                              type="button"
+                              className="payCopyBtn myfont1"
+                              onClick={() =>
+                                copyToClipboard(detail.key, detail.value)
+                              }
+                            >
+                              {copiedField === detail.key ? (
+                                <>
+                                  <CheckOutlined /> Copied
+                                </>
+                              ) : (
+                                <>
+                                  <CopyOutlined /> Copy
+                                </>
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                      <div className="payBankRow payBankAmount">
+                        <div className="payBankText">
+                          <span className="payBankLabel myfont1">
+                            Amount
+                          </span>
+                          <span className="payBankValue myfont3">
+                            {formatCurrency(totalPrice || 0)}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="payCopyBtn myfont1"
+                          onClick={() => copyToClipboard("amount", totalPrice)}
+                        >
+                          {copiedField === "amount" ? (
+                            <>
+                              <CheckOutlined /> Copied
+                            </>
+                          ) : (
+                            <>
+                              <CopyOutlined /> Copy
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+
+                {/* Tenancy Agreement */}
+                <section className="paySection">
+                  <div className="paySectionHeader">
+                    <span className="paySectionIcon">
+                      <FileTextOutlined />
+                    </span>
+                    <div>
+                      <h3 className="paySectionTitle myfont3">
+                        Tenancy Agreement
+                      </h3>
+                      <p className="paySectionHint myfont1">
+                        Please read the agreement before confirming payment.
+                      </p>
                     </div>
                   </div>
-                </div>
 
-                <div className="w3-col w3-margin-bottom w3-text-white">
-                  <div className="w3-card w3-round w3-padding bankAccountBg w3-border">
-                    <h2 className="w3-large">
-                      {" "}
-                      <b> Account Details </b>
-                    </h2>
-                    <br />
-                    <p> Bank Name : {userSettingsData?.bankName} </p>
-                    <br />
-                    <p> Account Name : {userSettingsData?.accountName} </p>
-                    <br />
-                    <p> Account Number : {userSettingsData?.accountNumber} </p>
-                    <br />
+                  <div className="payAgreement">
+                    {agreementUrl && (
+                      <a
+                        href={agreementUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="payAgreementBtn myfont1"
+                      >
+                        <FileTextOutlined /> Download Agreement
+                      </a>
+                    )}
+
+                    <label className="payCheck myfont1">
+                      <input
+                        name="agreePayment"
+                        type="checkbox"
+                        checked={!!payLoad?.agreePayment}
+                        onChange={handleInputChange}
+                      />
+                      <span className="payCheckBox" aria-hidden="true">
+                        <CheckOutlined />
+                      </span>
+                      <span>
+                        I have read and agree to the tenancy agreement.
+                      </span>
+                    </label>
                   </div>
-                </div>
+                </section>
 
                 {/* Button Here */}
+                <div className="w3-col payButtonSpace">
+                  <br />
+                </div>
 
-                <div className="w3-col w3-margin-bottom">
-                  <button
-                    className="w3-btn regButton w3-col w3-round-large"
-                    disabled={formLoading || !payLoad.agreePayment}
-                  >
-                    {!formLoading ? (
-                      "I have Made Payment"
-                    ) : (
-                      <LoadingOutlined rev={undefined} />
-                    )}
-                  </button>
+                <div className="w3-padding payButtonHolder">
+                  <div className="w3-content">
+                    <button
+                      className="w3-btn payButton w3-col w3-round-large myfont3"
+                      disabled={formLoading || !payLoad.agreePayment}
+                    >
+                      {!formLoading ? (
+                        "I have Made Payment"
+                      ) : (
+                        <LoadingOutlined rev={undefined} />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>

@@ -297,3 +297,35 @@ export const adminRejectRentPaymentApi = async (id?: string | number) => {
   const result: any = await data;
   return result;
 };
+
+// Admin Apartment (Tenant) Requests
+export const adminGetApartmentRequestsApi = async (body?: any) => {
+  const axios = await instance(null, null, true, true);
+  const { data } = await axios.get(
+    `api/v1/admin/apartment-requests${convertObjToQueryParams(body)}`
+  );
+  const result: any = await data;
+  return result;
+};
+
+export const adminGetApartmentRequestSingleApi = async (
+  id?: string | number
+) => {
+  const axios = await instance(null, null, true, true);
+  const { data } = await axios.get(`api/v1/admin/apartment-requests/${id}`);
+  const result: any = await data;
+  return result;
+};
+
+export const adminUpdateApartmentRequestStatusApi = async (
+  id?: string | number,
+  body?: { statusId: string }
+) => {
+  const axios = await instance(null, null, true, true);
+  const { data } = await axios.patch(
+    `api/v1/admin/apartment-requests/${id}/status`,
+    body
+  );
+  const result: any = await data;
+  return result;
+};
