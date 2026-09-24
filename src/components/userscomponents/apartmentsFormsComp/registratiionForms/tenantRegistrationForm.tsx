@@ -1,4 +1,5 @@
 import {
+  BookOutlined,
   LoadingOutlined,
   SafetyCertificateOutlined,
   UserOutlined,
@@ -108,6 +109,16 @@ const personalFields: IFormField[] = [
   },
 ];
 
+const schoolFields: IFormField[] = [
+  {
+    name: "admissionNumber",
+    label: "Matric/Admission Number",
+    placeholder: "Matric or Admission Number",
+  },
+  { name: "passportImage", label: "Passport Photograph", type: "file" },
+  { name: "admissionLetter", label: "JAMB Admission Letter", type: "file" },
+];
+
 const guarantorFields: IFormField[] = [
   { name: "fullName", label: "Full Name", placeholder: "Full Name" },
   {
@@ -118,7 +129,33 @@ const guarantorFields: IFormField[] = [
   },
   { name: "occupation", label: "Occupation", placeholder: "Occupation" },
   { name: "address", label: "Address", placeholder: "Address" },
+  {
+    name: "image",
+    label: "Guardian Photograph",
+    type: "file",
+    fullWidth: true,
+  },
 ];
+
+// Sent as multipart/form-data so the images can be uploaded
+const toFormData = (data: any): FormData => {
+  const formData = new FormData();
+  const append = (key: string, value: any) => {
+    if (value !== undefined && value !== null && value !== "") {
+      formData.append(key, value);
+    }
+  };
+
+  Object.keys(data).forEach((key) => {
+    if (key !== "guarantors") append(key, data[key]);
+  });
+  (data.guarantors || []).forEach((guarantor: any, index: number) => {
+    Object.keys(guarantor || {}).forEach((key) =>
+      append(`guarantors[${index}].${key}`, guarantor[key])
+    );
+  });
+  return formData;
+};
 
 // Guarantors to collect (index into payLoad.guarantors)
 const guarantorsToCollect = [0,1];
@@ -142,6 +179,7 @@ const testPrefill =
         noOfOccupants: "1",
         noOfVehicles: "0",
         reason: "Test registration from the development environment",
+        admissionNumber: "UNILAG/2026/0001",
         guarantors: [
           {
             fullName: "Jane Guarantor",
@@ -186,14 +224,16 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
   // Use to collect Input change Change
   const handleInputChange = (event: any) => {
     const name = event.target.name;
-    const value = event.target.value;
+    const value =
+      event.target.type === "file" ? event.target.files?.[0] : event.target.value;
     setpayLoad((values: any) => ({ ...values, [name]: value }));
   };
 
   // Use to collect Input change Change
   const handleInputChangeForArray = (event: any, index) => {
     const name = event.target.name;
-    const value = event.target.value;
+    const value =
+      event.target.type === "file" ? event.target.files?.[0] : event.target.value;
     payLoad.guarantors[index][name] = value;
 
     setpayLoad((values: any) => ({
@@ -211,7 +251,7 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
 
   // A custom hook to save form data
   const result = useFormatApiRequest(
-    () => tenantRegistrationApi(payLoad),
+    () => tenantRegistrationApi(toFormData(payLoad)),
     loadApi,
     () => {
       setLoadApi(false);
@@ -242,13 +282,50 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
     }
   };
 
-  // Render a single input/select field
-  const renderField = (
+  // Render an image upload with a preview of the selected file
+  const renderFileField = (
     field: IFormField,
-    value: string,
+    value: File | undefined,
     onChange: (event: any) => void,
     id: string
   ) => (
+    <div
+      key={id}
+      className={`regField ${field.fullWidth ? "regFieldFull" : ""}`}
+    >
+      <label htmlFor={id} className="regLabel myfont1">
+        {field.label}
+        {field.required !== false && <span className="regRequired">*</span>}
+      </label>
+      <input
+        id={id}
+        name={field.name}
+        onChange={onChange}
+        required={field.required !== false && !value}
+        type="file"
+        accept="image/*"
+        className="w3-input w3-text-white regFormInput regFileInput myfont1"
+      />
+      {value instanceof File && (
+        <img
+          src={URL.createObjectURL(value)}
+          alt={field.label}
+          className="regFilePreview"
+        />
+      )}
+    </div>
+  );
+
+  // Render a single input/select field
+  const renderField = (
+    field: IFormField,
+    value: any,
+    onChange: (event: any) => void,
+    id: string
+  ) =>
+    field.type === "file" ? (
+      renderFileField(field, value || undefined, onChange, id)
+    ) : (
     <div
       key={id}
       className={`regField ${field.fullWidth ? "regFieldFull" : ""}`}
@@ -287,7 +364,7 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
         />
       )}
     </div>
-  );
+    );
 
   return (
     <div className="w3-container">
@@ -320,6 +397,32 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
             </div>
           </section>
 
+          {/* School Information */}
+          <section className="regSection">
+            <div className="regSectionHeader">
+              <span className="regSectionIcon">
+                <BookOutlined />
+              </span>
+              <div>
+                <h3 className="regSectionTitle myfont3">School Information</h3>
+                <p className="regSectionHint myfont1">
+                  Upload clear photos of your passport and JAMB admission
+                  letter.
+                </p>
+              </div>
+            </div>
+            <div className="regGrid">
+              {schoolFields.map((field) =>
+                renderField(
+                  field,
+                  payLoad?.[field.name] || "",
+                  handleInputChange,
+                  `reg-${field.name}`
+                )
+              )}
+            </div>
+          </section>
+
           {/* Guarantors */}
           {guarantorsToCollect.map((index) => (
             <section className="regSection" key={index}>
@@ -332,7 +435,8 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
                     Guarantor {index + 1}
                   </h3>
                   <p className="regSectionHint myfont1">
-                    Someone who can vouch for you.
+                    Someone who can vouch for you, such as a parent or
+                    guardian.
                   </p>
                 </div>
               </div>

@@ -77,3 +77,60 @@
   opacity: 0.45;
   cursor: not-allowed;
 }
+
+/* Uploaded documents and photos */
+.adminDocumentGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.adminDocument {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 160px;
+  text-decoration: none;
+}
+
+.adminDocument img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #111111;
+}
+
+/* Building card on the request details */
+.reqBuildingCard {
+  margin-bottom: 4px;
+}
+
+.reqBuildingImageBtn {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.reqBuildingImageBtn:focus-visible {
+  outline: 2px solid #d4b24c;
+  outline-offset: -2px;
+}
+
+.reqBuildingLink {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #d4b24c !important;
+  text-decoration: none;
+}
+
+.reqBuildingLink:hover {
+  text-decoration: underline;
+}

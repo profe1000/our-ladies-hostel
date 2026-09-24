@@ -295,6 +295,7 @@ export interface TenantGuarantor {
   address?: string;
   phoneNumber?: string;
   occupation?: string;
+  imageUrl?: string;
 }
 
 export interface Meta {
@@ -473,10 +474,15 @@ export interface IAdminApartmentRequestData {
   reason?: string;
   noOfOccupants?: number | string;
   noOfVehicles?: number | string;
+  admissionNumber?: string;
+  passportImageUrl?: string;
+  admissionLetterUrl?: string;
   apartmentId?: number;
   apartment?: Partial<IAdminApartmentData> & {
     building?: Partial<IAdminBuildingsData>;
   };
+  buildingId?: number;
+  building?: Partial<IAdminBuildingsData>;
   statusId?: string;
   status?: string | { id?: string | number; name?: string };
   guarantors?: TenantGuarantor[];

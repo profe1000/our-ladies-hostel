@@ -178,7 +178,8 @@ export const AdminTenantRequestList = () => {
             const name = getRequestName(request);
             const status = getRequestStatus(request);
             const apartmentTitle = request?.apartment?.title;
-            const buildingTitle = request?.apartment?.building?.title;
+            const buildingTitle =
+              request?.building?.title || request?.apartment?.building?.title;
             return (
               <div
                 key={request.id}

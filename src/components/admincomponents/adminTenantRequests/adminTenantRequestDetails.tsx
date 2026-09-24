@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
+  AppstoreOutlined,
   CheckOutlined,
   CloseOutlined,
   ExclamationCircleFilled,
@@ -15,10 +16,23 @@ import {
   adminGetApartmentRequestSingleApi,
   adminUpdateApartmentRequestStatusApi,
 } from "../../../apiservice/admin-General-ApiService";
-import { IAdminApartmentRequestData } from "../../../apiservice/admin-General-ApiService.type";
+import {
+  IAdminApartmentData,
+  IAdminApartmentRequestData,
+  IAdminBuildingsData,
+} from "../../../apiservice/admin-General-ApiService.type";
+import {
+  tenantApartmentDetailsApi,
+  tenantBuildingDetailsApi,
+} from "../../../apiservice/tenant-general-apiService";
 import { appZIndex } from "../../../utils/appconst";
 import { formatCurrency } from "../../../utils/basic.utils";
 import { convertToShortDate } from "../../../utils/date.utils";
+import {
+  AdminFilePreviewModal,
+  AdminFileThumbnail,
+  IPreviewFile,
+} from "../adminFilePreview/adminFilePreview";
 import { ILoadState } from "../../../utils/loading.utils.";
 import {
   getInitials,
@@ -26,6 +40,7 @@ import {
   getRequestStatus,
   getRequestStatusClass,
 } from "./tenantRequest.utils";
+import "../adminContextHeader/adminContextHeader.css";
 import "./adminTenantRequests.css";
 
 // Fields shown in their own sections, so they are skipped in "Other details"
@@ -45,6 +60,9 @@ const knownFields = new Set([
   "reason",
   "noOfOccupants",
   "noOfVehicles",
+  "admissionNumber",
+  "passportImageUrl",
+  "admissionLetterUrl",
   "apartmentId",
   "apartment",
   "statusId",
@@ -68,6 +86,14 @@ export const AdminTenantRequestDetails = () => {
   const [request, setRequest] = useState<IAdminApartmentRequestData>();
   const [savingStatus, setSavingStatus] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
+  // Index into `allFiles` of the file open in the pop-up
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+  const [buildingPhotoOpen, setBuildingPhotoOpen] = useState(false);
+  // Looked up when the request only returns ids
+  const [fetchedApartment, setFetchedApartment] =
+    useState<Partial<IAdminApartmentData>>();
+  const [fetchedBuilding, setFetchedBuilding] =
+    useState<Partial<IAdminBuildingsData>>();
 
   // Load the request
   useEffect(() => {
@@ -88,6 +114,42 @@ export const AdminTenantRequestDetails = () => {
       cancelled = true;
     };
   }, [params?.id, reloadKey]);
+
+  // Resolve the apartment/building from whatever shape the API returns
+  const apartment = request?.apartment?.title
+    ? request.apartment
+    : fetchedApartment || request?.apartment;
+  const buildingId =
+    request?.building?.id ??
+    request?.buildingId ??
+    request?.apartment?.building?.id ??
+    request?.apartment?.buildingId ??
+    fetchedApartment?.buildingId;
+  const building =
+    request?.building?.title
+      ? request.building
+      : request?.apartment?.building?.title
+      ? request.apartment.building
+      : fetchedBuilding;
+
+  // Look up the apartment when only its id is returned
+  useEffect(() => {
+    const apartmentId = request?.apartmentId ?? request?.apartment?.id;
+    if (!request || request?.apartment?.title || apartmentId === undefined) {
+      return;
+    }
+    tenantApartmentDetailsApi(apartmentId)
+      .then((response) => setFetchedApartment(response?.data))
+      .catch((error) => console.error("Error fetching apartment:", error));
+  }, [request]);
+
+  // Look up the building when only its id is returned
+  useEffect(() => {
+    if (building || buildingId === undefined) return;
+    tenantBuildingDetailsApi(buildingId)
+      .then((response) => setFetchedBuilding(response?.data))
+      .catch((error) => console.error("Error fetching building:", error));
+  }, [buildingId, !!building]);
 
   // Accept or reject the request
   const updateStatus = async (statusId: string) => {
@@ -157,8 +219,6 @@ export const AdminTenantRequestDetails = () => {
   const name = getRequestName(request);
   const status = getRequestStatus(request);
   const isPending = status.toLowerCase().startsWith("pend");
-  const apartment = request.apartment;
-  const building = apartment?.building;
   const guarantors = (request.guarantors || request.tenantGuarantors || [])
     .filter((guarantor) => guarantor?.fullName);
 
@@ -170,11 +230,39 @@ export const AdminTenantRequestDetails = () => {
     { label: "Religion", value: request.religion },
     { label: "Occupation", value: request.occupation },
     { label: "NIN", value: request.nin },
+    {
+      label: "Matric/Admission Number",
+      value: request.admissionNumber,
+      plain: true,
+    },
     { label: "Number Of Occupants", value: request.noOfOccupants },
     { label: "Number Of Vehicles", value: request.noOfVehicles },
     { label: "Address", value: request.address, full: true },
     { label: "Reason", value: request.reason, full: true },
   ].filter((detail) => detail.value !== undefined && detail.value !== null);
+
+  const documents = [
+    { label: "Passport Photograph", url: request.passportImageUrl },
+    { label: "JAMB Admission Letter", url: request.admissionLetterUrl },
+  ].filter((document) => document.url);
+
+  // Guarantor photographs
+  const guarantorFiles = guarantors.map((guarantor, index) =>
+    guarantor.imageUrl
+      ? { label: `Guarantor ${index + 1} Photograph`, url: guarantor.imageUrl }
+      : null
+  );
+
+  // Every file on this request, in page order, so the pop-up can step
+  // through all of them
+  const allFiles: IPreviewFile[] = [
+    ...(documents as IPreviewFile[]),
+    ...(guarantorFiles.filter(Boolean) as IPreviewFile[]),
+  ];
+  const openFile = (url?: string) => {
+    const index = allFiles.findIndex((file) => file.url === url);
+    if (index >= 0) setPreviewIndex(index);
+  };
 
   // Anything else the API returns (simple values only)
   const otherDetails = Object.entries(request).filter(
@@ -254,41 +342,105 @@ export const AdminTenantRequestDetails = () => {
           </p>
         )}
 
-        {/* Apartment requested */}
-        {(apartment || request.apartmentId) && (
+        {/* Building & apartment requested */}
+        {(apartment || request.apartmentId || buildingId !== undefined) && (
           <>
             <h4 className="adminSubheading myfont1">Apartment Requested</h4>
-            <div className="adminDetailGrid">
-              <div className="adminDetailItem">
-                <span className="adminDetailLabel myfont1">Apartment</span>
-                <span className="adminDetailValue myfont3">
-                  {apartment?.title || `Apartment #${request.apartmentId}`}
-                </span>
-              </div>
-              <div className="adminDetailItem">
-                <span className="adminDetailLabel myfont1">Building</span>
-                <span className="adminDetailValue myfont1">
-                  <HomeOutlined /> {building?.title || "-"}
-                </span>
-              </div>
-              {apartment?.price !== undefined && (
-                <div className="adminDetailItem">
-                  <span className="adminDetailLabel myfont1">Rent</span>
-                  <span className="adminDetailValue myfont1">
-                    {formatCurrency(apartment.price)}
-                  </span>
+            <div className="adminCtxCard reqBuildingCard">
+              {building?.imageUrl ? (
+                <button
+                  type="button"
+                  className="reqBuildingImageBtn"
+                  aria-label={`View photo of ${building.title}`}
+                  onClick={() =>
+                    setBuildingPhotoOpen(true)
+                  }
+                >
+                  <img
+                    className="adminCtxImage"
+                    src={building.imageUrl}
+                    alt={building.title || "Building"}
+                  />
+                </button>
+              ) : (
+                <div className="adminCtxImage adminCtxImagePlaceholder">
+                  <HomeOutlined />
                 </div>
               )}
-              {apartment?.isOccupied !== undefined && (
-                <div className="adminDetailItem">
-                  <span className="adminDetailLabel myfont1">
-                    Current Status
-                  </span>
-                  <span className="adminDetailValue myfont1">
-                    {apartment.isOccupied ? "Occupied" : "Vacant"}
-                  </span>
+
+              <div className="adminCtxBody">
+                {/* Building */}
+                <div className="adminCtxBuilding">
+                  <span className="adminCtxEyebrow myfont1">Building</span>
+                  <h2 className="adminCtxTitle myfont5">
+                    {building?.title ||
+                      (buildingId !== undefined
+                        ? "Loading building..."
+                        : "Building not provided")}
+                  </h2>
+                  {building?.description && (
+                    <p className="adminCtxText myfont1">
+                      {building.description}
+                    </p>
+                  )}
+                  <div className="adminCtxChips myfont1">
+                    {building?.price !== undefined && (
+                      <span className="adminCtxChip">
+                        {formatCurrency(building.price)}
+                      </span>
+                    )}
+                    {building?.noOfApartments !== undefined && (
+                      <span className="adminCtxChip">
+                        <AppstoreOutlined /> {building.noOfApartments} Units
+                      </span>
+                    )}
+                    {!!building?.serviceCharge && (
+                      <span className="adminCtxChip">
+                        {formatCurrency(building.serviceCharge)} service
+                      </span>
+                    )}
+                  </div>
+                  {building?.id && (
+                    <Link
+                      to={`/admin/apartment/${building.id}`}
+                      className="reqBuildingLink myfont1"
+                    >
+                      View building units ›
+                    </Link>
+                  )}
                 </div>
-              )}
+
+                {/* Apartment */}
+                <div className="adminCtxApartment">
+                  <span className="adminCtxEyebrow myfont1">Apartment</span>
+                  <div className="adminCtxApartmentRow">
+                    <h3 className="adminCtxApartmentTitle myfont3">
+                      {apartment?.title ||
+                        (request.apartmentId
+                          ? `Apartment #${request.apartmentId}`
+                          : "-")}
+                    </h3>
+                    {apartment?.isOccupied !== undefined && (
+                      <span
+                        className={`adminStatusPill myfont1 ${
+                          apartment.isOccupied
+                            ? "adminStatusOccupied"
+                            : "adminStatusVacant"
+                        }`}
+                      >
+                        {apartment.isOccupied ? "Occupied" : "Vacant"}
+                      </span>
+                    )}
+                  </div>
+                  <div className="adminCtxChips myfont1">
+                    {apartment?.price !== undefined && (
+                      <span className="adminCtxChip">
+                        Rent {formatCurrency(apartment.price)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </>
         )}
@@ -316,6 +468,22 @@ export const AdminTenantRequestDetails = () => {
                     {String(detail.value)}
                   </span>
                 </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Uploaded documents */}
+        {documents.length > 0 && (
+          <>
+            <h4 className="adminSubheading myfont1">Documents</h4>
+            <div className="adminDocumentGrid">
+              {(documents as IPreviewFile[]).map((document) => (
+                <AdminFileThumbnail
+                  key={document.label}
+                  file={document}
+                  onOpen={() => openFile(document.url)}
+                />
               ))}
             </div>
           </>
@@ -385,10 +553,39 @@ export const AdminTenantRequestDetails = () => {
                   </span>
                 </div>
               </div>
+              {guarantor.imageUrl && (
+                <div className="adminDocumentGrid">
+                  <AdminFileThumbnail
+                    file={{
+                      label: "Guardian Photograph",
+                      url: guarantor.imageUrl,
+                    }}
+                    onOpen={() => openFile(guarantor.imageUrl)}
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>
       )}
+
+      {/* Building photo pop-up */}
+      {building?.imageUrl && (
+        <AdminFilePreviewModal
+          files={[
+            { label: building.title || "Building", url: building.imageUrl },
+          ]}
+          openIndex={buildingPhotoOpen ? 0 : null}
+          onChange={(index) => setBuildingPhotoOpen(index !== null)}
+        />
+      )}
+
+      {/* Document / photo pop-up */}
+      <AdminFilePreviewModal
+        files={allFiles}
+        openIndex={previewIndex}
+        onChange={setPreviewIndex}
+      />
     </div>
   );
 };
