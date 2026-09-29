@@ -34,6 +34,8 @@ export interface ITenantApartmentData {
   id: number;
   title: string;
   price: number;
+  // Added to the rent when a secondary occupant shares the apartment. 0 = not allowed
+  secondaryPrice?: number;
   isOccupied: boolean;
   buildingId?: number;
   dateModified: string;
@@ -136,6 +138,9 @@ export interface ITenantPaymentLinkData {
   id: number;
   amount: number;
   rent: number;
+  // Extra rent for a secondary occupant, null when there is none
+  secondaryAmount?: number | null;
+  secondaryOccupant?: string | null;
   serviceCharge?: number;
   paymentStatusId: number;
   paymentStatus: "Pending" | "Accepted" | "Rejected";

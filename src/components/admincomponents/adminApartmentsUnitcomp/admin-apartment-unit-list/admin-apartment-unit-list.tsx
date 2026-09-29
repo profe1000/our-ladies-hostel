@@ -2,6 +2,7 @@ import {
   AppstoreOutlined,
   DollarOutlined,
   EditOutlined,
+  TeamOutlined,
   UserOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
@@ -260,7 +261,27 @@ export const AdminApartmentUnitList: React.FC<IAdminApartmentUnitList> = ({
                       {apartmentUnits?.currentOccupant?.tenant?.fullName ||
                         "No occupant"}
                     </span>
+                    {apartmentUnits?.currentOccupant?.hasSecondaryOccupant && (
+                      <span className="adminUnitOccupant">
+                        <TeamOutlined />{" "}
+                        {apartmentUnits.currentOccupant.tenant
+                          ?.secondaryFullName || "Secondary occupant"}
+                      </span>
+                    )}
                   </div>
+
+                  {/* Secondary occupant: shared now, or sharing allowed */}
+                  {apartmentUnits?.currentOccupant?.hasSecondaryOccupant ? (
+                    <span className="adminUnitShareTag adminUnitShared myfont1">
+                      <TeamOutlined /> Shared · +
+                      {formatCurrency(apartmentUnits.secondaryPrice || 0)}
+                    </span>
+                  ) : (apartmentUnits.secondaryPrice || 0) > 0 ? (
+                    <span className="adminUnitShareTag myfont1">
+                      <TeamOutlined /> Sharing allowed · +
+                      {formatCurrency(apartmentUnits.secondaryPrice)}
+                    </span>
+                  ) : null}
 
                   {apartmentUnits?.currentOccupant?.expired && (
                     <div className="adminUnitDue myfont1">

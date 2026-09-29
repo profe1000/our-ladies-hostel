@@ -39,6 +39,7 @@ export const AdminEditApartmentUnitForm: React.FC<{}> = () => {
       title: selectedApartment.title,
       price: selectedApartment.price,
       serviceCharge: selectedApartment.serviceCharge,
+      secondaryPrice: selectedApartment.secondaryPrice ?? 0,
     });
   }, []);
 
@@ -148,6 +149,26 @@ export const AdminEditApartmentUnitForm: React.FC<{}> = () => {
                   onChange={handleInputChange}
                   className="w3-input w3-border w3-col w3-text-white w3-round-large AdminFormInput"
                   placeholder="Amount of Service Charge"
+                />
+              </div>
+            </div>
+
+            {/* Secondary Occupant Price */}
+            <div className="w3-col w3-margin-bottom">
+              <div className="w3-col l12 s12 m12">
+                <span className="w3-text-white w3-small myfont1">
+                  Secondary Occupant Amount (0 = not allowed)
+                </span>
+              </div>
+              <div className="w3-col l12 s12 m12">
+                <input
+                  name="secondaryPrice"
+                  value={payLoad?.secondaryPrice ?? ""}
+                  type={"number"}
+                  min={0}
+                  onChange={handleInputChange}
+                  className="w3-input w3-border w3-col w3-text-white w3-round-large AdminFormInput"
+                  placeholder="Extra rent when a second person shares this apartment"
                 />
               </div>
             </div>

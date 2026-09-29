@@ -41,6 +41,10 @@ export const AdminDashboardSummary = () => {
     ? Math.min(100, Math.round((collected / totalRevenue) * 100))
     : 0;
 
+  // Extra rent from units shared with a secondary occupant, already part of total revenue
+  const secondaryExpected =
+    dashboard?.revenue?.secondaryOccupants?.expectedRevenue || 0;
+
   const occupancy = dashboard?.occupancyRate;
   const totalUnits = occupancy?.noOfApartments || 0;
   const occupied = occupancy?.noOfOccupied || 0;
@@ -63,7 +67,11 @@ export const AdminDashboardSummary = () => {
       icon: <RiseOutlined />,
       label: "Total Revenue",
       value: formatCurrency(totalRevenue),
-      note: "Expected this year",
+      note: secondaryExpected
+        ? `Expected this year · includes ${formatCurrency(
+            secondaryExpected
+          )} from secondary occupants`
+        : "Expected this year",
     },
     {
       icon: <WalletOutlined />,

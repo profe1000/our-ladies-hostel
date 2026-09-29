@@ -4,6 +4,7 @@ import {
   InsertRowLeftOutlined,
   SettingOutlined,
   SolutionOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -47,6 +48,11 @@ const Tabbar = () => {
       title: "Requests",
     },
     {
+      icon: <TeamOutlined />,
+      url: "/admin/tenants",
+      title: "Tenants",
+    },
+    {
       icon: <SettingOutlined />,
       url: "/admin/Settings",
       title: "Settings",
@@ -68,6 +74,11 @@ const Tabbar = () => {
       icon: <SolutionOutlined />,
       url: "/admin/tenant-requests",
       title: "Requests",
+    },
+    {
+      icon: <TeamOutlined />,
+      url: "/admin/tenants",
+      title: "Tenants",
     },
     {
       icon: <SettingOutlined />,

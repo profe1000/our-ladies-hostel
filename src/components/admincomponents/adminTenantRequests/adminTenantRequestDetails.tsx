@@ -4,22 +4,28 @@ import {
   AppstoreOutlined,
   CheckOutlined,
   CloseOutlined,
+  CreditCardOutlined,
   ExclamationCircleFilled,
   HomeOutlined,
   InfoCircleOutlined,
   LoadingOutlined,
   SafetyCertificateOutlined,
+  TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Button, Modal, Result, Spin } from "antd";
 import {
+  adminAcceptRentPaymentApi,
   adminGetApartmentRequestSingleApi,
+  adminGetRentPaymentsApi,
+  adminRejectRentPaymentApi,
   adminUpdateApartmentRequestStatusApi,
 } from "../../../apiservice/admin-General-ApiService";
 import {
   IAdminApartmentData,
   IAdminApartmentRequestData,
   IAdminBuildingsData,
+  IPendingRentPaymentData,
 } from "../../../apiservice/admin-General-ApiService.type";
 import {
   tenantApartmentDetailsApi,
@@ -64,6 +70,12 @@ const knownFields = new Set([
   "admissionNumber",
   "passportImageUrl",
   "admissionLetterUrl",
+  "hasSecondaryOccupant",
+  "secondaryFirstName",
+  "secondaryLastName",
+  "secondaryAdmissionNumber",
+  "secondaryPassportImageUrl",
+  "secondaryAdmissionLetterUrl",
   "apartmentId",
   "apartment",
   "statusId",
@@ -73,6 +85,35 @@ const knownFields = new Set([
   "dateCreated",
   "dateModified",
 ]);
+
+// Payment status, including "receipt waiting for review"
+const getPaymentStatusLabel = (payment: IPendingRentPaymentData) => {
+  if (payment.paymentVerified || payment.paymentStatus === "Accepted") return "Paid";
+  if (payment.paymentStatus === "Rejected") return "Payment rejected";
+  if (payment.transferReceiptUrl) return "Receipt awaiting approval";
+  return "Awaiting payment";
+};
+
+const getPaymentStatusClass = (payment: IPendingRentPaymentData) => {
+  if (payment.paymentVerified || payment.paymentStatus === "Accepted") return "adminStatusVacant";
+  if (payment.paymentStatus === "Rejected") return "adminStatusDue";
+  return "adminStatusOccupied";
+};
+
+// Rent, secondary occupant, one-off charges and service charge
+const getPaymentLines = (payment: IPendingRentPaymentData) => [
+  {
+    label: "Rent",
+    value: (payment.netAmount || 0) - (payment.secondaryAmount || 0),
+  },
+  ...(payment.secondaryAmount
+    ? [{ label: "Secondary occupant", value: payment.secondaryAmount }]
+    : []),
+  ...(payment.rentPaymentCharges || [])
+    .filter((charge) => charge.title !== "Service Charge")
+    .map((charge) => ({ label: charge.title, value: charge.amount })),
+  { label: "Service charge", value: payment.serviceCharge },
+];
 
 // "noOfOccupants" => "No Of Occupants"
 const toLabel = (key: string) =>
@@ -95,6 +136,74 @@ export const AdminTenantRequestDetails = () => {
     useState<Partial<IAdminApartmentData>>();
   const [fetchedBuilding, setFetchedBuilding] =
     useState<Partial<IAdminBuildingsData>>();
+  // The rent payment created when this request was accepted
+  const [payment, setPayment] = useState<IPendingRentPaymentData | null>();
+  const [savingPayment, setSavingPayment] = useState("");
+
+  // Load the request's rent payment (reloaded with the request)
+  useEffect(() => {
+    let cancelled = false;
+    adminGetRentPaymentsApi({
+      apartmentRequestId: params?.id,
+      sort: "DateCreated",
+      order: "desc",
+      pageSize: 1,
+    })
+      .then((response) => {
+        if (!cancelled) setPayment(response?.data?.[0] || null);
+      })
+      .catch((error) => {
+        console.error("Error fetching rent payment:", error);
+        if (!cancelled) setPayment(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [params?.id, reloadKey]);
+
+  // Approve or reject the tenant's payment
+  const updatePayment = async (action: "accept" | "reject") => {
+    if (!payment) return;
+    setSavingPayment(action);
+    try {
+      if (action === "accept") {
+        await adminAcceptRentPaymentApi(payment.id);
+        alert(
+          "Payment approved. The tenant is now an occupant and has been emailed their login details."
+        );
+      } else {
+        await adminRejectRentPaymentApi(payment.id);
+        alert("Payment rejected.");
+      }
+      setReloadKey((key) => key + 1);
+    } catch (error: any) {
+      alert(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Sorry, the payment could not be updated."
+      );
+    } finally {
+      setSavingPayment("");
+    }
+  };
+
+  const confirmPayment = (action: "accept" | "reject") => {
+    Modal.confirm({
+      title:
+        action === "accept" ? "Approve this payment?" : "Reject this payment?",
+      content:
+        action === "accept"
+          ? "Only approve once the money is in the account. The tenant becomes an occupant of the apartment."
+          : "The tenant's payment will be marked as rejected.",
+      icon: <ExclamationCircleFilled />,
+      centered: true,
+      okText: action === "accept" ? "Approve" : "Reject",
+      okType: action === "accept" ? "primary" : "danger",
+      cancelText: "Cancel",
+      zIndex: appZIndex.modal,
+      onOk: () => updatePayment(action),
+    });
+  };
 
   // Load the request
   useEffect(() => {
@@ -249,6 +358,23 @@ export const AdminTenantRequestDetails = () => {
     { label: "JAMB Admission Letter", url: request.admissionLetterUrl },
   ].filter((document) => document.url);
 
+  const secondaryName = [request.secondaryFirstName, request.secondaryLastName]
+    .filter(Boolean)
+    .join(" ");
+  const secondaryPrice = apartment?.secondaryPrice || 0;
+  const secondaryDocuments = request.hasSecondaryOccupant
+    ? [
+        {
+          label: "Secondary Occupant Passport",
+          url: request.secondaryPassportImageUrl,
+        },
+        {
+          label: "Secondary Occupant Admission Letter",
+          url: request.secondaryAdmissionLetterUrl,
+        },
+      ].filter((document) => document.url)
+    : [];
+
   // Guarantor photographs
   const guarantorFiles = guarantors.map((guarantor, index) =>
     guarantor.imageUrl
@@ -258,8 +384,14 @@ export const AdminTenantRequestDetails = () => {
 
   // Every file on this request, in page order, so the pop-up can step
   // through all of them
+  const receiptFiles: IPreviewFile[] = payment?.transferReceiptUrl
+    ? [{ label: "Transfer Receipt", url: payment.transferReceiptUrl }]
+    : [];
+
   const allFiles: IPreviewFile[] = [
+    ...receiptFiles,
     ...(documents as IPreviewFile[]),
+    ...(secondaryDocuments as IPreviewFile[]),
     ...(guarantorFiles.filter(Boolean) as IPreviewFile[]),
   ];
   const openFile = (url?: string) => {
@@ -445,6 +577,12 @@ export const AdminTenantRequestDetails = () => {
                         Rent {formatCurrency(apartment.price)}
                       </span>
                     )}
+                    {request.hasSecondaryOccupant && (
+                      <span className="adminCtxChip">
+                        <TeamOutlined /> +{formatCurrency(secondaryPrice)}{" "}
+                        secondary occupant
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -515,6 +653,201 @@ export const AdminTenantRequestDetails = () => {
           </>
         )}
       </div>
+
+      {/* Rent payment */}
+      {payment && (
+        <div className="adminPanel">
+          <div className="adminPanelHeader">
+            <div>
+              <h3 className="adminPanelTitle myfont3">
+                <span className="adminPanelIcon">
+                  <CreditCardOutlined />
+                </span>
+                Payment
+              </h3>
+              <span
+                className={`adminStatusPill myfont1 ${getPaymentStatusClass(
+                  payment
+                )}`}
+              >
+                {getPaymentStatusLabel(payment)}
+              </span>
+            </div>
+
+            {!payment.paymentVerified && payment.paymentStatus !== "Accepted" && (
+              <div className="adminBtnRow">
+                <button
+                  type="button"
+                  disabled={!!savingPayment}
+                  onClick={() => confirmPayment("accept")}
+                  className="adminBtn adminBtnPrimary"
+                >
+                  {savingPayment === "accept" ? (
+                    <LoadingOutlined />
+                  ) : (
+                    <CheckOutlined />
+                  )}{" "}
+                  Approve payment
+                </button>
+                {payment.paymentStatus !== "Rejected" && (
+                  <button
+                    type="button"
+                    disabled={!!savingPayment}
+                    onClick={() => confirmPayment("reject")}
+                    className="adminBtn adminBtnDanger"
+                  >
+                    {savingPayment === "reject" ? (
+                      <LoadingOutlined />
+                    ) : (
+                      <CloseOutlined />
+                    )}{" "}
+                    Reject
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Breakdown */}
+          <div className="adminDetailGrid">
+            {getPaymentLines(payment).map((line) => (
+              <div key={line.label} className="adminDetailItem">
+                <span className="adminDetailLabel myfont1">{line.label}</span>
+                <span className="adminDetailValue myfont1">
+                  {formatCurrency(line.value || 0)}
+                </span>
+              </div>
+            ))}
+            <div className="adminDetailItem adminDetailHighlight">
+              <span className="adminDetailLabel myfont1">Total to pay</span>
+              <span className="adminDetailValue myfont3">
+                {formatCurrency(payment.amount || 0)}
+              </span>
+            </div>
+            {!!payment.amountPaid && (
+              <div className="adminDetailItem">
+                <span className="adminDetailLabel myfont1">Amount paid</span>
+                <span className="adminDetailValue myfont3">
+                  {formatCurrency(payment.amountPaid)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* How and when it was paid */}
+          <div className="adminDetailGrid">
+            {[
+              { label: "Paid with", value: payment.paymentGateway },
+              { label: "Reference", value: payment.paymentReference },
+              {
+                label: "Receipt uploaded",
+                value:
+                  payment.transferSubmittedAt &&
+                  convertToShortDate(payment.transferSubmittedAt),
+              },
+              {
+                label: "Payment confirmed",
+                value:
+                  payment.paymentReceivedAt &&
+                  convertToShortDate(payment.paymentReceivedAt),
+              },
+              {
+                label: "Rent period",
+                value:
+                  payment.startDate &&
+                  payment.endDate &&
+                  `${convertToShortDate(payment.startDate)} to ${convertToShortDate(
+                    payment.endDate
+                  )}`,
+              },
+            ]
+              .filter((detail) => detail.value)
+              .map((detail) => (
+                <div key={detail.label} className="adminDetailItem">
+                  <span className="adminDetailLabel myfont1">
+                    {detail.label}
+                  </span>
+                  <span className="adminDetailValue myfont1">
+                    {detail.value}
+                  </span>
+                </div>
+              ))}
+          </div>
+
+          {/* Transfer receipt */}
+          <h4 className="adminSubheading myfont1">Transfer Receipt</h4>
+          {receiptFiles.length > 0 ? (
+            <div className="adminDocumentGrid">
+              {receiptFiles.map((file) => (
+                <AdminFileThumbnail
+                  key={file.label}
+                  file={file}
+                  onOpen={() => openFile(file.url)}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="adminListSub myfont1">
+              {payment.paymentGateway === "Paystack"
+                ? "Paid online with Paystack, so there is no receipt to review."
+                : "The tenant has not uploaded a receipt yet."}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Secondary occupant */}
+      {request.hasSecondaryOccupant && (
+        <div className="adminPanel">
+          <div className="adminPanelHeader">
+            <h3 className="adminPanelTitle myfont3">
+              <span className="adminPanelIcon">
+                <TeamOutlined />
+              </span>
+              Secondary Occupant
+            </h3>
+          </div>
+          <div className="adminDetailGrid">
+            <div className="adminDetailItem">
+              <span className="adminDetailLabel myfont1">Full Name</span>
+              <span className="adminDetailValue myfont1 adminCapitalize">
+                {secondaryName || "-"}
+              </span>
+            </div>
+            <div className="adminDetailItem">
+              <span className="adminDetailLabel myfont1">
+                Matric/Admission Number
+              </span>
+              <span className="adminDetailValue myfont1">
+                {request.secondaryAdmissionNumber || "-"}
+              </span>
+            </div>
+            <div className="adminDetailItem">
+              <span className="adminDetailLabel myfont1">Extra Rent</span>
+              <span className="adminDetailValue myfont1">
+                {formatCurrency(secondaryPrice)}
+              </span>
+            </div>
+            <div className="adminDetailItem">
+              <span className="adminDetailLabel myfont1">Total Rent</span>
+              <span className="adminDetailValue myfont1">
+                {formatCurrency((apartment?.price || 0) + secondaryPrice)}
+              </span>
+            </div>
+          </div>
+          {secondaryDocuments.length > 0 && (
+            <div className="adminDocumentGrid">
+              {(secondaryDocuments as IPreviewFile[]).map((document) => (
+                <AdminFileThumbnail
+                  key={document.label}
+                  file={document}
+                  onOpen={() => openFile(document.url)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Guarantors */}
       {guarantors.length > 0 && (

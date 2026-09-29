@@ -29,6 +29,8 @@ import AdminManageAdminAccountUpdate from "./AdminManageAdminAccountUpdate/Admin
 import AdminManagePendingUsers from "./AdminManagePendingUsers/AdminManagePendingUsers";
 import AdminTenantRequests from "./AdminTenantRequests/AdminTenantRequests";
 import AdminTenantRequestDetailsPage from "./AdminTenantRequests/AdminTenantRequestDetailsPage";
+import AdminTenants from "./AdminTenants/AdminTenants";
+import AdminTenantDetailsPage from "./AdminTenants/AdminTenantDetailsPage";
 
 const AdminPagesRoute = () => {
   return (
@@ -85,6 +87,8 @@ const AdminPagesRoute = () => {
       <Route path="/manageProfile" element={<AdminManageProfile />} />
 
       <Route path="/pending-user" element={<AdminManagePendingUsers />} />
+      <Route path="/tenants" element={<AdminTenants />} />
+      <Route path="/tenants/:id" element={<AdminTenantDetailsPage />} />
       <Route path="/tenant-requests" element={<AdminTenantRequests />} />
       <Route
         path="/tenant-requests/:id"

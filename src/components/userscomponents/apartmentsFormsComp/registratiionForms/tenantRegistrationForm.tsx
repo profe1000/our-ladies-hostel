@@ -2,6 +2,7 @@ import {
   BookOutlined,
   LoadingOutlined,
   SafetyCertificateOutlined,
+  TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
@@ -17,148 +18,17 @@ import {
   useAppSelector,
 } from "../../../../Redux/reduxCustomHook";
 import { RootState } from "../../../../Redux/store";
+import { formatCurrency } from "../../../../utils/basic.utils";
+import {
+  guarantorFields,
+  guarantorsToCollect,
+  personalFields,
+  renderField,
+  schoolFields,
+  secondaryOccupantFields,
+  toFormData,
+} from "./registrationFields";
 import "./tenantRegistration.css";
-
-type IFormField = {
-  name: string;
-  label: string;
-  placeholder?: string;
-  type?: string;
-  required?: boolean;
-  minLength?: number;
-  maxLength?: number;
-  fullWidth?: boolean;
-  options?: { value: string; label: string }[];
-};
-
-const personalFields: IFormField[] = [
-  { name: "firstName", label: "First Name", placeholder: "First Name" },
-  { name: "lastName", label: "Last Name", placeholder: "Last Name" },
-  { name: "email", label: "Email", placeholder: "Email", type: "email" },
-  {
-    name: "phoneNumber",
-    label: "Phone Number",
-    placeholder: "Phone Number",
-    type: "tel",
-  },
-  {
-    name: "nin",
-    label: "NIN",
-    placeholder: "National Identification Number",
-    type: "number",
-    minLength: 11,
-    maxLength: 11,
-  },
-  {
-    name: "occupation",
-    label: "Occupation",
-    placeholder: "Occupation",
-  },
-  {
-    name: "address",
-    label: "Address",
-    placeholder: "Address",
-    fullWidth: true,
-  },
-  {
-    name: "gender",
-    label: "Gender",
-    options: [
-      { value: "", label: "Select Gender" },
-      { value: "male", label: "Male" },
-      { value: "female", label: "Female" },
-    ],
-  },
-  {
-    name: "maritalStatus",
-    label: "Marital Status",
-    options: [
-      { value: "", label: "Select" },
-      { value: "single", label: "Single" },
-      { value: "married", label: "Married" },
-    ],
-  },
-  {
-    name: "religion",
-    label: "Religion",
-    required: false,
-    options: [
-      { value: "", label: "Select Religion" },
-      { value: "christain", label: "Christian" },
-      { value: "muslim", label: "Muslim" },
-      { value: "others", label: "Others" },
-    ],
-  },
-  {
-    name: "noOfOccupants",
-    label: "No. of Occupants",
-    placeholder: "Number of Occupants",
-    type: "number",
-  },
-  {
-    name: "noOfVehicles",
-    label: "No. of Vehicles",
-    placeholder: "Number of Vehicles",
-    type: "number",
-  },
-  {
-    name: "reason",
-    label: "Reason",
-    placeholder: "Why are you looking for accommodation?",
-    fullWidth: true,
-  },
-];
-
-const schoolFields: IFormField[] = [
-  {
-    name: "admissionNumber",
-    label: "Matric/Admission Number",
-    placeholder: "Matric or Admission Number",
-  },
-  { name: "passportImage", label: "Passport Photograph", type: "file" },
-  { name: "admissionLetter", label: "JAMB Admission Letter", type: "file" },
-];
-
-const guarantorFields: IFormField[] = [
-  { name: "fullName", label: "Full Name", placeholder: "Full Name" },
-  {
-    name: "phoneNumber",
-    label: "Phone Number",
-    placeholder: "Phone Number",
-    type: "tel",
-  },
-  { name: "occupation", label: "Occupation", placeholder: "Occupation" },
-  { name: "address", label: "Address", placeholder: "Address" },
-  {
-    name: "image",
-    label: "Guardian Photograph",
-    type: "file",
-    fullWidth: true,
-  },
-];
-
-// Sent as multipart/form-data so the images can be uploaded
-const toFormData = (data: any): FormData => {
-  const formData = new FormData();
-  const append = (key: string, value: any) => {
-    if (value !== undefined && value !== null && value !== "") {
-      formData.append(key, value);
-    }
-  };
-
-  Object.keys(data).forEach((key) => {
-    if (key !== "guarantors") append(key, data[key]);
-  });
-  (data.guarantors || []).forEach((guarantor: any, index: number) => {
-    Object.keys(guarantor || {}).forEach((key) =>
-      append(`guarantors[${index}].${key}`, guarantor[key])
-    );
-  });
-  return formData;
-};
-
-// Guarantors to collect (index into payLoad.guarantors)
-const guarantorsToCollect = [0,1];
 
 // TODO(remove): TEMPORARY TEST DATA - delete this block and the
 // `testPrefill` use below once testing is done. It only applies to
@@ -213,13 +83,19 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  // Extra rent for a secondary occupant. 0 means this apartment doesn't allow one
+  const secondaryPrice = selectedApartment?.secondaryPrice || 0;
+  const hasSecondaryOccupant = secondaryPrice > 0 && !!payLoad?.hasSecondaryOccupant;
+
   // Keep the apartment in sync (it may be reloaded after a page refresh)
   useEffect(() => {
     setpayLoad((values: any) => ({
       ...values,
       apartmentId: selectedApartment?.id,
+      // An apartment without a secondary price can't have a secondary occupant
+      hasSecondaryOccupant: secondaryPrice > 0 ? !!values.hasSecondaryOccupant : false,
     }));
-  }, [selectedApartment?.id]);
+  }, [selectedApartment?.id, secondaryPrice]);
 
   // Use to collect Input change Change
   const handleInputChange = (event: any) => {
@@ -282,90 +158,6 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
     }
   };
 
-  // Render an image upload with a preview of the selected file
-  const renderFileField = (
-    field: IFormField,
-    value: File | undefined,
-    onChange: (event: any) => void,
-    id: string
-  ) => (
-    <div
-      key={id}
-      className={`regField ${field.fullWidth ? "regFieldFull" : ""}`}
-    >
-      <label htmlFor={id} className="regLabel myfont1">
-        {field.label}
-        {field.required !== false && <span className="regRequired">*</span>}
-      </label>
-      <input
-        id={id}
-        name={field.name}
-        onChange={onChange}
-        required={field.required !== false && !value}
-        type="file"
-        accept="image/*"
-        className="w3-input w3-text-white regFormInput regFileInput myfont1"
-      />
-      {value instanceof File && (
-        <img
-          src={URL.createObjectURL(value)}
-          alt={field.label}
-          className="regFilePreview"
-        />
-      )}
-    </div>
-  );
-
-  // Render a single input/select field
-  const renderField = (
-    field: IFormField,
-    value: any,
-    onChange: (event: any) => void,
-    id: string
-  ) =>
-    field.type === "file" ? (
-      renderFileField(field, value || undefined, onChange, id)
-    ) : (
-    <div
-      key={id}
-      className={`regField ${field.fullWidth ? "regFieldFull" : ""}`}
-    >
-      <label htmlFor={id} className="regLabel myfont1">
-        {field.label}
-        {field.required !== false && <span className="regRequired">*</span>}
-      </label>
-      {field.options ? (
-        <select
-          id={id}
-          name={field.name}
-          value={value}
-          onChange={onChange}
-          required={field.required !== false}
-          className="w3-input w3-text-white regFormInput myfont1"
-        >
-          {field.options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <input
-          id={id}
-          name={field.name}
-          value={value}
-          onChange={onChange}
-          required={field.required !== false}
-          type={field.type || "text"}
-          minLength={field.minLength}
-          maxLength={field.maxLength}
-          placeholder={field.placeholder}
-          className="w3-input w3-text-white regFormInput myfont1"
-        />
-      )}
-    </div>
-    );
-
   return (
     <div className="w3-container">
       <div className="w3-content regFormWrapper">
@@ -422,6 +214,90 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
               )}
             </div>
           </section>
+
+          {/* Secondary Occupant, only for apartments that allow one */}
+          {secondaryPrice > 0 && (
+            <section className="regSection">
+              <div className="regSectionHeader">
+                <span className="regSectionIcon">
+                  <TeamOutlined />
+                </span>
+                <div>
+                  <h3 className="regSectionTitle myfont3">
+                    Secondary Occupant
+                  </h3>
+                  <p className="regSectionHint myfont1">
+                    You can share this apartment with one other person for an
+                    extra {formatCurrency(secondaryPrice)} per year.
+                  </p>
+                </div>
+              </div>
+              <div className="regGrid">
+                <div className="regField regFieldFull">
+                  <label
+                    htmlFor="reg-hasSecondaryOccupant"
+                    className="regLabel myfont1"
+                  >
+                    Will someone share this apartment with you?
+                    <span className="regRequired">*</span>
+                  </label>
+                  <select
+                    id="reg-hasSecondaryOccupant"
+                    name="hasSecondaryOccupant"
+                    value={hasSecondaryOccupant ? "yes" : "no"}
+                    onChange={(e) =>
+                      setpayLoad((values: any) => ({
+                        ...values,
+                        hasSecondaryOccupant: e.target.value === "yes",
+                      }))
+                    }
+                    className="w3-input w3-text-white regFormInput myfont1"
+                  >
+                    <option value="no">No, just me</option>
+                    <option value="yes">
+                      Yes, add a secondary occupant (+
+                      {formatCurrency(secondaryPrice)})
+                    </option>
+                  </select>
+                </div>
+
+                {hasSecondaryOccupant &&
+                  secondaryOccupantFields.map((field) =>
+                    renderField(
+                      field,
+                      payLoad?.[field.name] || "",
+                      handleInputChange,
+                      `reg-${field.name}`
+                    )
+                  )}
+
+                <div className="regField regFieldFull regPriceSummary myfont1">
+                  <div className="regPriceRow">
+                    <span>Rent</span>
+                    <span>{formatCurrency(selectedApartment?.price)}</span>
+                  </div>
+                  {hasSecondaryOccupant && (
+                    <div className="regPriceRow">
+                      <span>Secondary occupant</span>
+                      <span>+{formatCurrency(secondaryPrice)}</span>
+                    </div>
+                  )}
+                  <div className="regPriceRow regPriceTotal myfont3">
+                    <span>Total rent per year</span>
+                    <span>
+                      {formatCurrency(
+                        (selectedApartment?.price || 0) +
+                          (hasSecondaryOccupant ? secondaryPrice : 0)
+                      )}
+                    </span>
+                  </div>
+                  <span className="regSectionHint">
+                    Service charge and one-off fees are added when you pay.
+                  </span>
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* Guarantors */}
           {guarantorsToCollect.map((index) => (

@@ -1,3 +1,4 @@
+import { TeamOutlined } from "@ant-design/icons";
 import { Button, Empty, notification, Pagination, Result, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -12,6 +13,7 @@ import {
   useAppSelector,
 } from "../../../../Redux/reduxCustomHook";
 import { RootState } from "../../../../Redux/store";
+import { formatCurrency } from "../../../../utils/basic.utils";
 import { ILoadState } from "../../../../utils/loading.utils.";
 import "./apartment-unit-list.css";
 type NotificationType = "success" | "info" | "warning" | "error";
@@ -198,6 +200,12 @@ export const ApartmentUnitListUser: React.FC<IApartmentUnitList> = ({
                             <span className="w3-text-white myfont1 unitsCardText">
                               {apartmentUnits.title}
                             </span>
+                            {(apartmentUnits.secondaryPrice || 0) > 0 && (
+                              <span className="apartmentUnitShareTag myfont1">
+                                <TeamOutlined /> Shareable · +
+                                {formatCurrency(apartmentUnits.secondaryPrice)}
+                              </span>
+                            )}
                             <img
                               className="apartmentUnitStatus"
                               alt={

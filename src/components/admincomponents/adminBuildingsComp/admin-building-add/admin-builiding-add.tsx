@@ -189,6 +189,30 @@ export const AdminAddBuilding: React.FC<{}> = () => {
               </div>
             </div>
 
+            {/* Secondary Occupant Price */}
+            <div className="w3-col w3-margin-bottom">
+              <div className="w3-col l12 s12 m12">
+                <span className="w3-text-white w3-small myfont1">
+                  Secondary Occupant Price (optional)
+                </span>
+              </div>
+              <div className="w3-col l12 s12 m12">
+                <input
+                  name="secondaryPrice"
+                  value={payLoad?.secondaryPrice ?? ""}
+                  type={"number"}
+                  min={0}
+                  onChange={handleInputChange}
+                  className="w3-input w3-border w3-col w3-text-white w3-round-large AdminFormInput"
+                  placeholder="Extra rent when a second person shares an apartment"
+                />
+                <p className="adminFormHint myfont1">
+                  Applied to every apartment in this building. Leave empty or 0
+                  if apartments can't be shared.
+                </p>
+              </div>
+            </div>
+
             {/* Image */}
             <div className="w3-col w3-margin-bottom">
               <div className="w3-col l12 s12 m12">

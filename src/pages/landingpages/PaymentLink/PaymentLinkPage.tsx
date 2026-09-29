@@ -169,6 +169,16 @@ export const PaymentLinkPage = () => {
 
   const paymentLines = [
     { label: "Rent", value: payment.rent },
+    ...(payment.secondaryAmount != null
+      ? [
+          {
+            label: payment.secondaryOccupant
+              ? `Secondary Occupant (${payment.secondaryOccupant})`
+              : "Secondary Occupant",
+            value: payment.secondaryAmount,
+          },
+        ]
+      : []),
     ...payment.charges.map((charge) => ({
       label: charge.title,
       value: charge.amount,

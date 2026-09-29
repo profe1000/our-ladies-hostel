@@ -183,6 +183,13 @@ export const adminGetTenantsApi = async (body?: any) => {
   return result;
 };
 
+export const adminGetTenantSingleApi = async (id?: string | number) => {
+  const axios = await instance(null, null, true, true);
+  const { data } = await axios.get(`api/v1/admin/tenants/${id}`);
+  const result: any = await data;
+  return result;
+};
+
 export const adminAddTenantApi = async (body?: any) => {
   const axios = await instance(null, null, true, true);
   const { data } = await axios.post("api/v1/admin/tenants", body);

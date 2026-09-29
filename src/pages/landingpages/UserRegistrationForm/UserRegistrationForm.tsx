@@ -80,6 +80,16 @@ export const UserRegistrationForm = () => {
                     {formatCurrency(selectedApartment.price)}
                   </span>
                 </div>
+                {(selectedApartment.secondaryPrice || 0) > 0 && (
+                  <div className="regSummaryStat">
+                    <span className="regSummaryStatLabel myfont1">
+                      Secondary occupant
+                    </span>
+                    <span className="regSummaryStatValue myfont3">
+                      +{formatCurrency(selectedApartment.secondaryPrice)}
+                    </span>
+                  </div>
+                )}
                 <div className="regSummaryStat">
                   <span className="regSummaryStatLabel myfont1">Status</span>
                   <span

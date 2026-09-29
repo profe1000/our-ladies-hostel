@@ -37,6 +37,16 @@
   height: 22px;
 }
 
+/* Apartment can be shared with a secondary occupant */
+.apartmentUnitShareTag {
+  font-size: 11px;
+  line-height: 1.4;
+  color: #d4b24c;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 178, 76, 0.45);
+}
+
 @media (max-width: 600px) {
   .apartmentUnitGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -58,6 +58,19 @@ export interface Revenue {
   extraCharges: number;
   currentYear: CurrentYear;
   apartmentDetails: ApartmentDetails;
+  secondaryOccupants?: SecondaryOccupantRevenue;
+}
+
+// Extra rent from secondary occupants sharing an apartment
+export interface SecondaryOccupantRevenue {
+  // Collected this year, already part of amountCollected
+  amountCollected: number;
+  // From apartments shared right now, already part of totalRevenue
+  expectedRevenue: number;
+  // If every shareable apartment had a secondary occupant
+  potentialRevenue: number;
+  noOfShared: number;
+  noOfShareable: number;
 }
 
 export interface ApartmentDetails {
@@ -152,6 +165,8 @@ export interface IAdminBuildingsData {
   title: string;
   description: string;
   price: number;
+  // Extra rent for a secondary occupant, copied to the building's apartments
+  secondaryPrice?: number;
   serviceCharge: number;
   noOfApartments: number;
   imageUrl: string;
@@ -175,6 +190,8 @@ export interface IAdminApartmentData {
   id: number;
   title: string;
   price: number;
+  // Added to the rent when a secondary occupant shares the apartment. 0 = not allowed
+  secondaryPrice?: number;
   serviceCharge: number;
   isOccupied: boolean;
   buildingId?: number;
@@ -188,6 +205,8 @@ export interface CurrentOccupant {
   expired: boolean;
   startDate: string;
   endDate: string;
+  // This tenancy includes a secondary occupant
+  hasSecondaryOccupant?: boolean;
   tenantId: number;
   tenant: IAdminTenantsData;
   apartmentId: number;
@@ -285,8 +304,31 @@ export interface IAdminTenantsData {
   activeOccupant?: any;
   blocked: boolean;
   tenantGuarantors: TenantGuarantor[];
+  occupation?: string;
+  agreementFormUrl?: string;
+  // School documents
+  admissionNumber?: string;
+  passportImageUrl?: string;
+  admissionLetterUrl?: string;
+  // Secondary occupant sharing the apartment
+  hasSecondaryOccupant?: boolean;
+  secondaryFullName?: string;
+  secondaryAdmissionNumber?: string;
+  secondaryPassportImageUrl?: string;
+  secondaryAdmissionLetterUrl?: string;
+  nextPaymentAmount?: number;
   dateModified: string;
   dateCreated: string;
+}
+
+// Apartment of a tenancy, with its building
+export interface IAdminTenancyApartment {
+  id: number;
+  title: string;
+  price: number;
+  secondaryPrice: number;
+  buildingId?: number;
+  building?: { id: number; title: string };
 }
 
 export interface TenantGuarantor {
@@ -316,9 +358,13 @@ export type IAdminOccupantData = {
   tenantId: number;
   tenant: IAdminTenantsData;
   apartmentId?: number;
+  apartment?: IAdminTenancyApartment;
   amountPaid?: number;
   expired: boolean;
   active?: boolean;
+  hasSecondaryOccupant?: boolean;
+  // "RentPayment" or "Admin"
+  source?: string;
   startDate: string; // This should ideally be a Date object if you're parsing dates
   endDate: string; // This should ideally be a Date object if you're parsing dates
   dateModified?: string; // This should ideally be a Date object if you're parsing dates
@@ -395,7 +441,13 @@ export interface IPendingRentPaymentData {
   amount: number;
   netAmount: number;
   serviceCharge: number;
+  // Secondary occupant's share, included in netAmount
+  secondaryAmount?: number | null;
   amountPaid?: number;
+  startDate?: string;
+  endDate?: string;
+  apartmentRequestId?: number;
+  rentPaymentCharges?: { title: string; amount?: number }[];
   tenantId: number;
   tenant: Tenant;
   apartmentId: number;
@@ -482,6 +534,13 @@ export interface IAdminApartmentRequestData {
   admissionNumber?: string;
   passportImageUrl?: string;
   admissionLetterUrl?: string;
+  // Secondary occupant sharing the apartment
+  hasSecondaryOccupant?: boolean;
+  secondaryFirstName?: string;
+  secondaryLastName?: string;
+  secondaryAdmissionNumber?: string;
+  secondaryPassportImageUrl?: string;
+  secondaryAdmissionLetterUrl?: string;
   apartmentId?: number;
   apartment?: Partial<IAdminApartmentData> & {
     building?: Partial<IAdminBuildingsData>;
