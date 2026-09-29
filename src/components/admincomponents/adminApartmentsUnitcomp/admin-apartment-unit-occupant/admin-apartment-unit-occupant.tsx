@@ -209,6 +209,11 @@ export const AdminUnitOccupantComp: React.FC<{}> = () => {
     }
   };
 
+  // Reserved units (price 0) count as occupied but may have no tenant
+  const hasOccupant =
+    selectedApartment?.isOccupied &&
+    (!selectedApartment?.isReserved || !!selectedApartment?.currentOccupant?.id);
+
   // Navigate to the next Page
   const navigateToPage = async (pageName) => {
     navigate(pageName);
@@ -217,7 +222,7 @@ export const AdminUnitOccupantComp: React.FC<{}> = () => {
   return (
     <>
       <div className="w3-content adminPageBody">
-        {selectedApartment?.isOccupied ? (
+        {hasOccupant ? (
           <>
             {/* Current Occupant Details */}
             <AdminTenantDetails></AdminTenantDetails>
@@ -228,8 +233,10 @@ export const AdminUnitOccupantComp: React.FC<{}> = () => {
               <UserAddOutlined />
             </span>
             <p className="myfont1">
-              {selectedApartment?.title || "This unit"} does not have an
-              occupant yet.
+              {selectedApartment?.title || "This unit"}{" "}
+              {selectedApartment?.isReserved
+                ? "is reserved (price ₦0), so tenants see it as occupied. You can still add its occupant here."
+                : "does not have an occupant yet."}
             </p>
             <button
               type="button"
@@ -268,7 +275,7 @@ export const AdminUnitOccupantComp: React.FC<{}> = () => {
             >
               <HistoryOutlined /> Occupant History
             </button>
-            {selectedApartment?.isOccupied && (
+            {hasOccupant && (
               <>
                 <button
                   type="button"
@@ -301,7 +308,7 @@ export const AdminUnitOccupantComp: React.FC<{}> = () => {
             )}
           </div>
 
-          {selectedApartment?.isOccupied && showResetPassword && (
+          {hasOccupant && showResetPassword && (
             <div className="adminResetPassword">
               <label
                 htmlFor="occupant-new-password"

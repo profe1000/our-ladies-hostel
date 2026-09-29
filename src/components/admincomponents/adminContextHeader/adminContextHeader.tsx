@@ -187,7 +187,11 @@ export const AdminContextHeader: React.FC<IAdminContextHeader> = ({
                         : "adminStatusVacant"
                     }`}
                   >
-                    {apartment.isOccupied ? "Occupied" : "Vacant"}
+                    {(apartment as any).isReserved
+                      ? "Reserved"
+                      : apartment.isOccupied
+                      ? "Occupied"
+                      : "Vacant"}
                   </span>
                 )}
                 {rentDue && (

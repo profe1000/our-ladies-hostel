@@ -251,9 +251,18 @@ export const BuildingListUser: React.FC<IBuildingList> = ({
                                   {buildings?.description}
                                 </p>
 
-                                <span className="buildingAmount myfont1 w3-text-white">
-                                  {formatCurrency(buildings.price)}
-                                </span>
+                                <div className="buildingCardTags">
+                                  <span className="buildingAmount myfont1 w3-text-white">
+                                    {formatCurrency(buildings.price)}
+                                  </span>
+                                  <span className="buildingUnits myfont1 w3-text-white">
+                                    <AppstoreOutlined />{" "}
+                                    {buildings.noOfApartments || 0}{" "}
+                                    {buildings.noOfApartments === 1
+                                      ? "apartment"
+                                      : "apartments"}
+                                  </span>
+                                </div>
                               </div>
 
                               <img

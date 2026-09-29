@@ -36,7 +36,9 @@ export interface ITenantApartmentData {
   price: number;
   // Added to the rent when a secondary occupant shares the apartment. 0 = not allowed
   secondaryPrice?: number;
+  // Has an occupant, or is reserved (price 0)
   isOccupied: boolean;
+  isReserved?: boolean;
   buildingId?: number;
   dateModified: string;
   dateCreated: string;

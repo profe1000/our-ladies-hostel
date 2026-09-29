@@ -76,11 +76,15 @@ export const AdminApartmentUnitList: React.FC<IAdminApartmentUnitList> = ({
 
   // A custom hook to Load All ApartmentUnits Details
   const apartmentUnitsDataResult = useFormatApiRequest(
-    () =>
-      adminGetApartmentsApi({
-        ...apartmentUnitsDefaultFilter,
+    () => {
+      // The API reads `pageSize`, not `perPage`
+      const { perPage: filterPerPage, ...filter } = apartmentUnitsDefaultFilter;
+      return adminGetApartmentsApi({
+        ...filter,
+        pageSize: filterPerPage || perPage,
         buildingId: params?.id,
-      }),
+      });
+    },
     loadApartmentUnitsData,
     () => {
       setLoadApartmentUnitsData(false);
@@ -245,7 +249,11 @@ export const AdminApartmentUnitList: React.FC<IAdminApartmentUnitList> = ({
                           : "adminStatusVacant"
                       }`}
                     >
-                      {apartmentUnits.isOccupied ? "Occupied" : "Vacant"}
+                      {apartmentUnits.isReserved
+                        ? "Reserved"
+                        : apartmentUnits.isOccupied
+                        ? "Occupied"
+                        : "Vacant"}
                     </span>
                   </div>
 
@@ -253,7 +261,9 @@ export const AdminApartmentUnitList: React.FC<IAdminApartmentUnitList> = ({
                     <span>
                       Rent{" "}
                       <b className="adminUnitPrice">
-                        {formatCurrency(apartmentUnits.price || 0)}
+                        {apartmentUnits.isReserved
+                          ? "Reserved (₦0)"
+                          : formatCurrency(apartmentUnits.price || 0)}
                       </b>
                     </span>
                     <span className="adminUnitOccupant">

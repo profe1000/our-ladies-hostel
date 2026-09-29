@@ -118,14 +118,17 @@ export const AdminEditApartmentUnitForm: React.FC<{}> = () => {
             {/* Amount */}
             <div className="w3-col w3-margin-bottom">
               <div className="w3-col l12 s12 m12">
-                <span className="w3-text-white w3-small myfont1">Amount</span>
+                <span className="w3-text-white w3-small myfont1">
+                  Amount (0 = reserved, shown as occupied)
+                </span>
               </div>
               <div className="w3-col l12 s12 m12">
                 <input
                   required
                   name="price"
                   type="number"
-                  value={payLoad?.price || ""}
+                  min={0}
+                  value={payLoad?.price ?? ""}
                   onChange={handleInputChange}
                   className="w3-input w3-border w3-col w3-text-white w3-border-white w3-round-large AdminFormInput"
                   placeholder="Amount"

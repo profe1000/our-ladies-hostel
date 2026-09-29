@@ -193,7 +193,10 @@ export interface IAdminApartmentData {
   // Added to the rent when a secondary occupant shares the apartment. 0 = not allowed
   secondaryPrice?: number;
   serviceCharge: number;
+  // Has an occupant, or is reserved
   isOccupied: boolean;
+  // Price 0: reserved, shown as occupied to tenants
+  isReserved?: boolean;
   buildingId?: number;
   currentOccupant?: CurrentOccupant;
   dateModified: string;

@@ -80,7 +80,14 @@ export const AdminBuildingList: React.FC<IAdminBuildingList> = ({
 
   // A custom hook to Load All Buildings Details
   const buildingsDataResult = useFormatApiRequest(
-    () => adminGetBuildingsApi(buildingsDefaultFilter),
+    () => {
+      // The API reads `pageSize`, not `perPage`
+      const { perPage: filterPerPage, ...filter } = buildingsDefaultFilter;
+      return adminGetBuildingsApi({
+        ...filter,
+        pageSize: filterPerPage || perPage,
+      });
+    },
     loadBuildingsData,
     () => {
       setLoadBuildingsData(false);
