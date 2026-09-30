@@ -5,12 +5,11 @@
   gap: 12px;
   flex-wrap: wrap;
   padding: 12px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.tenantLinkRow:first-of-type {
-  border-top: none;
-  padding-top: 0;
+/* Divider between links only; the panel header already has one */
+.tenantLinkRow + .tenantLinkRow {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .tenantLinkText {
