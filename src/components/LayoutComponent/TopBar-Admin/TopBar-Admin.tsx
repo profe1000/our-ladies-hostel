@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { IAdminAuthType } from "../../../apiservice/admin-AuthService.type";
 import { useAppSelector } from "../../../Redux/reduxCustomHook";
 import { RootState } from "../../../Redux/store";
+import EstateLogo from "../EstateLogo/EstateLogo";
 import "./TopBar-Admin.css";
 
 type ITopBarAdmin = {
@@ -62,15 +63,7 @@ export const TopBarAdmin: React.FC<ITopBarAdmin> = ({
                     </span>
                   )}
                   <span>
-                    <img
-                      onClick={() => {
-                        navigateToHome();
-                      }}
-                      style={{height:"70px"}}
-                      className="favicon-header"
-                      src="/images/our-ladies-logo.png"
-                      alt="Our Ladies Hostel"
-                    />
+                    <EstateLogo isAdmin onClick={navigateToHome} />
                   </span>
                 </div>
               </div>

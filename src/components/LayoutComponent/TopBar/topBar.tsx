@@ -4,7 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { IAuthType } from "../../../apiservice/authService.type";
 import { useAppSelector } from "../../../Redux/reduxCustomHook";
 import { RootState } from "../../../Redux/store";
+import EstateLogo from "../EstateLogo/EstateLogo";
 import "./topbar.css";
+import { estatePath } from "../../../utils/estate";
 
 type ITopBar = {
   showBackButton?: boolean;
@@ -27,7 +29,7 @@ export const TopBar: React.FC<ITopBar> = ({
 
   // Navigate To Home
   const navigateToHome = async () => {
-    navigate("/", { replace: true });
+    navigate(estatePath(), { replace: true });
   };
 
   // Navigate BackWards
@@ -62,15 +64,7 @@ export const TopBar: React.FC<ITopBar> = ({
                     </span>
                   )}
                   <span>
-                    <img
-                      onClick={() => {
-                        navigateToHome();
-                      }}
-                      style={{height:"70px"}}
-                      className="favicon-header"
-                      src="/images/our-ladies-logo.png"
-                      alt="Our Ladies Hostel"
-                    />
+                    <EstateLogo onClick={navigateToHome} />
                   </span>
                 </div>
               </div>

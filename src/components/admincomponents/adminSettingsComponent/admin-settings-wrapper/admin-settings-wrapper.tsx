@@ -3,6 +3,7 @@ import { IAdminAuthType } from "../../../../apiservice/admin-AuthService.type";
 import { useAppSelector } from "../../../../Redux/reduxCustomHook";
 import { RootState } from "../../../../Redux/store";
 import "./admin-settings-wrapper.css";
+import { isSuperAdminRole } from "../../../../utils/admin.utils";
 
 export const AdminSettingWrapper: React.FC<{}> = () => {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ export const AdminSettingWrapper: React.FC<{}> = () => {
             Pending Payments
           </button>
 
-          {authData.data?.credentials?.adminRole?.id === 1 && (
+          {isSuperAdminRole(authData.data?.credentials?.adminRole) && (
             <>
               <br />
               <button

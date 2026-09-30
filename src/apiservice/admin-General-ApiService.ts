@@ -343,3 +343,10 @@ export const adminUpdateApartmentRequestStatusApi = async (
   const result: any = await data;
   return result;
 };
+
+// Opens a session as the tenant ("login as"); super admins only. readOnly limits it to viewing
+export const adminLoginAsTenantApi = async (id: string | number, body: { readOnly?: boolean }) => {
+  const axios = await instance(null, null, true, true);
+  const { data } = await axios.post(`api/v1/admin/tenants/${id}/login-as`, body);
+  return data;
+};

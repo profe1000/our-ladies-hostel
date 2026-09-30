@@ -12,6 +12,7 @@ import { IAdminAuthType } from "../../../apiservice/admin-AuthService.type";
 import { useAppSelector } from "../../../Redux/reduxCustomHook";
 import { RootState } from "../../../Redux/store";
 import "./Tabbar.css";
+import { isSuperAdminRole } from "../../../utils/admin.utils";
 
 const Tabbar = () => {
   const location = useLocation();
@@ -94,7 +95,7 @@ const Tabbar = () => {
 
   const updateMenuType = () => {
     // Used Url path to check
-    if (authData.data?.credentials?.adminRole?.id === 1) {
+    if (isSuperAdminRole(authData.data?.credentials?.adminRole)) {
       setMenu(superMenu);
     } else {
       setMenu(generalMenu);

@@ -20,6 +20,7 @@ import { useAppDispatch } from "../../../../Redux/reduxCustomHook";
 import { formatCurrency } from "../../../../utils/basic.utils";
 import { ILoadState } from "../../../../utils/loading.utils.";
 import "./building-list.css";
+import { estatePath } from "../../../../utils/estate";
 type NotificationType = "success" | "info" | "warning" | "error";
 
 type IBuildingList = {
@@ -125,7 +126,7 @@ export const BuildingListUser: React.FC<IBuildingList> = ({
       type: "TENANT_ADD_SELECTED_BUILDING",
       payload: tableData[index],
     });
-    navigate(`/landing/user-apartment-Unit/${tableData[index].id}`);
+    navigate(estatePath(`/user-apartment-Unit/${tableData[index].id}`));
   };
 
   const fetchSettings = async () => {

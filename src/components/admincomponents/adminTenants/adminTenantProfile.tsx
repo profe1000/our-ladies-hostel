@@ -2,18 +2,27 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { HistoryOutlined, HomeOutlined, TeamOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
-import { adminGetOccupantApi } from "../../../apiservice/admin-General-ApiService";
+import {
+  adminGetOccupantApi,
+  adminLoginAsTenantApi,
+} from "../../../apiservice/admin-General-ApiService";
 import { IAdminOccupantData } from "../../../apiservice/admin-General-ApiService.type";
 import { formatCurrency } from "../../../utils/basic.utils";
 import { convertToShortDate } from "../../../utils/date.utils";
 import AdminTenantDetails from "../adminApartmentsUnitcomp/admin-tenant-detail/admin-tenant-detail";
 import "../adminContextHeader/adminContextHeader.css";
 import "./adminTenants.css";
+import LoginAsButton from "../../../pages/saaspages/admin/LoginAsButton";
+import { useAppSelector } from "../../../Redux/reduxCustomHook";
+import { RootState } from "../../../Redux/store";
+import { isSuperAdminRole } from "../../../utils/admin.utils";
 
 // A tenant's details, documents and every tenancy they have had
 export const AdminTenantProfile = () => {
   const params = useParams();
   const [occupancies, setOccupancies] = useState<IAdminOccupantData[]>();
+  const adminAuthData: any = useAppSelector((state: RootState) => state?.AdminAuthData);
+  const isSuperAdmin = isSuperAdminRole(adminAuthData?.data?.credentials?.adminRole);
 
   useEffect(() => {
     let cancelled = false;
@@ -45,6 +54,18 @@ export const AdminTenantProfile = () => {
         <span className="adminCtxCrumbSep">›</span>
         <span className="adminCtxCrumbCurrent">Details</span>
       </nav>
+
+      {/* See the app as this tenant sees it, without their password */}
+      {isSuperAdmin && params?.id && (
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+          <LoginAsButton
+            isAdmin={false}
+            size="middle"
+            label="Login as tenant"
+            start={(readOnly) => adminLoginAsTenantApi(params.id!, { readOnly })}
+          />
+        </div>
+      )}
 
       <AdminTenantDetails
         tenantId={params?.id}

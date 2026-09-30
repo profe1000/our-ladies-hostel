@@ -10,6 +10,7 @@ import {
 import TopBar from "../../../components/LayoutComponent/TopBar/topBar";
 import { BuildingListUser } from "../../../components/userscomponents/buildingsComp/building-list/building-list";
 import "./Home.css";
+import useEstateBranding from "../../../hooks/useEstateBranding";
 
 const homeHighlights = [
   {
@@ -31,6 +32,7 @@ const homeHighlights = [
 
 export const HomePage = () => {
   const listingsRef = useRef<HTMLDivElement>(null);
+  const branding = useEstateBranding();
 
   useEffect(() => {
     const backHandler = () => {
@@ -58,7 +60,7 @@ export const HomePage = () => {
         <div className="w3-content homeHeroInner">
           <div className="homeHeroText">
             <span className="homeHeroEyebrow myfont1">
-              Our Ladies Lodge
+              {branding?.name}
             </span>
             <h1 className="homeHeroTitle myfont5">
               A home that feels <em>right</em>, from day one.

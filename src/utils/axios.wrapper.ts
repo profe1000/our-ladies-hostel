@@ -2,6 +2,11 @@ import axios from "axios";
 import { Device } from "@capacitor/device";
 import { ADMIN_TOKEN_KEY, USER_TOKEN_KEY } from "../hooks/useAuth";
 import { getString } from "./localStorage";
+import {
+  getEstateSlug,
+  LOGIN_AS_ADMIN_UUID_KEY,
+  LOGIN_AS_USER_UUID_KEY,
+} from "./estate";
 // import * as rax from "retry-axios";
 
 interface IAxiosHeaders {
@@ -30,13 +35,23 @@ const instance = async (
     const info = await Device.getInfo();
     const deviceId = await Device.getId();
 
+    // A "login as" session only works with the uuid it was issued for
+    const loginAsUuid = getString(
+      isAdmin ? LOGIN_AS_ADMIN_UUID_KEY : LOGIN_AS_USER_UUID_KEY
+    );
+
     headers = {
       ...headers,
-      uuid: deviceId.identifier,
+      uuid: loginAsUuid || deviceId.identifier,
       "device-name": info.name || info.model,
       "device-info": info.operatingSystem,
       platform: info.platform,
     };
+  }
+
+  // Tenant pages belong to the estate opened at /e/:slug. Admins are matched to their estate by the server
+  if (!isAdmin) {
+    headers = { ...headers, "X-Estate": getEstateSlug() };
   }
 
   const axiosInstance = axios.create({

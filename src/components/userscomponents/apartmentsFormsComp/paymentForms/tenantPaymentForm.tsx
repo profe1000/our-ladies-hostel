@@ -31,6 +31,7 @@ import {
 import { formatCurrency } from "../../../../utils/basic.utils";
 import { ILoadState } from "../../../../utils/loading.utils.";
 import { Spin, Result, Button, Empty } from "antd";
+import { estatePath } from "../../../../utils/estate";
 
 export const TenantPaymentForm: React.FC<{}> = () => {
   const [loadApi, setLoadApi] = useState(false);
@@ -189,7 +190,7 @@ export const TenantPaymentForm: React.FC<{}> = () => {
       // payWithPayStack(result.data?.paystackMetadata);
 
       alert("Your Payment is under review, Thank you");
-      navigate("/");
+      navigate(estatePath());
 
       // Handle Success Here
     } else if (result.httpState === "ERROR") {
@@ -211,7 +212,7 @@ export const TenantPaymentForm: React.FC<{}> = () => {
       metadata: meta || {},
       onSuccess: (transaction) => {
         alert("Your Payment was succesful, Thank you.");
-        navigate("/");
+        navigate(estatePath());
       },
       onCancel: () => {
         console.log("Pop Up closed");

@@ -18,6 +18,8 @@ import {
 import { useAppDispatch } from "../../../Redux/reduxCustomHook";
 import { storePlainString, storeJSON } from "../../../utils/localStorage";
 import "../Auth.css";
+import { isSuperAdminRole } from "../../../utils/admin.utils";
+import { clearLoginAs } from "../../../utils/estate";
 type NotificationType = "success" | "info" | "warning" | "error";
 
 const AuthSignIn = () => {
@@ -43,6 +45,8 @@ const AuthSignIn = () => {
   // Use to Submit Form
   const handleSubmit = (event: any) => {
     event.preventDefault();
+    // A real sign in must use this device's own uuid, not one left by a "login as" session
+    clearLoginAs(selectedUserType === 2);
     setLoadApi(true);
     setFormLoading(true);
   };
@@ -75,7 +79,7 @@ const AuthSignIn = () => {
           storePlainString(ADMIN_TOKEN_KEY, signinResult?.data?.token || "");
           storeJSON(ADMIN_AUTH_DATA_KEY, signinResult);
           dispatch({ type: "ADMIN_AUTH_ADD_DATA", payload: signinResult });
-          if (signinResult.data?.credentials?.adminRole?.id === 1) {
+          if (isSuperAdminRole(signinResult.data?.credentials?.adminRole)) {
             navigate("/admin");
           } else {
             navigate("/admin/Buildings");
