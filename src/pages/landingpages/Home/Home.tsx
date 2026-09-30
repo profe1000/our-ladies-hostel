@@ -11,6 +11,7 @@ import TopBar from "../../../components/LayoutComponent/TopBar/topBar";
 import { BuildingListUser } from "../../../components/userscomponents/buildingsComp/building-list/building-list";
 import "./Home.css";
 import useEstateBranding from "../../../hooks/useEstateBranding";
+import { estatePath } from "../../../utils/estate";
 
 const homeHighlights = [
   {
@@ -78,7 +79,7 @@ export const HomePage = () => {
                 Explore Buildings <ArrowDownOutlined />
               </button>
               <Link
-                to="/auth"
+                to={estatePath("/login")}
                 className="homeHeroButton homeHeroButtonGhost myfont1"
               >
                 Tenant Sign In

@@ -4,29 +4,22 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { adminAuthSignIn } from "../../../apiservice/admin-AuthService";
 import { IAdminAuthType } from "../../../apiservice/admin-AuthService.type";
-import { authSignIn } from "../../../apiservice/authService";
-import { IAuthType } from "../../../apiservice/authService.type";
 import TitleBar from "../../../components/LayoutComponent/TitleBar/titleBar";
 import TopBar from "../../../components/LayoutComponent/TopBar/topBar";
 import useFormatApiRequest from "../../../hooks/formatApiRequest";
-import {
-  USER_TOKEN_KEY,
-  USER_AUTH_DATA_KEY,
-  ADMIN_AUTH_DATA_KEY,
-  ADMIN_TOKEN_KEY,
-} from "../../../hooks/useAuth";
+import { ADMIN_AUTH_DATA_KEY, ADMIN_TOKEN_KEY } from "../../../hooks/useAuth";
 import { useAppDispatch } from "../../../Redux/reduxCustomHook";
 import { storePlainString, storeJSON } from "../../../utils/localStorage";
 import "../Auth.css";
 import { isSuperAdminRole } from "../../../utils/admin.utils";
-import { clearLoginAs } from "../../../utils/estate";
+import { clearLoginAs, ESTATE_SLUG_KEY, estatePath } from "../../../utils/estate";
+import { getString } from "../../../utils/localStorage";
 type NotificationType = "success" | "info" | "warning" | "error";
 
 const AuthSignIn = () => {
   const [formLoading, setFormLoading] = useState<boolean>(false);
   const [loadApi, setLoadApi] = useState(false);
   const [user, setUser] = useState<any>({});
-  const [selectedUserType, setSelectedUserType] = useState<number>(2);
   const [notificationMessage, setNotificationMessage] = useState<any | null>(
     null
   );
@@ -46,14 +39,14 @@ const AuthSignIn = () => {
   const handleSubmit = (event: any) => {
     event.preventDefault();
     // A real sign in must use this device's own uuid, not one left by a "login as" session
-    clearLoginAs(selectedUserType === 2);
+    clearLoginAs(true);
     setLoadApi(true);
     setFormLoading(true);
   };
 
   // A custom hook to format the login Api
   const result = useFormatApiRequest(
-    () => (selectedUserType === 1 ? authSignIn(user) : adminAuthSignIn(user)),
+    () => adminAuthSignIn(user),
     loadApi,
     () => {
       setLoadApi(false);
@@ -67,23 +60,16 @@ const AuthSignIn = () => {
   const processApi = async () => {
     if (result.httpState === "SUCCESS") {
       setFormLoading(false);
-      const signinResult: IAuthType & IAdminAuthType = result.data;
+      const signinResult: IAdminAuthType = result.data;
 
       setTimeout(() => {
-        if (selectedUserType === 1) {
-          storePlainString(USER_TOKEN_KEY, signinResult?.data?.token || "");
-          storeJSON(USER_AUTH_DATA_KEY, signinResult);
-          dispatch({ type: "AUTH_ADD_DATA", payload: signinResult });
-          navigate("/users");
-        } else if (selectedUserType === 2) {
-          storePlainString(ADMIN_TOKEN_KEY, signinResult?.data?.token || "");
-          storeJSON(ADMIN_AUTH_DATA_KEY, signinResult);
-          dispatch({ type: "ADMIN_AUTH_ADD_DATA", payload: signinResult });
-          if (isSuperAdminRole(signinResult.data?.credentials?.adminRole)) {
-            navigate("/admin");
-          } else {
-            navigate("/admin/Buildings");
-          }
+        storePlainString(ADMIN_TOKEN_KEY, signinResult?.data?.token || "");
+        storeJSON(ADMIN_AUTH_DATA_KEY, signinResult);
+        dispatch({ type: "ADMIN_AUTH_ADD_DATA", payload: signinResult });
+        if (isSuperAdminRole(signinResult.data?.credentials?.adminRole)) {
+          navigate("/admin");
+        } else {
+          navigate("/admin/Buildings");
         }
       }, 1500);
 
@@ -123,67 +109,19 @@ const AuthSignIn = () => {
       {/* " The context is use to hold the notification from ant design" */}
       {contextHolder}
 
-      <TopBar showProfile={false}></TopBar>
+      <TopBar showProfile={false} saasBrand></TopBar>
 
       <div className="w3-col" style={{ marginTop: "20px" }}>
-        <TitleBar title="Choose Account Type"></TitleBar>
+        <TitleBar title="Estate Admin Sign In"></TitleBar>
       </div>
       <div className="w3-content">
         <div className="w3-container">
-          {/* PreForm */}
-          <div style={{ paddingTop: "20px" }}>
-            {/* <div className="w3-col l6 s6 m6" style={{ padding: "15px" }}>
-              <div
-                className={
-                  "w3-col authSelectorBg w3-round-large w3-center " +
-                  (selectedUserType === 1 ? "authSelectorBgSelected " : "")
-                }
-                onClick={() => {
-                  setSelectedUserType(1);
-                }}
-              >
-                <div className="w3-col w3-center">
-                  <img
-                    src="/images/auth/avatar.png"
-                    style={{ width: "100%", maxWidth: "100px" }}
-                    alt=""
-                  />
-                  <br />
-                  <div className="w3-text-white w3-center myfont1">Tenant</div>
-                </div>
-              </div>
-            </div> */}
-
-            <div className="w3-col l6 s6 m6" style={{ padding: "15px" }}>
-              <div
-                className={
-                  "w3-col authSelectorBg w3-round-large w3-center " +
-                  (selectedUserType === 2 ? "authSelectorBgSelected " : "")
-                }
-                onClick={() => {
-                  setSelectedUserType(2);
-                }}
-              >
-                <div className="w3-col w3-center">
-                  <img
-                    src="/images/auth/avatar.png"
-                    style={{ width: "100%", maxWidth: "100px" }}
-                    alt=""
-                  />
-                  <br />
-                  <div className="w3-text-white w3-center myfont1">
-                    LandLord
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
           {/* Form */}
           <div style={{ paddingTop: "20px" }}>
             <form onSubmit={handleSubmit}>
               <div className="w3-col w3-margin-top w3-margin-bottom">
                 <h5 className="adminLoginFormInputHeader myfont1">
-                  Login into your account
+                  Sign in to manage your estate
                 </h5>
               </div>
 
@@ -239,6 +177,21 @@ const AuthSignIn = () => {
                     )}
                   </span>
                 </button>
+              </div>
+
+              {/* Tenants have their own sign in page on their estate's page */}
+              <div
+                className="w3-col w3-margin-top w3-small myfont1"
+                style={{ color: "rgba(255,255,255,0.7)" }}
+              >
+                Are you a tenant?{" "}
+                {getString(ESTATE_SLUG_KEY) ? (
+                  <Link to={estatePath("/login")} className="w3-text-white">
+                    <u>Sign in as a tenant</u>
+                  </Link>
+                ) : (
+                  "Sign in from your estate's page, using the link in your welcome email."
+                )}
               </div>
 
               <div className="w3-col w3-margin-bottom">

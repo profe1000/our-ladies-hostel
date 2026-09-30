@@ -6,13 +6,15 @@ import { useAppSelector } from "../../../Redux/reduxCustomHook";
 import { RootState } from "../../../Redux/store";
 import EstateLogo from "../EstateLogo/EstateLogo";
 import "./topbar.css";
-import { estatePath } from "../../../utils/estate";
+import { estatePath, SAAS_NAME } from "../../../utils/estate";
 
 type ITopBar = {
   showBackButton?: boolean;
   showNotification?: boolean;
   showProfile?: boolean;
   backButtonHref?: string;
+  /** Show the SaaS name (linking to the landing page) instead of an estate, e.g. on the estate admin sign in */
+  saasBrand?: boolean;
 };
 
 export const TopBar: React.FC<ITopBar> = ({
@@ -20,6 +22,7 @@ export const TopBar: React.FC<ITopBar> = ({
   showNotification = false,
   showProfile = true,
   backButtonHref = "/",
+  saasBrand = false,
 }) => {
   const authData: IAuthType = useAppSelector(
     (state: RootState) => state?.AuthData
@@ -64,7 +67,17 @@ export const TopBar: React.FC<ITopBar> = ({
                     </span>
                   )}
                   <span>
-                    <EstateLogo onClick={navigateToHome} />
+                    {saasBrand ? (
+                      <span
+                        onClick={() => navigate("/")}
+                        className="myfont5"
+                        style={{ display: "inline-flex", alignItems: "center", minHeight: "70px", fontSize: "20px", cursor: "pointer" }}
+                      >
+                        {SAAS_NAME}
+                      </span>
+                    ) : (
+                      <EstateLogo onClick={navigateToHome} />
+                    )}
                   </span>
                 </div>
               </div>
@@ -75,7 +88,7 @@ export const TopBar: React.FC<ITopBar> = ({
                 {showProfile && (
                   <>
                     <span className="topBarProfileIndicator">
-                      <Link to={"/auth"}>
+                      <Link to={estatePath("/login")}>
                         <UserOutlined className="w3-text-white" />
                       </Link>
                     </span>

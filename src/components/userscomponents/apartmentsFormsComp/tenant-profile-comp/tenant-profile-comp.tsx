@@ -20,6 +20,7 @@ import { useNavigate } from "react-router";
 import { convertToShortDate } from "../../../../utils/date.utils";
 import { ILoadState } from "../../../../utils/loading.utils.";
 import { formatCurrency } from "../../../../utils/basic.utils";
+import { estatePath } from "../../../../utils/estate";
 
 export const TenantProfileComp: React.FC<{}> = () => {
   const authData: IAuthType = useAppSelector(
@@ -339,7 +340,7 @@ export const TenantProfileComp: React.FC<{}> = () => {
                 &nbsp; &nbsp;
                 <button
                   onClick={() => {
-                    navigateToPage("/auth");
+                    navigateToPage(estatePath("/login"));
                   }}
                   className="w3-btn w3-margin-top  w3-round-large myfont1 w3-small editOccupantBtn"
                 >

@@ -7,6 +7,7 @@ import UserRegistrationForm from "./UserRegistrationForm/UserRegistrationForm";
 import UserPaymentForm from "./UserPaymentForm/UserPaymentForm";
 import PaymentLinkPage from "./PaymentLink/PaymentLinkPage";
 import UserApartmentUnitsPage from "./UserApartmentUnitsPage/UserApartmentUnitsPage";
+import TenantSignIn from "./TenantSignIn/TenantSignIn";
 
 const LandingPagesRoute = () => {
   return (
@@ -23,6 +24,7 @@ const LandingPagesRoute = () => {
         />
         <Route path="/user-tenant-payment/:id" element={<UserPaymentForm />} />
         <Route path="/pay/:token" element={<PaymentLinkPage />} />
+        <Route path="/login" element={<TenantSignIn />} />
         <Route path="*" element={<Nopage />} />
       </Route>
     </Routes>

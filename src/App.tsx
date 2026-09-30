@@ -20,7 +20,7 @@ import {
   SaasAdminRoutes,
 } from "./pages/saaspages/saasPagesRoute";
 import LoginAsBanner from "./components/LoginAsBanner/LoginAsBanner";
-import { LOCKED_ESTATE_SLUG } from "./utils/estate";
+import { estatePath, LOCKED_ESTATE_SLUG } from "./utils/estate";
 
 const ReactApp = () => {
   const authState = useAuth();
@@ -84,7 +84,7 @@ const ReactApp = () => {
         <Route
           path="users/*"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute customUrl={estatePath("/login")}>
               <UsersPagesRoute />
             </ProtectedRoute>
           }
