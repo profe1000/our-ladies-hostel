@@ -350,3 +350,40 @@ export const adminLoginAsTenantApi = async (id: string | number, body: { readOnl
   const { data } = await axios.post(`api/v1/admin/tenants/${id}/login-as`, body);
   return data;
 };
+
+// Who is emailed about payments, rent reminders and requests; empty uses the fallback shown by the settings
+export const adminSaveNotificationSettingsApi = async (body: {
+  paymentEmails?: string;
+  rentReminderEmails?: string;
+  requestEmails?: string;
+}) => {
+  const axios = await instance(null, null, true, true);
+  const { data } = await axios.post(`api/v1/admin/settings/notifications`, body);
+  return data;
+};
+
+// Paystack collections. Empty keys keep the saved ones
+export const adminSavePaystackSettingsApi = async (body: {
+  enabled: boolean;
+  publicKey?: string;
+  secretKey?: string;
+  removeKeys?: boolean;
+}) => {
+  const axios = await instance(null, null, true, true);
+  const { data } = await axios.post(`api/v1/admin/settings/paystack`, body);
+  return data;
+};
+
+// The admin's estate: name, logo, home page pictures, plan and usage
+export const adminGetEstateApi = async () => {
+  const axios = await instance(null, null, true, true);
+  const { data } = await axios.get(`api/v1/admin/estate`);
+  return data;
+};
+
+// Logo and home page pictures (multipart: logo, homeImage1-3, removeLogo, removeHomeImage1-3)
+export const adminSaveBrandingApi = async (formData: FormData) => {
+  const axios = await instance(null, null, true, true);
+  const { data } = await axios.post(`api/v1/admin/estate/branding`, formData);
+  return data;
+};

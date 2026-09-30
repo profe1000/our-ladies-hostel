@@ -6,7 +6,15 @@ export interface IEstateBranding {
   name: string;
   slug: string;
   logoUrl?: string | null;
+  homeImage1Url?: string | null;
+  homeImage2Url?: string | null;
+  homeImage3Url?: string | null;
 }
+
+/** Clears the saved branding, e.g. after an admin uploads a new logo */
+export const clearEstateBrandingCache = () => {
+  Object.keys(cache).forEach((key) => delete cache[key]);
+};
 
 // Kept for the page's lifetime so every top bar does not refetch it
 const cache: Record<string, IEstateBranding> = {};

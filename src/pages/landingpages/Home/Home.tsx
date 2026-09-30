@@ -90,17 +90,17 @@ export const HomePage = () => {
           <div className="homeHeroGallery" aria-hidden="true">
             <img
               className="homeHeroImage homeHeroImageMain"
-              src="/images/sample/sample1.jpeg"
+              src={branding?.homeImage1Url || "/images/sample/sample1.jpeg"}
               alt=""
             />
             <img
               className="homeHeroImage homeHeroImageTop"
-              src="/images/sample/sample2.jpeg"
+              src={branding?.homeImage2Url || "/images/sample/sample2.jpeg"}
               alt=""
             />
             <img
               className="homeHeroImage homeHeroImageBottom"
-              src="/images/sample/sample3.jpeg"
+              src={branding?.homeImage3Url || "/images/sample/sample3.jpeg"}
               alt=""
             />
           </div>

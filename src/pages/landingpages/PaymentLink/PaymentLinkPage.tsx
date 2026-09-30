@@ -13,6 +13,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Result, Spin } from "antd";
 import PaystackPop from "@paystack/inline-js";
+import { getPaystackKey } from "../../../utils/paystack";
 import TopBar from "../../../components/LayoutComponent/TopBar/topBar";
 import {
   tenantGetPaymentLinkApi,
@@ -70,11 +71,14 @@ export const PaymentLinkPage = () => {
     setConfirming(false);
   };
 
+  // Null when the estate only takes bank transfers
+  const paystackKey = getPaystackKey(payment?.bankAccount);
+
   const payWithPaystack = () => {
-    if (!payment) return;
+    if (!payment || !paystackKey) return;
     const paystack = new PaystackPop();
     paystack.newTransaction({
-      key: process.env.REACT_APP_PAYSTACK_PK,
+      key: paystackKey,
       email: payment.tenant.email,
       amount: Math.round(payment.amount * 100),
       currency: "NGN",
@@ -309,7 +313,7 @@ export const PaymentLinkPage = () => {
             </section>
 
             {/* Pay online */}
-            {!isPaid && !isRejected && (
+            {!isPaid && !isRejected && paystackKey && (
               <section className="paySection">
                 <div className="paySectionHeader">
                   <span className="paySectionIcon">

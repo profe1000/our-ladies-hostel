@@ -31,6 +31,7 @@ import AdminTenantRequests from "./AdminTenantRequests/AdminTenantRequests";
 import AdminTenantRequestDetailsPage from "./AdminTenantRequests/AdminTenantRequestDetailsPage";
 import AdminTenants from "./AdminTenants/AdminTenants";
 import AdminTenantDetailsPage from "./AdminTenants/AdminTenantDetailsPage";
+import AdminEstateSettings from "./AdminEstateSettings/AdminEstateSettings";
 
 const AdminPagesRoute = () => {
   return (
@@ -100,6 +101,7 @@ const AdminPagesRoute = () => {
       />
 
       <Route path="/settings" element={<AdminSettings />} />
+      <Route path="/estate-settings" element={<AdminEstateSettings />} />
       <Route path="/notifications" element={<AdminNotifcation />} />
       <Route path="*" element={<Nopage />} />
     </Routes>

@@ -1,207 +1,77 @@
-import { LoadingOutlined } from "@ant-design/icons";
-import { notification } from "antd";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Alert, Button, Form, Input } from "antd";
 import { adminAuthSignIn } from "../../../apiservice/admin-AuthService";
 import { IAdminAuthType } from "../../../apiservice/admin-AuthService.type";
-import TitleBar from "../../../components/LayoutComponent/TitleBar/titleBar";
-import TopBar from "../../../components/LayoutComponent/TopBar/topBar";
-import useFormatApiRequest from "../../../hooks/formatApiRequest";
+import { getApiErrorMessage } from "../../../apiservice/public-ApiService";
+import AuthCard from "../../../components/AuthCard/AuthCard";
 import { ADMIN_AUTH_DATA_KEY, ADMIN_TOKEN_KEY } from "../../../hooks/useAuth";
 import { useAppDispatch } from "../../../Redux/reduxCustomHook";
-import { storePlainString, storeJSON } from "../../../utils/localStorage";
-import "../Auth.css";
 import { isSuperAdminRole } from "../../../utils/admin.utils";
 import { clearLoginAs, ESTATE_SLUG_KEY, estatePath } from "../../../utils/estate";
-import { getString } from "../../../utils/localStorage";
-type NotificationType = "success" | "info" | "warning" | "error";
+import { getString, storeJSON, storePlainString } from "../../../utils/localStorage";
 
+/** Estate admin sign in. Tenants sign in on their estate's page (/e/:slug/login) */
 const AuthSignIn = () => {
-  const [formLoading, setFormLoading] = useState<boolean>(false);
-  const [loadApi, setLoadApi] = useState(false);
-  const [user, setUser] = useState<any>({});
-  const [notificationMessage, setNotificationMessage] = useState<any | null>(
-    null
-  );
-  const [api, contextHolder] = notification.useNotification();
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  // Use to collect Site Description Change
-  const handleInputChange = (event: any) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setUser((values: any) => ({ ...values, [name]: value }));
-  };
-
-  // Use to Submit Form
-  const handleSubmit = (event: any) => {
-    event.preventDefault();
+  const onFinish = async (values: { email: string; password: string }) => {
+    setError(null);
+    setLoading(true);
     // A real sign in must use this device's own uuid, not one left by a "login as" session
     clearLoginAs(true);
-    setLoadApi(true);
-    setFormLoading(true);
-  };
-
-  // A custom hook to format the login Api
-  const result = useFormatApiRequest(
-    () => adminAuthSignIn(user),
-    loadApi,
-    () => {
-      setLoadApi(false);
-    },
-    () => {
-      processApi();
+    try {
+      const signinResult: IAdminAuthType = await adminAuthSignIn(values);
+      storePlainString(ADMIN_TOKEN_KEY, signinResult?.data?.token || "");
+      storeJSON(ADMIN_AUTH_DATA_KEY, signinResult);
+      dispatch({ type: "ADMIN_AUTH_ADD_DATA", payload: signinResult });
+      navigate(isSuperAdminRole(signinResult.data?.credentials?.adminRole) ? "/admin" : "/admin/Buildings");
+    } catch (e: any) {
+      setError(getApiErrorMessage(e, "Could not sign in"));
+      setLoading(false);
     }
-  );
-
-  // Process Api
-  const processApi = async () => {
-    if (result.httpState === "SUCCESS") {
-      setFormLoading(false);
-      const signinResult: IAdminAuthType = result.data;
-
-      setTimeout(() => {
-        storePlainString(ADMIN_TOKEN_KEY, signinResult?.data?.token || "");
-        storeJSON(ADMIN_AUTH_DATA_KEY, signinResult);
-        dispatch({ type: "ADMIN_AUTH_ADD_DATA", payload: signinResult });
-        if (isSuperAdminRole(signinResult.data?.credentials?.adminRole)) {
-          navigate("/admin");
-        } else {
-          navigate("/admin/Buildings");
-        }
-      }, 1500);
-
-      // Handle Success Here
-      openNotificationWithIcon("info", "", "Login Success", "#D9FFB5");
-    } else if (result.httpState === "ERROR") {
-      setFormLoading(false);
-      //Handle Error Here
-      openNotificationWithIcon(
-        "info",
-        "",
-        result.data?.response?.data?.message ||
-          result.errorMsg ||
-          "Login Error",
-        "#FFC2B7"
-      );
-    }
-  };
-
-  // Show Notification
-  const openNotificationWithIcon = (
-    type: NotificationType,
-    message: string,
-    description: string,
-    background?: string
-  ) => {
-    api[type]({
-      message,
-      description,
-      placement: "bottomRight",
-      style: { background },
-    });
   };
 
   return (
-    <>
-      {/* " The context is use to hold the notification from ant design" */}
-      {contextHolder}
-
-      <TopBar showProfile={false} saasBrand></TopBar>
-
-      <div className="w3-col" style={{ marginTop: "20px" }}>
-        <TitleBar title="Estate Admin Sign In"></TitleBar>
-      </div>
-      <div className="w3-content">
-        <div className="w3-container">
-          {/* Form */}
-          <div style={{ paddingTop: "20px" }}>
-            <form onSubmit={handleSubmit}>
-              <div className="w3-col w3-margin-top w3-margin-bottom">
-                <h5 className="adminLoginFormInputHeader myfont1">
-                  Sign in to manage your estate
-                </h5>
-              </div>
-
-              {/* Email */}
-              <div className="w3-col w3-margin-top w3-margin-bottom">
-                <div className="w3-col l12 s12 m12">
-                  {/* <span className="w3-small w3-text-white myfont1">Email</span> */}
-                  <input
-                    required
-                    name="email"
-                    value={user?.email || ""}
-                    onChange={handleInputChange}
-                    className="w3-input w3-col w3-text-white loginFormInput"
-                    placeholder="Email Address"
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="w3-col w3-margin-top w3-margin-bottom">
-                <div className="w3-col l12 s12 m12">
-                  {/* <span className="w3-small w3-text-white myfont1">Email</span> */}
-                  <input
-                    required
-                    name="password"
-                    type={"password"}
-                    value={user?.password || ""}
-                    onChange={handleInputChange}
-                    className="w3-input w3-col w3-text-white loginFormInput"
-                    placeholder="Password"
-                  />
-                </div>
-              </div>
-
-              {/* Forget Password */}
-              {/* <div className="w3-col w3-margin-bottom w3-right-align">
-              <Link className="w3-text-white" to="/auth/user-forget-password">
-                <u> Forget Password </u>
-              </Link>
-            </div> */}
-
-              {/* Login Button */}
-              <div className="w3-col w3-margin-bottom">
-                <button
-                  disabled={formLoading}
-                  className="w3-btn w3-col w3-round-large loginButton"
-                >
-                  <span className="w3-text-white">
-                    {!formLoading ? (
-                      "Login"
-                    ) : (
-                      <LoadingOutlined rev={undefined} />
-                    )}
-                  </span>
-                </button>
-              </div>
-
-              {/* Tenants have their own sign in page on their estate's page */}
-              <div
-                className="w3-col w3-margin-top w3-small myfont1"
-                style={{ color: "rgba(255,255,255,0.7)" }}
-              >
-                Are you a tenant?{" "}
-                {getString(ESTATE_SLUG_KEY) ? (
-                  <Link to={estatePath("/login")} className="w3-text-white">
-                    <u>Sign in as a tenant</u>
-                  </Link>
-                ) : (
-                  "Sign in from your estate's page, using the link in your welcome email."
-                )}
-              </div>
-
-              <div className="w3-col w3-margin-bottom">
-                <br />
-              </div>
-            </form>
-          </div>
+    <AuthCard
+      isAdmin
+      eyebrow="Estate admin"
+      title="Welcome back"
+      subtitle="Sign in to manage your buildings, tenants and payments."
+      footer={
+        <>
+          Are you a tenant?{" "}
+          {getString(ESTATE_SLUG_KEY) ? (
+            <Link to={estatePath("/login")}>Sign in as a tenant</Link>
+          ) : (
+            "Sign in from your estate's page, using the link in your welcome email."
+          )}
+          <br />
+          New here? <Link to="/signup">Create your estate</Link>
+        </>
+      }
+    >
+      <Form layout="vertical" requiredMark={false} onFinish={onFinish} disabled={loading} size="large">
+        <Form.Item name="email" label="Email" rules={[{ required: true, type: "email", message: "Enter your email" }]}>
+          <Input autoComplete="username" placeholder="you@example.com" />
+        </Form.Item>
+        <Form.Item name="password" label="Password" rules={[{ required: true, message: "Enter your password" }]}>
+          <Input.Password autoComplete="current-password" />
+        </Form.Item>
+        <div className="authCardRow">
+          <Link to="/auth/forgot-password">Forgot password?</Link>
         </div>
-      </div>
-    </>
+        {error && <Alert type="error" message={error} showIcon style={{ marginBottom: 16 }} />}
+        <Form.Item>
+          <Button type="primary" htmlType="submit" block loading={loading}>
+            Sign in
+          </Button>
+        </Form.Item>
+      </Form>
+    </AuthCard>
   );
 };
 

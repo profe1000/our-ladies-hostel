@@ -66,6 +66,15 @@ export const AdminSettingWrapper: React.FC<{}> = () => {
               <br />
               <button
                 onClick={() => {
+                  navigateToPage("/admin/estate-settings");
+                }}
+                className="w3-col w3-btn  w3-left-align  w3-border-bottom  myfont1  w3-margin-top"
+              >
+                Estate Settings (logo, notification emails, Paystack)
+              </button>
+              <br />
+              <button
+                onClick={() => {
                   navigateToPage("/admin/manageAdminBank/update");
                 }}
                 className="w3-col w3-btn  w3-left-align  w3-border-bottom  myfont1  w3-margin-top"

@@ -8,6 +8,8 @@ import UserPaymentForm from "./UserPaymentForm/UserPaymentForm";
 import PaymentLinkPage from "./PaymentLink/PaymentLinkPage";
 import UserApartmentUnitsPage from "./UserApartmentUnitsPage/UserApartmentUnitsPage";
 import TenantSignIn from "./TenantSignIn/TenantSignIn";
+import ForgotPasswordPage from "../authenticationpages/ForgotPassword/ForgotPasswordPage";
+import ResetPasswordPage from "../authenticationpages/ResetPassword/ResetPasswordPage";
 
 const LandingPagesRoute = () => {
   return (
@@ -25,6 +27,8 @@ const LandingPagesRoute = () => {
         <Route path="/user-tenant-payment/:id" element={<UserPaymentForm />} />
         <Route path="/pay/:token" element={<PaymentLinkPage />} />
         <Route path="/login" element={<TenantSignIn />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage isAdmin={false} />} />
+        <Route path="/reset-password" element={<ResetPasswordPage isAdmin={false} />} />
         <Route path="*" element={<Nopage />} />
       </Route>
     </Routes>

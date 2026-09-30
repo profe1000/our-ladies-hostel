@@ -1,0 +1,114 @@
+.authCardPage {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  background: #000000;
+  color: #ffffff;
+}
+
+.authCardGlow {
+  position: absolute;
+  top: -220px;
+  left: 50%;
+  width: 640px;
+  height: 640px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(148, 122, 30, 0.3) 0%, rgba(98, 79, 11, 0.1) 45%, transparent 70%);
+  pointer-events: none;
+}
+
+.authCardBrand {
+  position: relative;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.authCardBrandText {
+  color: #ffffff !important;
+  font-size: 24px;
+  text-decoration: none;
+}
+
+.authCardLogo {
+  height: 72px;
+  max-width: 220px;
+  object-fit: contain;
+}
+
+.authCard {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: #111312;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 32px 28px 12px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+}
+
+.authCardEyebrow {
+  display: inline-block;
+  color: #d4b24c;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-left: 3px solid #947a1e;
+  padding-left: 10px;
+}
+
+.authCardTitle {
+  color: #ffffff;
+  font-size: 28px;
+  line-height: 1.2;
+  margin: 12px 0 8px;
+}
+
+.authCardSubtitle {
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.authCardRow {
+  display: flex;
+  justify-content: flex-end;
+  margin: -8px 0 16px;
+  font-size: 13px;
+}
+
+.authCard a,
+.authCardFooter a {
+  color: #d4b24c;
+}
+
+.authCard a:hover,
+.authCardFooter a:hover {
+  color: #e3c566;
+}
+
+.authCardFooter {
+  position: relative;
+  margin-top: 20px;
+  max-width: 420px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+@media (max-width: 480px) {
+  .authCard {
+    padding: 28px 20px 8px;
+  }
+
+  .authCardTitle {
+    font-size: 24px;
+  }
+}

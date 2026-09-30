@@ -173,6 +173,10 @@ export interface ITenantPaymentLinkData {
     bankName?: string;
     accountName?: string;
     accountNumber?: string;
+    // Whether and how the estate collects through Paystack (see utils/paystack)
+    paystackEnabled?: boolean;
+    paystackPublicKey?: string | null;
+    paystackUsesAppKeys?: boolean;
   };
   paystackMetadata: any;
 }

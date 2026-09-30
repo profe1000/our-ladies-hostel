@@ -151,3 +151,17 @@ export const changeAdminPassword = async (body: any) => {
 //   const result = await data;
 //   return result;
 // };
+
+// Forgot password: emails a reset link (same answer whether or not the email has an account)
+export const adminForgotPassword = async (body: { email: string }) => {
+  const axios = await instance("", null, true, true);
+  const { data } = await axios.post("api/v1/admin/auth/forgot-password", body);
+  return data;
+};
+
+// Sets the new password from the emailed link
+export const adminResetForgottenPassword = async (body: { email: string; token: string; newPassword: string }) => {
+  const axios = await instance("", null, true, true);
+  const { data } = await axios.post("api/v1/admin/auth/forgot-password/reset", body);
+  return data;
+};
