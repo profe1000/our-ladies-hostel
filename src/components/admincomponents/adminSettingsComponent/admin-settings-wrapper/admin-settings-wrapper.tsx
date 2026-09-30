@@ -4,11 +4,12 @@ import { useAppSelector } from "../../../../Redux/reduxCustomHook";
 import { RootState } from "../../../../Redux/store";
 import "./admin-settings-wrapper.css";
 import { isSuperAdminRole } from "../../../../utils/admin.utils";
+import TenantLinksPanel from "../../TenantLinks/TenantLinksPanel";
 
 export const AdminSettingWrapper: React.FC<{}> = () => {
   const navigate = useNavigate();
   const authData: IAdminAuthType = useAppSelector(
-    (state: RootState) => state?.AdminAuthData
+    (state: RootState) => state?.AdminAuthData,
   );
 
   // Navigate to the next Page
@@ -23,7 +24,8 @@ export const AdminSettingWrapper: React.FC<{}> = () => {
             <h2>Settings</h2>
           </p>
         </div>
-        <div className="w3-left-align">
+
+        <div className="w3-left-align mb-4">
           {/* <button
           onClick={() => {
             navigateToPage("/admin/manageProfile");
@@ -94,6 +96,10 @@ export const AdminSettingWrapper: React.FC<{}> = () => {
             Logout
           </button>
           <br />
+        </div>
+
+        <div className="w3-left-align mt-4">
+          <TenantLinksPanel />
         </div>
       </div>
     </div>
