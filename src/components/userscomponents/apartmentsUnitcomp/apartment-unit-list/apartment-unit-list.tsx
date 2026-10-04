@@ -16,6 +16,7 @@ import { RootState } from "../../../../Redux/store";
 import { formatCurrency } from "../../../../utils/basic.utils";
 import { ILoadState } from "../../../../utils/loading.utils.";
 import "./apartment-unit-list.css";
+import { estatePath } from "../../../../utils/estate";
 type NotificationType = "success" | "info" | "warning" | "error";
 
 type IApartmentUnitList = {
@@ -129,7 +130,7 @@ export const ApartmentUnitListUser: React.FC<IApartmentUnitList> = ({
       type: "TENANT_ADD_SELECTED_APARTMENT",
       payload: tableData[index],
     });
-    navigate(`/landing/user-tenant-registration/${tableData[index].id}`);
+    navigate(estatePath(`/user-tenant-registration/${tableData[index].id}`));
   };
 
   return (

@@ -10,6 +10,8 @@ import {
 import TopBar from "../../../components/LayoutComponent/TopBar/topBar";
 import { BuildingListUser } from "../../../components/userscomponents/buildingsComp/building-list/building-list";
 import "./Home.css";
+import useEstateBranding from "../../../hooks/useEstateBranding";
+import { estatePath } from "../../../utils/estate";
 
 const homeHighlights = [
   {
@@ -31,6 +33,7 @@ const homeHighlights = [
 
 export const HomePage = () => {
   const listingsRef = useRef<HTMLDivElement>(null);
+  const branding = useEstateBranding();
 
   useEffect(() => {
     const backHandler = () => {
@@ -58,7 +61,7 @@ export const HomePage = () => {
         <div className="w3-content homeHeroInner">
           <div className="homeHeroText">
             <span className="homeHeroEyebrow myfont1">
-              Our Ladies Lodge
+              {branding?.name}
             </span>
             <h1 className="homeHeroTitle myfont5">
               A home that feels <em>right</em>, from day one.
@@ -76,7 +79,7 @@ export const HomePage = () => {
                 Explore Buildings <ArrowDownOutlined />
               </button>
               <Link
-                to="/auth"
+                to={estatePath("/login")}
                 className="homeHeroButton homeHeroButtonGhost myfont1"
               >
                 Tenant Sign In
@@ -87,17 +90,17 @@ export const HomePage = () => {
           <div className="homeHeroGallery" aria-hidden="true">
             <img
               className="homeHeroImage homeHeroImageMain"
-              src="/images/sample/sample1.jpeg"
+              src={branding?.homeImage1Url || "/images/sample/sample1.jpeg"}
               alt=""
             />
             <img
               className="homeHeroImage homeHeroImageTop"
-              src="/images/sample/sample2.jpeg"
+              src={branding?.homeImage2Url || "/images/sample/sample2.jpeg"}
               alt=""
             />
             <img
               className="homeHeroImage homeHeroImageBottom"
-              src="/images/sample/sample3.jpeg"
+              src={branding?.homeImage3Url || "/images/sample/sample3.jpeg"}
               alt=""
             />
           </div>

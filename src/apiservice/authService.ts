@@ -99,24 +99,18 @@ export const authUpdateActiveType = async (body: any) => {
   return result;
 };
 
-export const authResetPassword = async (body: any) => {
-  const axios = await instance(null, null, true);
-  const { data } = await axios.post(
-    "api/v1/auth/forgot-password/send-email",
-    body
-  );
-  const result = await data;
-  return result;
+// Forgot password for tenants of the current estate (X-Estate): emails a reset link
+export const authResetPassword = async (body: { email: string }) => {
+  const axios = await instance("", null, true);
+  const { data } = await axios.post("api/v1/tenant/auth/forgot-password", body);
+  return data;
 };
 
-export const authSetNewPassword = async (body: any) => {
-  const axios = await instance(null, null, true);
-  const { data } = await axios.post(
-    "api/v1/auth/forgot-password/confirm-token",
-    body
-  );
-  const result = await data;
-  return result;
+// Sets the new password from the emailed link
+export const authSetNewPassword = async (body: { email: string; token: string; newPassword: string }) => {
+  const axios = await instance("", null, true);
+  const { data } = await axios.post("api/v1/tenant/auth/forgot-password/reset", body);
+  return data;
 };
 
 // User Notifications

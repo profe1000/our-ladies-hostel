@@ -1,0 +1,73 @@
+.tenantLinkRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 0;
+}
+
+/* Divider between links only; the panel header already has one */
+.tenantLinkRow + .tenantLinkRow {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tenantLinkText {
+  min-width: 0;
+  flex: 1 1 260px;
+}
+
+.tenantLinkTitle {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.tenantLinkHint {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  margin: 2px 0 6px;
+}
+
+.tenantLinkUrl {
+  display: block;
+  color: #d4b24c !important;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.tenantLinkUrl:hover {
+  text-decoration: underline;
+}
+
+.tenantLinkActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.tenantLinkButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: #ffffff !important;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.tenantLinkButton:hover {
+  border-color: #d4b24c;
+  color: #d4b24c !important;
+}
+
+.tenantLinkWhatsApp:hover {
+  border-color: #25d366;
+  color: #25d366 !important;
+}

@@ -1,13 +1,12 @@
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Button, Empty, Modal, Result, Spin } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IAuthType } from "../../../../apiservice/authService.type";
 import {
   tenantRentPaymentApi,
   tenantRentPaymentDetailsApi,
 } from "../../../../apiservice/tenant-general-apiService";
 import {
-  ITenantPaymentResult,
   ITenantRentPaymentDetailsApi,
 } from "../../../../apiservice/tenant-general-apiService.type.";
 import useFormatApiRequest from "../../../../hooks/formatApiRequest";
@@ -20,6 +19,9 @@ import { useNavigate } from "react-router";
 import { convertToShortDate } from "../../../../utils/date.utils";
 import { ILoadState } from "../../../../utils/loading.utils.";
 import { formatCurrency } from "../../../../utils/basic.utils";
+import { estatePath } from "../../../../utils/estate";
+import { getPaystackKey } from "../../../../utils/paystack";
+import { tenantGetSettingsApi } from "../../../../apiservice/tenant-general-apiService";
 
 export const TenantProfileComp: React.FC<{}> = () => {
   const authData: IAuthType = useAppSelector(
@@ -38,9 +40,15 @@ export const TenantProfileComp: React.FC<{}> = () => {
   const [totalPrice, settotalPrice] = useState<number>(0);
 
   const navigate = useNavigate();
+  // The estate's Paystack public key; null when it only takes bank transfers
+  const [paystackKey, setPaystackKey] = useState<string | null>(null);
 
-  const [tenantPaymentResultData, setTenantPaymentResultData] =
-    useState<ITenantPaymentResult | null>(null);
+  useEffect(() => {
+    tenantGetSettingsApi()
+      .then((result) => setPaystackKey(getPaystackKey(result?.data)))
+      .catch(() => setPaystackKey(getPaystackKey(null)));
+  }, []);
+
 
   const { confirm } = Modal;
 
@@ -124,8 +132,13 @@ export const TenantProfileComp: React.FC<{}> = () => {
   // Process The Extension
   const processExtendOccupantApi = async () => {
     if (extendOccupantApiResult.httpState === "SUCCESS") {
-      setTenantPaymentResultData(extendOccupantApiResult.data);
-      payWithPayStack();
+      const paymentResult = extendOccupantApiResult.data;
+      if (paystackKey) {
+        payWithPayStack(paymentResult);
+      } else if (paymentResult?.paymentLinkToken) {
+        // No Paystack for this estate: pay by bank transfer and upload the receipt on the payment page
+        navigate(estatePath(`/pay/${paymentResult.paymentLinkToken}`));
+      }
     } else if (extendOccupantApiResult.httpState === "ERROR") {
       alert(
         extendOccupantApiResult.data?.response?.data?.message ||
@@ -135,14 +148,15 @@ export const TenantProfileComp: React.FC<{}> = () => {
     }
   };
 
-  const payWithPayStack = () => {
+  // Takes the payment result directly: state set just before is not readable yet
+  const payWithPayStack = (paymentResult: any) => {
     const paystack = new PaystackPop();
     paystack.newTransaction({
-      key: process.env.REACT_APP_PAYSTACK_PK,
+      key: paystackKey || undefined,
       email: authData.data?.credentials?.email || "annonymouslinkmie@gmail.com",
       amount: nextPaymentAmount * 100 || 0,
       currency: "NGN",
-      metadata: tenantPaymentResultData?.paystackMetadata || {},
+      metadata: paymentResult?.paystackMetadata || {},
       onSuccess: (transaction) => {
         alert("Your Rent Payment is successful");
       },
@@ -339,7 +353,7 @@ export const TenantProfileComp: React.FC<{}> = () => {
                 &nbsp; &nbsp;
                 <button
                   onClick={() => {
-                    navigateToPage("/auth");
+                    navigateToPage(estatePath("/login"));
                   }}
                   className="w3-btn w3-margin-top  w3-round-large myfont1 w3-small editOccupantBtn"
                 >

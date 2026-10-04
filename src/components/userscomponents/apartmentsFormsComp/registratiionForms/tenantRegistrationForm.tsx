@@ -29,6 +29,7 @@ import {
   toFormData,
 } from "./registrationFields";
 import "./tenantRegistration.css";
+import { estatePath } from "../../../../utils/estate";
 
 // TODO(remove): TEMPORARY TEST DATA - delete this block and the
 // `testPrefill` use below once testing is done. It only applies to
@@ -149,7 +150,7 @@ export const TenantRegistrationForm: React.FC<{}> = () => {
       alert(
         "Your form has been submitted. An email will be sent to you shortly to make payment."
       );
-      navigate("/", { replace: true });
+      navigate(estatePath(), { replace: true });
       // Handle Success Here
     } else if (result.httpState === "ERROR") {
       setFormLoading(false);

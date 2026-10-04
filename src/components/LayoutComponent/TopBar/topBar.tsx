@@ -4,13 +4,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { IAuthType } from "../../../apiservice/authService.type";
 import { useAppSelector } from "../../../Redux/reduxCustomHook";
 import { RootState } from "../../../Redux/store";
+import EstateLogo from "../EstateLogo/EstateLogo";
 import "./topbar.css";
+import { estatePath, SAAS_NAME } from "../../../utils/estate";
 
 type ITopBar = {
   showBackButton?: boolean;
   showNotification?: boolean;
   showProfile?: boolean;
   backButtonHref?: string;
+  /** Show the SaaS name (linking to the landing page) instead of an estate, e.g. on the estate admin sign in */
+  saasBrand?: boolean;
 };
 
 export const TopBar: React.FC<ITopBar> = ({
@@ -18,6 +22,7 @@ export const TopBar: React.FC<ITopBar> = ({
   showNotification = false,
   showProfile = true,
   backButtonHref = "/",
+  saasBrand = false,
 }) => {
   const authData: IAuthType = useAppSelector(
     (state: RootState) => state?.AuthData
@@ -27,7 +32,7 @@ export const TopBar: React.FC<ITopBar> = ({
 
   // Navigate To Home
   const navigateToHome = async () => {
-    navigate("/", { replace: true });
+    navigate(estatePath(), { replace: true });
   };
 
   // Navigate BackWards
@@ -62,15 +67,17 @@ export const TopBar: React.FC<ITopBar> = ({
                     </span>
                   )}
                   <span>
-                    <img
-                      onClick={() => {
-                        navigateToHome();
-                      }}
-                      style={{height:"70px"}}
-                      className="favicon-header"
-                      src="/images/our-ladies-logo.png"
-                      alt="Our Ladies Hostel"
-                    />
+                    {saasBrand ? (
+                      <span
+                        onClick={() => navigate("/")}
+                        className="myfont5"
+                        style={{ display: "inline-flex", alignItems: "center", minHeight: "70px", fontSize: "20px", cursor: "pointer" }}
+                      >
+                        {SAAS_NAME}
+                      </span>
+                    ) : (
+                      <EstateLogo onClick={navigateToHome} />
+                    )}
                   </span>
                 </div>
               </div>
@@ -81,7 +88,7 @@ export const TopBar: React.FC<ITopBar> = ({
                 {showProfile && (
                   <>
                     <span className="topBarProfileIndicator">
-                      <Link to={"/auth"}>
+                      <Link to={estatePath("/login")}>
                         <UserOutlined className="w3-text-white" />
                       </Link>
                     </span>

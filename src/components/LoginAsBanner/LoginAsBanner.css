@@ -1,0 +1,52 @@
+.loginAsBanner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 12px;
+  background: #d4b24c;
+  color: #232624;
+  font-size: 13px;
+}
+
+.loginAsBannerReadOnly {
+  background: #8fb3e8;
+}
+
+.loginAsBannerText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.loginAsBanner button {
+  flex-shrink: 0;
+  border: 1px solid #232624;
+  background: transparent;
+  color: #232624;
+  border-radius: 6px;
+  padding: 2px 12px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.loginAsBanner button:hover {
+  background: #232624;
+  color: #ffffff;
+}
+
+/* Make room for the banner above the app's fixed header and the page */
+body.hasLoginAsBanner {
+  padding-top: 40px;
+}
+
+body.hasLoginAsBanner .fixedMenu {
+  top: 40px;
+}

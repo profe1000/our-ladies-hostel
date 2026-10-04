@@ -5,6 +5,7 @@ import { RootState } from "../../../../Redux/store";
 import { AdminDashboard } from "../admin-dashboard/admin-dashboard";
 import AdminDashboardAlerts from "../admin-dashboard-alerts/admin-dashboard-alerts";
 import "./admin-dashboard-wrapper.css";
+import TenantLinksPanel from "../../TenantLinks/TenantLinksPanel";
 
 // "Good morning" / "Good afternoon" / "Good evening"
 const getGreeting = () => {
@@ -101,6 +102,9 @@ export const AdminDashBoardWrapper = () => {
 
         {/* Needs attention */}
         <AdminDashboardAlerts></AdminDashboardAlerts>
+
+        {/* Links to send to tenants */}
+        <TenantLinksPanel />
 
         {/* Dashboard */}
         <AdminDashboard
